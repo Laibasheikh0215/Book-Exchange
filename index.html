@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookcrossing</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="Assets/main logo.png" alt="main-logo" id="main-logo" style="width:150px; margin-right:100px;">
+
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-3">
+                <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
+                <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="login.html" class="nav-link">Log In</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Register / Sign Up</a></li>
+            </ul>
+            <form class="ms-auto d-flex align-items-center">
+                <input type="text" placeholder="Search" class="search-box">
+            </form>
+            <div class="social-icons ms-3">
+                <img src="Assets/facebook logo.png" alt="fb">
+                <img src="Assets/tik tok logo.png" alt="tiktok">
+                <img src="Assets/insta logo.png" alt="insta">
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAking hero section -->
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+
+            <!-- Slide 1 -->
+            <div class="carousel-item active" style="background-image: url('Assets/Class\ Diagram.jpg');">
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="carousel-item" style="background-image: url('Assets/carousel\ 2.jpeg');">
+                <div class="carousel-caption">
+                    <h1>Stories That Inspire</h1>
+                    <p>Find books that change the way you think.</p>
+                    <a href="#" class="btn-shop">Shop Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+
+    <!-- Making exclusively suggested section -->
+    <div class="container py-5">
+
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 class="fw-bold">Exclusively Suggested</h2>
+            </div>
+        </div>
+        <div class="row g-4">
+
+            <!-- Card 1 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card" style="height: 325px;">
+                    <img src="Assets/think and grow rich 1.png" id="before1"
+                        onmouseover="swapPic('before1', 'Assets/think and grow rich 2.png')"
+                        onmouseout="swapPic('before1', 'Assets/think and grow rich 3.png')">
+                    <div class="book-title">Think & Grow Rich</div>
+                    <div class="book-author">By Napoleon Hill</div>
+                    <div class="star-rating">⭐⭐⭐⭐☆</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card" style="height: 325px;">
+                    <img src="Assets/Atomic habit (1).png" id="before2"
+                        onmouseover="swapPic('before2', 'Assets/Atomic habit (2).png')"
+                        onmouseout="swapPic('before2', 'Assets/Atomic habit (3).png')">
+                    <div class="book-title">Atomic Habits</div>
+                    <div class="book-author">By James Clear</div>
+                    <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card">
+                    <img src="Assets/Mockingbird (3).png" id="before3"
+                        onmouseover="swapPic('before3', 'Assets/Mockingbird (2).png')"
+                        onmouseout="swapPic('before3', 'Assets/Mockingbird (1).png')">
+                    <div class="book-title">To Kill a Mocking bird</div>
+                    <div class="book-author">By Harper Lee</div>
+                    <div class="star-rating">⭐⭐⭐⭐☆</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card">
+                    <img src="Assets/Physology of money (1).png" id="before4"
+                        onmouseover="swapPic('before4', 'Assets/Physology of money (2).png')"
+                        onmouseout="swapPic('before4', 'Assets/Physology of money (3).png')">
+                    <div class="book-title">The Phsycology of Money</div>
+                    <div class="book-author">By Morgan Housel</div>
+                    <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card" style="height: 325px;">
+                    <img src="Assets/Its end with us  (2).png" id="before5"
+                        onmouseover="swapPic('before5', 'Assets/Its end with us  (3).png')"
+                        onmouseout="swapPic('before5', 'Assets/Its end with us  (1).png')">
+                    <div class="book-title">It's End with Us</div>
+                    <div class="book-author">By Colleen Hoover</div>
+                    <div class="star-rating">⭐⭐⭐⭐☆</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+                <div class="book-card">
+                    <img src="Assets/Art of bieng alone (3).png" id="before6"
+                        onmouseover="swapPic('before6', 'Assets/Art of bieng alone (1).png')"
+                        onmouseout="swapPic('before6', 'Assets/Art of bieng alone (2).png')">
+                    <div class="book-title">The Art of Being of Alone</div>
+                    <div class="book-author">By Renuka Gavrani</div>
+                    <div class="star-rating">⭐⭐⭐⭐⭐</div>
+                    <button class="borrow-btn">Borrow Now</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Making Top Writer Section-->
+    <div class="container text-center">
+        <h2 class="section-title">Top Writers</h2>
+        <div class="row justify-content-center">
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/Norman Rizvi.jpeg" alt="Norman Rizvi">
+                <div class="writer-name">Norman Rizvi</div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/Shehar Rizvi,.jpeg" alt="Sheharbano Rizvi">
+                <div class="writer-name">Sheharbano Rizvi</div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/James Clear.jpeg" alt="James Clear">
+                <div class="writer-name">James Clear</div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/JK Rowling.jpeg" alt="J.K Rowling">
+                <div class="writer-name">J.K Rowling</div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/Eric Hobsbawm.jpeg" alt="Eric Hobsbawm">
+                <div class="writer-name">Eric Hobsbawm</div>
+            </div>
+
+            <div class="col-6 col-sm-4 col-md-2 writer-card">
+                <img src="Assets/Agatha Christie.jpeg" alt="Agatha Christie">
+                <div class="writer-name">Agatha Christie</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Making qoutes section -->
+    <div class="container qoute-section">
+        <div class="row align-items-center">
+
+            <!-- Left Content -->
+            <div class="col-md-6">
+                <div class="qoute-title">Night</div>
+                <div class="author-name">- By Elie Wiesel</div>
+                <p class="quote-text">
+                    "Never shall I forget that night, the first night in camp, which has turned my life into one long
+                    night, seven times cursed and seven times sealed. Never shall I forget that smoke. Never shall I
+                    forget the little faces of the children, whose bodies I saw turned into wreaths of smoke beneath a
+                    silent blue sky."
+                </p>
+            </div>
+
+            <!-- Right Content -->
+            <div class="col-md-6 text-center">
+                <div class="image-wrapper">
+                    <img src="Assets/Elie Wiesel.jpeg" alt="Elie Wiesel" class="author-photo">
+                    <img src="Assets/Night by Elie Wiesel.jpeg" alt="Night Book" class="book-photo">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Making genre section -->
+    <div class="container my-5 genre">
+        <h2 class="genre-title">Genres & Beyond</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card" style="height: 261px;">
+                    <img src="Assets/Fictional.jpeg" alt="Fictional">
+                    <h6>Fictional</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card" style="height: 261px;">
+                    <img src="Assets/Childeren's.jpeg" alt="Children's Books">
+                    <h6>Children’s Books</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card" style="height: 261px;">
+                    <img src="Assets/Non-fictional.jpeg" alt="Non-Fictional">
+                    <h6>Non-Fictional</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card">
+                    <img src="Assets/Language & literature.jpg" alt="Language & Literature">
+                    <h6>Language & Literature</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card">
+                    <img src="Assets/Magzines & journals.jpeg" alt="Magazines & Journal">
+                    <h6>Magazines & Journal</h6>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="genre-card" style="height: 261px;">
+                    <img src="Assets/history.jpeg" alt="History">
+                    <h6>History</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAking best investment section -->
+         <div class="section-container">
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center">
+                <img src="Assets/best_investment_img.png" alt="Book" class="best-investment-img fade-in-up">
+            </div>
+            <div class="col-md-8 fade-in-up" id="best-investment-content" style="animation-delay: 0.3s;">
+                <p class="small-heading">LET'S MAKE THE BEST INVESTMENT</p>
+                <h2 class="main-heading">There Is No Friend As Loyal<br>As A Book</h2>
+                <p class="quote-text">
+                    "In a world that changes, books remain — whispering wisdom, offering comfort, and waiting patiently
+                    to be opened once more."
+                </p>
+            </div>
+        </div>
+    </div>
+
+<!-- Making Footer section -->
+   <footer>
+    <div class="container">
+      <div class="row">
+        <!-- Logo & Quote -->
+        <div class="col-md-3">
+          <div class="d-flex align-items-center footer-logo">
+            <img src="Assets/main logo.png" alt="Logo" class="footer-logo">
+
+          </div>
+          <div class="footer-quote">
+            "Thank you for being a part of our story-sharing family—<br>
+            every book you share brings knowledge, kindness, and connection to someone new."
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div class="col-md-2 footer-links">
+          <div class="footer-title">User Action</div>
+          <p><span class="footer-user-actions">Register / Login</span><br>
+            <span class="footer-user-actions">Add a Book</span><br>
+            <span class="footer-user-actions">Search Books</span><br>
+            <span class="footer-user-actions">My Profile</span><br>
+            <span class="footer-user-actions">Messages</span>
+          </p>
+        </div>
+
+        <!-- About -->
+        <div class="col-md-2 footer-links">
+          <div class="footer-title">About</div>
+          <a href="#">About Us</a>
+        </div>
+
+        <!-- Policies -->
+        <div class="col-md-2 footer-links">
+          <div class="footer-title">Policies</div>
+          <a href="#">Terms & Conditions</a>
+        </div>
+
+        <!-- Get in Touch -->
+        <div class="col-md-3 footer-links">
+          <div class="footer-title">Got In Touch</div>
+          <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
+          <a href="#">Bookcrossing.com</a>
+          <a href="tel:+923412875468">+92 3412875468</a>
+        </div>
+      </div>
+
+      <!-- Bottom -->
+      <div class="row footer-bottom">
+        <div class="col-md-6">
+          © 2025 BookCrossing, Inc. All rights reserved.
+        </div>
+        <div class="col-md-6 text-end social-icons">
+          <img src="Assets/facebook logo.png" alt="fb">
+          <img src="Assets/tik tok logo.png" alt="tiktok">
+          <img src="Assets/insta logo.png" alt="insta">
+        </div>
+      </div>
+    </div>
+  </footer>
+
+    <script src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

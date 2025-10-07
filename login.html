@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookcrossing</title>
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #f3efee;
+            padding: 10px 0;
+        }
+
+        .navbar-brand img {
+            width: 150px;
+        }
+
+        .nav-link {
+            color: black !important;
+            font-weight: 300;
+            margin: 0 10px;
+        }
+
+        .nav-link:hover {
+            color: #f8ca30 !important;
+            text-decoration: underline;
+        }
+
+        .search-box {
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            outline: none;
+            width: 200px;
+        }
+
+        .social-icons img {
+            width: 30px;
+            height: 30px;
+            margin-left: 8px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        /* Main content */
+        .main-container {
+            height: calc(100vh - 76px);
+            display: flex;
+        }
+
+        /* Left side gradient */
+        .left-section {
+            background: linear-gradient(to bottom, #084779, #113b5e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+        }
+
+        .left-section img {
+            max-width: 280px;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Right side form */
+        .right-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+            padding: 20px;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-control {
+            border-radius: 30px;
+            background-color: #eee;
+            border: none;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+        }
+
+        .btn-login {
+            background-color: #f8ca30;
+            border: none;
+            border-radius: 30px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background-color: #e0b420;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .signup-btn {
+            background-color: #f5efef;
+            border-radius: 30px;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .signup-btn:hover {
+            background-color: #e8e0e0;
+            transform: scale(1.02);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-login {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .social-login img {
+            width: 40px;
+            margin: 0 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .social-login img:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .left-section,
+            .right-section {
+                width: 100%;
+                padding: 40px 20px;
+            }
+
+            .left-section {
+                height: 300px;
+            }
+
+            .left-section img {
+                max-width: 200px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand img {
+                width: 120px;
+            }
+
+            .nav-link {
+                margin: 0 5px;
+                font-size: 14px;
+            }
+
+            .search-box {
+                width: 150px;
+            }
+
+            .social-icons img {
+                width: 25px;
+                height: 25px;
+                margin-left: 5px;
+            }
+
+            .form-wrapper {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="Assets/main logo.png" alt="main-logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
+                    <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
+                    <li class="nav-item"><a href="" class="nav-link">Contact</a></li>
+                    <li class="nav-item"><a href="register.html" class="nav-link">Register / Sign Up</a></li>
+                </ul>
+                <form class="d-flex me-3">
+                    <input type="text" placeholder="Search" class="search-box">
+                </form>
+                <div class="social-icons d-flex">
+                    <img src="Assets/facebook logo.png" alt="fb">
+                    <img src="Assets/tik tok logo.png" alt="tiktok">
+                    <img src="Assets/insta logo.png" alt="insta">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Left gradient section -->
+        <div class="left-section">
+            <img src="Assets/login.jpg" alt="Six of Crows book" class="img-fluid">
+        </div>
+
+        <!-- Right login form -->
+        <div class="right-section">
+            <div class="form-wrapper">
+                <h3 class="mb-4" style="color: #f8ca30; font-weight: bold;">Log In</h3>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Username / Email Address:</label>
+                        <input type="text" id="username" class="form-control"
+                            placeholder="Enter your email or username">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password:</label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-login">Log In</button>
+                </form>
+                <div class="mt-3">
+                    <button class="signup-btn">Sign Up</button>
+                </div>
+                <div class="social-login mt-3">
+                    <img src="Assets/google icon.png" alt="Google">
+                    <img src="Assets/facebook logo.png" alt="Facebook">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            let username = document.getElementById("username").value.trim();
+            let password = document.getElementById("password").value.trim();
+
+            if (username === "" || password === "") {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            // Show loading state
+            const loginBtn = document.querySelector('.btn-login');
+            const originalText = loginBtn.textContent;
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+
+            // Clear previous errors
+            const errorDiv = document.getElementById('errorMessage');
+            if (errorDiv) errorDiv.textContent = '';
+
+            try {
+                // Send login request to backend
+                const response = await fetch('http://localhost/book-exchange/backend/api/auth/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: username,
+                        password: password
+                    }),
+                });
+
+                console.log('Response status:', response.status);
+
+                // Get response as text first to handle HTML errors
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+
+                    // Check if it's a PHP error page
+                    if (responseText.includes('<b>') || responseText.includes('<br />') || responseText.includes('Warning') || responseText.includes('Error')) {
+                        throw new Error("Server error occurred. Please check PHP configuration.");
+                    } else {
+                        throw new Error("Invalid server response: " + responseText.substring(0, 100));
+                    }
+                }
+
+                console.log('Parsed data:', data);
+
+                if (data.success && data.message === "Login successful.") {
+                    alert("Login successful!");
+
+                    // Store user data in localStorage
+                    localStorage.setItem('user', JSON.stringify({
+                        user_id: data.user.user_id,
+                        name: data.user.name,
+                        email: data.user.email,
+                        profile_picture: data.user.profile_picture,
+                        loggedIn: true
+                    }));
+
+                    // Redirect to dashboard
+                    window.location.href = "dashboard.html";
+                } else {
+                    throw new Error(data.message || "Login failed. Please check your credentials.");
+                }
+
+            } catch (error) {
+                console.error('Error details:', error);
+
+                // Show error message to user
+                if (error.message.includes('Server error') || error.message.includes('PHP configuration')) {
+                    alert("Server error: Please try again later or contact administrator.");
+                } else if (error.message.includes('Network')) {
+                    alert("Network error: Please check your internet connection and try again.");
+                } else {
+                    alert("Login failed: " + error.message);
+                }
+
+                // Optional: Display error in a div instead of alert
+                const errorDiv = document.getElementById('errorMessage') || document.createElement('div');
+                errorDiv.id = 'errorMessage';
+                errorDiv.style.color = 'red';
+                errorDiv.style.marginTop = '10px';
+                errorDiv.textContent = error.message;
+
+                if (!document.getElementById('errorMessage')) {
+                    this.appendChild(errorDiv);
+                }
+            } finally {
+                // Reset button state
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
+            }
+        });
+
+        // Additional function to test login API directly
+        async function testLoginAPI(email, password) {
+            try {
+                console.log("Testing login API with:", email);
+
+                const response = await fetch('http://localhost/book-exchange/backend/api/auth/login.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const responseText = await response.text();
+                console.log("API Test - Status:", response.status);
+                console.log("API Test - Response:", responseText);
+
+                try {
+                    const data = JSON.parse(responseText);
+                    console.log("API Test - Parsed JSON:", data);
+                    return data;
+                } catch (e) {
+                    console.error("API Test - JSON Parse Failed:", e);
+                    return { error: "Invalid JSON", raw: responseText };
+                }
+
+            } catch (error) {
+                console.error("API Test - Failed:", error);
+                return { error: error.message };
+            }
+        }
+
+        // Test the login API on page load (optional)
+        window.addEventListener('load', function () {
+            console.log("Login page loaded");
+
+            // Check if user is already logged in
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (userData && userData.loggedIn) {
+                alert("You are already logged in. Redirecting to dashboard...");
+                window.location.href = 'dashboard.html';
+            }
+
+            // Uncomment below to test API on page load
+            // testLoginAPI("test@example.com", "test123");
+        });
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,385 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #f3efee;
+}
+
+.nav-link {
+    color: black !important;
+    font-weight: 500;
+    margin: 0 10px;
+    font-weight: 300;
+}
+
+.nav-link:hover {
+    color: #f8ca30 !important;
+    font-weight: 500;
+    margin: 0 10px;
+    text-decoration: underline;
+}
+
+.search-box {
+    border: none;
+    border-radius: 20px;
+    padding: 5px 10px;
+    outline: none;
+}
+
+.social-icons img {
+    width: 30px;
+    height: 30px;
+    margin-left: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Styling hero section */
+.carousel-item {
+    height: 80vh;
+    min-height: 400px;
+    background: no-repeat center center scroll;
+    background-size: cover;
+    position: relative;
+}
+
+.carousel-caption {
+    bottom: 70%;
+    text-align: left;
+}
+
+.carousel-caption h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    animation: fadeInDown 1s ease;
+    text-align: left;
+}
+
+.carousel-caption p {
+    font-size: 1.2rem;
+    animation: fadeInUp 1.2s ease;
+    text-align: left;
+}
+
+.btn-shop {
+    padding: 12px 30px;
+    background-color: #ff7f50;
+    border: none;
+    color: #fff;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    transition: 0.3s;
+    text-align: left;
+}
+
+.btn-shop:hover {
+    background-color: #ff5722;
+    transform: scale(1.05);
+    text-align: left;
+}
+
+/* Animations */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-200px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styling For Exclusively suggested section */
+.book-card {
+    background: #fff;
+    /* border-radius: 10px; */
+    border: 3px solid #ececec;
+    text-align: center;
+    padding-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-card img {
+    width: 100%;
+    height: auto;
+    padding: 5px 5px 0 5px;
+    transition: 0.3s ease;
+}
+
+.book-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.book-author {
+    font-size: 14px;
+    color: #c8c5c5;
+}
+
+.star-rating {
+    color: #f8ca30;
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+.borrow-btn {
+    background-color: white;
+    color: #c8c5c5;
+    border: none;
+    padding: 2px 5px 2px 5px;
+    margin-top: 10px;
+    border-radius: 20px 0px 20px 0px;
+    border: 2px solid #f8ca30;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.borrow-btn:hover {
+    background-color: white;
+}
+
+/* Styling top writers */
+.qoute-section {
+    padding-top: 70px;
+}
+
+.section-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+}
+
+.writer-card img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #94b143;
+    /* green border */
+    padding: 3px;
+}
+
+.writer-name {
+    margin-top: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* STyling qoutes section */
+.qoute-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    color: #f4b400;
+    /* Yellow */
+}
+
+.author-name {
+    font-size: 1.3rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.quote-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 15px;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-left: 350px;
+}
+
+.author-photo {
+    border: 10px solid #f4b400;
+    border-radius: 0;
+    width: 200px;
+    height: auto;
+}
+
+.book-photo {
+    position: absolute;
+    bottom: -60px;
+    left: -170px;
+    border-radius: 40%;
+    width: 225px;
+    height: 250px;
+    object-fit: cover;
+}
+
+/* styling genre */
+.genre-title {
+    font-family: 'Georgia', serif;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.genre-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+    text-align: center;
+    cursor: pointer;
+}
+
+.genre-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    padding: 5px 5px 0 5px;
+}
+
+.genre-card h6 {
+    padding: 10px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.genre-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Styling best investment section */
+.section-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 50px 20px;
+}
+
+.best-investment-img {
+    width: 320px;
+    height: 320px;
+    border-radius: 10px;
+    transition: transform 0.4s ease;
+    filter: drop-shadow(1px 1px 20px rgba(0, 0, 0, 0.4));
+}
+
+.best-investment-img:hover {
+    transform: scale(1.05);
+}
+
+#best-investment-content {
+    padding-left: 250px;
+}
+
+.small-heading {
+    color: #f4b400;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.main-heading {
+    font-family: 'Georgia', serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    font-style: italic;
+    margin: 15px 0;
+    line-height: 1.4;
+}
+
+.quote-text {
+    color: #444;
+    font-size: 1rem;
+}
+
+/* Animation */
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Styling footer */
+footer {
+    background-color: #f5f2f2;
+    padding: 40px 0 10px;
+    font-size: 14px;
+    color: #000;
+}
+
+.footer-logo img {
+    width: 150px;
+    height: 40px;
+    margin-right: 8px;
+
+}
+
+.footer-quote {
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 10px;
+}
+
+.footer-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+    margin-bottom: 6px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    border-top: 2px solid #f1c40f;
+    padding-top: 8px;
+    margin-top: 20px;
+    font-size: 13px;
+}
+
+.social-icons a {
+    color: #000;
+    margin-left: 15px;
+    font-size: 18px;
+}
+
+.social-icons a:hover {
+    color: #f1c40f;
+}

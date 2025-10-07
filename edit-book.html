@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Book - Book Exchange</title>
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg px-4" style="background-color: #f3efee;">
+        <a class="navbar-brand" href="dashboard.html">
+            <img src="Assets/main logo.png" alt="main-logo" style="width:150px;">
+        </a>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Update Book</h2>
+        <div id="bookForm">
+            <div class="text-center">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading book details...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get book ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
+        const userData = JSON.parse(localStorage.getItem('user'));
+
+        if (!userData || !bookId) {
+            alert("Invalid access");
+            window.location.href = "dashboard.html";
+        }
+
+        // Load book details
+        fetch(`http://localhost/book-exchange/backend/api/books/read_one.php?id=${bookId}&user_id=${userData.user_id}`)
+            .then(response => response.json())
+            .then(book => {
+                document.getElementById('bookForm').innerHTML = `
+                    <form id="editBookForm">
+                        <input type="hidden" id="bookId" value="${book.id}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Book Title *</label>
+                                    <input type="text" class="form-control" id="title" value="${book.title}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Author *</label>
+                                    <input type="text" class="form-control" id="author" value="${book.author}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">ISBN</label>
+                                    <input type="text" class="form-control" id="isbn" value="${book.isbn || ''}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Genre</label>
+                                    <input type="text" class="form-control" id="genre" value="${book.genre || ''}">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Condition *</label>
+                                    <select class="form-select" id="condition" required>
+                                        <option value="New" ${book.condition === 'New' ? 'selected' : ''}>New</option>
+                                        <option value="Like New" ${book.condition === 'Like New' ? 'selected' : ''}>Like New</option>
+                                        <option value="Very Good" ${book.condition === 'Very Good' ? 'selected' : ''}>Very Good</option>
+                                        <option value="Good" ${book.condition === 'Good' ? 'selected' : ''}>Good</option>
+                                        <option value="Fair" ${book.condition === 'Fair' ? 'selected' : ''}>Fair</option>
+                                        <option value="Poor" ${book.condition === 'Poor' ? 'selected' : ''}>Poor</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status *</label>
+                                    <select class="form-select" id="status" required>
+                                        <option value="Available" ${book.status === 'Available' ? 'selected' : ''}>Available</option>
+                                        <option value="Lent Out" ${book.status === 'Lent Out' ? 'selected' : ''}>Lent Out</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3">${book.description || ''}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Book</button>
+                        <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+                    </form>
+                `;
+
+                // Add form submit handler
+                document.getElementById("editBookForm").addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    updateBook();
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('bookForm').innerHTML = `
+                    <div class="alert alert-danger">
+                        Error loading book details. <a href="dashboard.html">Return to Dashboard</a>
+                    </div>
+                `;
+            });
+
+        function updateBook() {
+            const bookData = {
+                id: document.getElementById('bookId').value,
+                user_id: userData.user_id,
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                isbn: document.getElementById('isbn').value,
+                genre: document.getElementById('genre').value,
+                condition: document.getElementById('condition').value,
+                status: document.getElementById('status').value,
+                description: document.getElementById('description').value
+            };
+
+            fetch('http://localhost/book-exchange/backend/api/books/update.php', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message.includes("updated")) {
+                    alert("Book updated successfully!");
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("An error occurred while updating the book.");
+            });
+        }
+    </script>
+</body>
+</html>

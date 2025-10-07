@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Book - Book Exchange</title>
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #f8ca30;
+            border-color: #f8ca30;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0b420;
+            border-color: #e0b420;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg px-4" style="background-color: #f3efee;">
+        <a class="navbar-brand d-flex align-items-center" href="dashboard.html">
+            <img src="Assets/main logo.png" alt="main-logo" style="width:150px;">
+        </a>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-4">
+                    <h2 class="text-center mb-4">Add New Book</h2>
+
+                    <form id="addBookForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Book Title *</label>
+                                    <input type="text" class="form-control" id="title" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Author *</label>
+                                    <input type="text" class="form-control" id="author" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">ISBN</label>
+                                    <input type="text" class="form-control" id="isbn">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Genre</label>
+                                    <input type="text" class="form-control" id="genre"
+                                        placeholder="Fiction, Mystery, etc.">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Condition *</label>
+                                    <select class="form-select" id="condition" required>
+                                        <option value="">Select Condition</option>
+                                        <option value="New">New</option>
+                                        <option value="Like New">Like New</option>
+                                        <option value="Very Good">Very Good</option>
+                                        <option value="Good" selected>Good</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Poor">Poor</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3"
+                                placeholder="Describe the book's content and condition..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Add Book</button>
+                            <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("addBookForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (!userData) {
+                alert("Please login first");
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Get form values
+            const bookData = {
+                title: document.getElementById('title').value,
+                author: document.getElementById('author').value,
+                user_id: userData.user_id, // Use the user_id from logged in user
+                isbn: document.getElementById('isbn').value,
+                genre: document.getElementById('genre').value,
+                condition: document.getElementById('condition').value,
+                description: document.getElementById('description').value
+            };
+
+            console.log("Sending book data:", bookData);
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Adding Book...';
+            submitBtn.disabled = true;
+
+            // API URL - Use the correct path
+            const apiUrl = 'http://localhost/book-exchange/backend/api/books/create.php';
+
+            // Send the request
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookData) // This converts JavaScript object to JSON string
+            })
+                .then(response => {
+                    console.log("Response status:", response.status, response.statusText);
+                    return response.json(); // Try to parse response as JSON
+                })
+                .then(data => {
+                    if (data.message && data.message.includes("successfully")) {
+                        alert("Book added successfully!");
+
+                        // Force refresh the dashboard to show updated data
+                        if (window.opener && !window.opener.closed) {
+                            // If opened from dashboard, refresh it
+                            window.opener.location.reload(true);
+                        }
+
+                        // Redirect to dashboard with cache busting
+                        window.location.href = "dashboard.html?refresh=" + new Date().getTime();
+                    } else {
+                        alert("Error: " + (data.message || "Unknown error occurred"));
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("An error occurred while adding the book. Please check the console for details.");
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
+        });
+
+        // Add book function with better error handling
+        async function addBook(bookData) {
+            try {
+                console.log("Adding book:", bookData);
+
+                const response = await fetch('http://localhost/book-exchange/backend/api/books/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookData)
+                });
+
+                // Get response as text first to handle non-JSON responses
+                const responseText = await response.text();
+                console.log("Raw response:", responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error("JSON Parse Error:", parseError);
+
+                    // Check if it's a database connection error
+                    if (responseText.includes('Connection') || responseText.includes('database')) {
+                        throw new Error("Database connection failed. Please check if MySQL is running.");
+                    } else {
+                        throw new Error("Server returned invalid response: " + responseText.substring(0, 100));
+                    }
+                }
+
+                if (response.ok) {
+                    return result;
+                } else {
+                    throw new Error(result.message || "Failed to add book");
+                }
+
+            } catch (error) {
+                console.error('Add book error:', error);
+                throw error;
+            }
+        }
+    </script>
+</body>
+
+</html>

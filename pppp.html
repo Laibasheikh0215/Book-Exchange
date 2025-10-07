@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login - Book Exchange</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    }
+
+    .login-container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .login-left {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #fff;
+      padding: 50px;
+    }
+
+    .login-right {
+      flex: 1;
+      background-image: url('https://i.ibb.co/WkDnq4Y/login-side.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .login-right::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(44, 62, 80, 0.8) 0%, rgba(52, 152, 219, 0.8) 100%);
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-box h2 {
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .login-subtitle {
+      text-align: center;
+      color: #6c757d;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    /* .admin-badge {
+      background: linear-gradient(90deg, #005f3d, #8bc34a);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 20px;
+    } */
+
+    .form-control {
+      border-radius: 10px;
+      padding: 12px;
+      border: 2px solid #e9ecef;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    }
+
+    .input-group-text {
+      background-color: white;
+      border: 2px solid #e9ecef;
+      border-right: none;
+    }
+
+    .form-control:focus + .input-group-text {
+      border-color: #3498db;
+    }
+
+    .input-group .form-control:focus {
+      border-left: 2px solid #3498db;
+    }
+
+    .form-check-label {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .login-btn {
+      background: linear-gradient(90deg, #2c3e50, #3498db);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 12px;
+      font-weight: 600;
+      width: 100%;
+      transition: all 0.3s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.7;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .security-notice {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-top: 20px;
+      border-left: 4px solid #f39c12;
+    }
+
+    .security-notice h6 {
+      color: #f39c12;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+
+    .security-notice p {
+      margin: 0;
+      font-size: 12px;
+      color: #6c757d;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-link a {
+      color: #3498db;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+
+    .alert {
+      border-radius: 10px;
+      border: none;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+    }
+
+    .password-toggle {
+      cursor: pointer;
+      transition: color 0.3s;
+      background: white;
+      border: 2px solid #e9ecef;
+      border-left: none;
+    }
+
+    .password-toggle:hover {
+      color: #3498db;
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+      }
+      .login-right {
+        display: none;
+      }
+      .login-left {
+        padding: 30px;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-box {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <!-- Left Side - Login Form -->
+    <div class="login-left">
+      <div class="login-box">
+        <div class="text-center mb-4">
+          <h2>Admin Login</h2>
+          <p class="login-subtitle">Book Exchange Management System</p>
+        </div>
+
+        <!-- Message Alert -->
+        <div id="message" class="alert alert-danger" style="display: none;"></div>
+
+        <form id="adminLoginForm">
+          <div class="mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" class="form-control" id="username" name="username" 
+                     placeholder="Admin Username" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input type="password" class="form-control" id="password" name="password" 
+                     placeholder="Password" required>
+              <span class="input-group-text password-toggle" id="togglePassword">
+                <i class="bi bi-eye"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <a href="#" class="forgot-password" style="font-size: 14px; color: #555; text-decoration: none;">
+              Forgot Password?
+            </a>
+          </div>
+
+          <button type="submit" class="login-btn" id="loginButton">
+            <i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard
+          </button>
+
+          <div class="security-notice">
+            <h6><i class="fas fa-exclamation-triangle me-2"></i>Security Notice</h6>
+            <p>Restricted to authorized personnel only. All access attempts are monitored and logged.</p>
+          </div>
+
+          <div class="back-link">
+            <a href="../index.html">
+              <i class="fas fa-arrow-left me-1"></i>Back to Main Site
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Side - Background Image -->
+    <div class="login-right">
+      <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+        <i class="fas fa-book-open fa-4x mb-3"></i>
+        <h3>Book Exchange</h3>
+        <p>Community Book Sharing Platform</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const loginForm = document.getElementById('adminLoginForm');
+      const messageDiv = document.getElementById('message');
+      const loginButton = document.getElementById('loginButton');
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+
+      // Check if admin is already logged in
+      const adminData = JSON.parse(localStorage.getItem('admin'));
+      if (adminData && adminData.loggedIn) {
+        showMessage('Welcome back! Redirecting to dashboard...', 'info');
+        setTimeout(() => {
+          window.location.href = 'admin_dashboard.html';
+        }, 2000);
+      }
+
+      // Toggle password visibility
+      togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        const icon = this.querySelector('i');
+        icon.className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+      });
+
+      // Form submission
+      loginForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        // Get form data
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        // Basic validation
+        if (!username || !password) {
+          showMessage('Please fill in all fields', 'danger');
+          return;
+        }
+
+        // Show loading state
+        loginButton.disabled = true;
+        loginButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Authenticating...';
+
+        try {
+          // Prepare login data
+          const loginData = {
+            username: username,
+            password: password
+          };
+
+          console.log("Sending admin login request...");
+
+          // Send login request
+          const API_URL = 'http://localhost/book-exchange/backend/api/auth/admin_login.php';
+          console.log("Calling API:", API_URL);
+
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(loginData)
+          });
+
+          console.log("Response status:", response.status);
+
+          // Get response as text first
+          const responseText = await response.text();
+          console.log("Raw response text:", responseText);
+
+          // Check if response is HTML instead of JSON
+          if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+            console.error("Server returned HTML error page instead of JSON");
+            throw new Error("Server error - check PHP configuration and file paths");
+          }
+
+          let result;
+          try {
+            result = JSON.parse(responseText);
+          } catch (parseError) {
+            console.error("JSON Parse Error:", parseError);
+            console.error("Response that failed to parse:", responseText);
+            throw new Error("Server returned invalid JSON response");
+          }
+
+          if (response.ok && result.success) {
+            showMessage('Authentication successful! Redirecting...', 'success');
+
+            // Store admin data in localStorage
+            const adminData = {
+              admin_id: result.admin.id,
+              username: result.admin.username,
+              email: result.admin.email,
+              role: result.admin.role,
+              loggedIn: true,
+              loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('admin', JSON.stringify(adminData));
+
+            // Redirect to dashboard after 1.5 seconds
+            setTimeout(() => {
+              window.location.href = 'admin_dashboard.html';
+            }, 1500);
+
+          } else {
+            showMessage(result.message || 'Login failed. Please check your credentials.', 'danger');
+          }
+
+        } catch (error) {
+          console.error('Login Error:', error);
+
+          let errorMessage = 'Authentication Error: ' + error.message;
+
+          if (error.message.includes('Failed to fetch')) {
+            errorMessage = 'Cannot connect to server. Please check if your local server (XAMPP/WAMP) is running.';
+          } else if (error.message.includes('Server error')) {
+            errorMessage = 'Server configuration error. Please check PHP files and API endpoints.';
+          } else if (error.message.includes('invalid JSON')) {
+            errorMessage = 'Server returned an unexpected response. Check browser console for details.';
+          }
+
+          showMessage(errorMessage, 'danger');
+
+        } finally {
+          // Reset button state
+          setTimeout(() => {
+            loginButton.disabled = false;
+            loginButton.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Login to Dashboard';
+          }, 1000);
+        }
+      });
+
+      // Function to show messages
+      function showMessage(message, type) {
+        messageDiv.textContent = message;
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.style.display = 'block';
+
+        // Auto hide after 5 seconds for non-success messages
+        if (type !== 'success') {
+          setTimeout(() => {
+            messageDiv.style.display = 'none';
+          }, 5000);
+        }
+      }
+
+      // Demo login for testing (remove in production)
+      document.addEventListener('keydown', function (e) {
+        // Press Ctrl+Alt+D for demo login
+        if (e.ctrlKey && e.altKey && e.key === 'd') {
+          document.getElementById('username').value = 'admin';
+          document.getElementById('password').value = 'admin123';
+          showMessage('Demo credentials filled. Click Login to continue.', 'info');
+        }
+      });
+
+      // Focus on username field when page loads
+      document.getElementById('username').focus();
+    });
+  </script>
+</body>
+</html>

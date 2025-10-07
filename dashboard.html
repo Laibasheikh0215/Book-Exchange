@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Book Exchange</title>
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #f3efee;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(to right, #084779, #113b5e);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-primary {
+            background-color: #f8ca30;
+            border-color: #f8ca30;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0b420;
+            border-color: #e0b420;
+        }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="Assets/main logo.png" alt="main-logo" style="width:150px;">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-3">
+                <li class="nav-item"><a href="browse-book.html" class="nav-link">Browse Books</a></li>
+                <li class="nav-item"><a href="my-books.html" class="nav-link">My Book</a></li>
+                <li class="nav-item"><a href="user-transactions.html" class="nav-link">My Transactions</a></li>
+            </ul>
+            <div class="ms-auto d-flex align-items-center">
+                <span class="me-3" id="userWelcome">Welcome, User!</span>
+                <button class="btn btn-outline-secondary btn-sm" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header text-center">
+        <div class="container">
+            <h1>Welcome to Your Book Exchange Dashboard</h1>
+            <p>Manage your books, requests, and connections with other book lovers</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="container">
+        <div class="row">
+            <!-- Quick Stats -->
+            <div class="col-md-3 mb-4">
+                <div class="card text-center p-3">
+                    <h3 id="booksCount">0</h3>
+                    <p>Books Listed</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center p-3">
+                    <h3 id="requestsCount">0</h3>
+                    <p>Pending Requests</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center p-3">
+                    <h3 id="messagesCount">0</h3>
+                    <p>Unread Messages</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center p-3">
+                    <h3 id="rating">4.5</h3>
+                    <p>Your Rating</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Quick Actions</h4>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+                            ↻ Refresh
+                        </button>
+                    </div>
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-primary" onclick="addBook()">Add New Book</button>
+                        <button class="btn btn-outline-primary" onclick="searchbook()">Browse Books</button>
+                        <button class="btn btn-outline-primary" onclick="viewRequests()">View Requests</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h4>Recent Books</h4>
+                    <div id="recentBooks">
+                        <p class="text-muted">No books listed yet.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card p-4">
+                    <h4>Recent Requests</h4>
+                    <div id="recentRequests">
+                        <p class="text-muted">No recent requests.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this to your dashboard after the Quick Actions section -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Requests</h5>
+                    <a href="requests.html" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div id="recentRequests">
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Loading requests...</span>
+                            </div>
+                            <p class="mt-2">Loading requests...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in - FIXED: No const redeclaration
+        const userData = JSON.parse(localStorage.getItem('user')) || null;
+
+        if (!userData || !userData.loggedIn) {
+            alert("Please login first");
+            window.location.href = "index.html";
+        } else {
+            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+            loadUserBooks(); // Load user's books
+            loadDashboardStats(); // Load other dashboard stats
+        }
+
+        // Auto-refresh every 30 seconds (optional)
+        setInterval(() => {
+            console.log("Auto-refreshing dashboard data...");
+            loadUserBooks();
+            loadDashboardStats();
+        }, 30000);
+
+        function refreshDashboard() {
+            console.log("Manual refresh requested");
+
+            // Show loading animation
+            const refreshBtn = event.target;
+            const originalHtml = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
+            refreshBtn.disabled = true;
+
+            // Reload data
+            loadUserBooks();
+            loadDashboardStats();
+
+            // Re-enable button after 2 seconds
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalHtml;
+                refreshBtn.disabled = false;
+
+                // Show confirmation
+                const toast = document.createElement('div');
+                toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+                toast.style.zIndex = '1000';
+                toast.innerHTML = 'Dashboard refreshed successfully!';
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.remove();
+                }, 3000);
+            }, 2000);
+        }
+
+        function loadDashboardStats() {
+            // Load requests count
+            if (userData && userData.user_id) {
+                fetch(`http://localhost/book-exchange/backend/api/requests/count.php?user_id=${userData.user_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.count !== undefined) {
+                            document.getElementById('requestsCount').textContent = data.count;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading requests count:', error);
+                    });
+            }
+
+            // Load messages count (placeholder)
+            document.getElementById('messagesCount').textContent = "0";
+        }
+
+        function loadUserBooks() {
+            // Show loading state
+            const booksCountElement = document.getElementById('booksCount');
+            const originalText = booksCountElement.textContent;
+            booksCountElement.textContent = 'Loading...';
+
+            const recentBooksDiv = document.getElementById('recentBooks');
+            recentBooksDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading books...</div>';
+
+            // Check if user data exists before making API call
+            if (!userData || !userData.user_id) {
+                booksCountElement.textContent = '0';
+                recentBooksDiv.innerHTML = '<p class="text-muted">Please login to view your books</p>';
+                return;
+            }
+
+            fetch(`http://localhost/book-exchange/backend/api/books/read.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.books && data.books.length > 0) {
+                        // Update book count with animation
+                        booksCountElement.textContent = data.books.length;
+                        booksCountElement.classList.add('text-success');
+                        setTimeout(() => {
+                            booksCountElement.classList.remove('text-success');
+                        }, 2000);
+
+                        // Show recent books WITH EDIT/DELETE BUTTONS
+                        recentBooksDiv.innerHTML = '';
+
+                        data.books.slice(0, 3).forEach(book => {
+                            recentBooksDiv.innerHTML += `
+                            <div class="border-bottom pb-2 mb-2">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">${book.title}</h6>
+                                        <p class="mb-1 text-muted">by ${book.author}</p>
+                                        <small class="text-muted">
+                                            Condition: ${book.condition} • 
+                                            Status: <span class="badge ${book.status === 'Available' ? 'bg-success' : 'bg-warning'}">${book.status}</span> •
+                                            Added: ${new Date(book.created_at).toLocaleDateString()}
+                                        </small>
+                                    </div>
+                                    <div class="btn-group ms-2">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        });
+
+                        // Add "View All Books" link
+                        if (data.books.length > 3) {
+                            recentBooksDiv.innerHTML += `
+                            <div class="text-center mt-2">
+                                <a href="my-books.html" class="btn btn-sm btn-outline-primary">View All ${data.books.length} Books</a>
+                            </div>
+                        `;
+                        }
+                    } else {
+                        recentBooksDiv.innerHTML = `
+                        <div class="text-center text-muted">
+                            <p>No books listed yet.</p>
+                            <button class="btn btn-primary btn-sm" onclick="addBook()">Add Your First Book</button>
+                        </div>
+                    `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading books:', error);
+                    booksCountElement.textContent = '0';
+                    recentBooksDiv.innerHTML = '<p class="text-danger">Error loading books. Please try refreshing.</p>';
+                });
+        }
+
+        function editBook(bookId) {
+            window.location.href = `edit-book.html?id=${bookId}`;
+        }
+
+        function deleteBook(bookId) {
+            if (confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
+                // Use the existing userData variable
+                if (!userData || !userData.user_id) {
+                    alert("Please login again");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Show loading
+                const deleteBtn = event.target;
+                const originalText = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                deleteBtn.disabled = true;
+
+                fetch('http://localhost/book-exchange/backend/api/books/delete.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: bookId,
+                        user_id: userData.user_id
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message && data.message.includes("deleted")) {
+                            // Show success message
+                            const toast = document.createElement('div');
+                            toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+                            toast.style.zIndex = '1000';
+                            toast.innerHTML = 'Book deleted successfully!';
+                            document.body.appendChild(toast);
+
+                            // Refresh the books list
+                            setTimeout(() => {
+                                toast.remove();
+                                loadUserBooks();
+                            }, 2000);
+                        } else {
+                            alert("Error: " + (data.message || "Failed to delete book"));
+                            deleteBtn.innerHTML = originalText;
+                            deleteBtn.disabled = false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("An error occurred while deleting the book.");
+                        deleteBtn.innerHTML = originalText;
+                        deleteBtn.disabled = false;
+                    });
+            }
+        }
+
+        function logout() {
+            fetch('http://localhost/book-exchange/backend/api/auth/logout.php', {
+                method: 'POST'
+            })
+                .then(response => {
+                    // Clear local storage and redirect regardless of response
+                    localStorage.removeItem('user');
+                    window.location.href = "index.html";
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                    localStorage.removeItem('user');
+                    window.location.href = "index.html";
+                });
+        }
+
+        function addBook() {
+            window.location.href = "add-book.html";
+        }
+
+        function searchbook() {
+            window.location.href = "search.html";
+        }
+
+        function viewRequests() {
+            alert("View requests functionality will be implemented soon");
+        }
+
+        function loadRecentRequests() {
+            fetch('http://localhost/book-exchange/backend/api/requests/my_requests.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const incoming = data.incoming_requests.slice(0, 3);
+                        const outgoing = data.outgoing_requests.slice(0, 3);
+
+                        let html = '';
+
+                        if (incoming.length === 0 && outgoing.length === 0) {
+                            html = '<p class="text-muted">No recent requests</p>';
+                        } else {
+                            // Show incoming requests
+                            incoming.forEach(request => {
+                                html += `
+                            <div class="mb-2 p-2 border rounded">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Incoming: ${request.book_title}</strong>
+                                    <span class="badge bg-${request.status === 'Pending' ? 'warning' :
+                                        request.status === 'Approved' ? 'success' : 'danger'}">
+                                        ${request.status}
+                                    </span>
+                                </div>
+                                <small class="text-muted">From: ${request.requester_name}</small>
+                            </div>
+                        `;
+                            });
+
+                            // Show outgoing requests
+                            outgoing.forEach(request => {
+                                html += `
+                            <div class="mb-2 p-2 border rounded">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Outgoing: ${request.book_title}</strong>
+                                    <span class="badge bg-${request.status === 'Pending' ? 'warning' :
+                                        request.status === 'Approved' ? 'success' : 'danger'}">
+                                        ${request.status}
+                                    </span>
+                                </div>
+                                <small class="text-muted">To: ${request.owner_name}</small>
+                            </div>
+                        `;
+                            });
+                        }
+
+                        document.getElementById('recentRequests').innerHTML = html;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading requests:', error);
+                    document.getElementById('recentRequests').innerHTML =
+                        '<p class="text-danger">Error loading requests</p>';
+                });
+        }
+
+        // Call this function when dashboard loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadUserBooks();
+            loadDashboardStats();
+            loadRecentRequests(); // Add this line
+        });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
