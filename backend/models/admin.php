@@ -17,7 +17,7 @@ class Admin {
         $this->conn = $db;
     }
 
-    // Admin login
+    // Admin login method
     public function login() {
         $query = "SELECT id, username, email, password, role, is_active
                 FROM " . $this->table_name . "
@@ -73,50 +73,6 @@ class Admin {
         $stmt->bindParam(":user_agent", $_SERVER['HTTP_USER_AGENT']);
         
         return $stmt->execute();
-    }
-
-    // Check if username exists
-    public function usernameExists() {
-        $query = "SELECT id FROM " . $this->table_name . " 
-                  WHERE username = ?";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->username);
-        $stmt->execute();
-        
-        return $stmt->rowCount() > 0;
-    }
-
-    // Create new admin
-    public function create() {
-        if($this->usernameExists()) {
-            return false;
-        }
-
-        $query = "INSERT INTO " . $this->table_name . " 
-                  SET username=:username, email=:email, password=:password,
-                      role=:role, is_active=:is_active";
-        
-        $stmt = $this->conn->prepare($query);
-        
-        $this->username = htmlspecialchars(strip_tags($this->username));
-        $this->email = htmlspecialchars(strip_tags($this->email));
-        $this->role = htmlspecialchars(strip_tags($this->role));
-        
-        $hashed_password = password_hash($this->password, PASSWORD_DEFAULT);
-        
-        $stmt->bindParam(":username", $this->username);
-        $stmt->bindParam(":email", $this->email);
-        $stmt->bindParam(":password", $hashed_password);
-        $stmt->bindParam(":role", $this->role);
-        $stmt->bindParam(":is_active", $this->is_active);
-        
-        if($stmt->execute()) {
-            $this->id = $this->conn->lastInsertId();
-            return true;
-        }
-        
-        return false;
     }
 }
 ?>
