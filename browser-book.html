@@ -44,7 +44,6 @@
             text-decoration: underline;
         }
 
-
         /* Styling banner */
         #banner-container {
             background-image: url(Assets/browser\ banner.PNG);
@@ -61,7 +60,7 @@
             font-family: 'Times New Roman', Times, serif;
         }
 
-        /* Category Heading */
+        /* Available Heading */
         .category-title {
             text-align: center;
             font-size: 2rem;
@@ -73,15 +72,16 @@
 
         /* Book Cards */
         .book-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            transition: 0.3s;
-            height: 100%;
+            background: #fff;
+            border: 3px solid #ececec;
+            text-align: center;
+            padding-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
 
         .book-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .book-card img {
@@ -217,9 +217,9 @@
 
 <body>
 
-    <!-- Navbar from Code 1 -->
+    <!-- Navbar-->
     <nav class="navbar navbar-expand-lg px-4">
-        <a class="navbar-brand d-flex align-items-center" href="#">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
             <img src="Assets/main logo.png" alt="main-logo" id="main-logo" style="width:150px; margin-right:100px;">
 
         </a>
@@ -330,21 +330,28 @@
                 <!-- About -->
                 <div class="col-md-2 footer-links">
                     <div class="footer-title">About</div>
-                    <a href="#">About Us</a>
+                    <a href="About-us.html" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">About Us</a>
                 </div>
 
                 <!-- Policies -->
                 <div class="col-md-2 footer-links">
                     <div class="footer-title">Policies</div>
-                    <a href="#">Terms & Conditions</a>
+                    <a href="terms-and-conditions.html" style="color: #000; text-decoration: none;" onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">Terms & Conditions</a>
                 </div>
 
                 <!-- Get in Touch -->
                 <div class="col-md-3 footer-links">
                     <div class="footer-title">Got In Touch</div>
-                    <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
-                    <a href="#">Bookcrossing.com</a>
-                    <a href="tel:+923412875468">+92 3412875468</a>
+                    <a href="mailto:bookcrossing@gmail.com" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">bookcrossing@gmail.com</a>
+                    <a href="#" style="color: #000; text-decoration: none;" onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">Bookcrossing.com</a>
+                    <a href="tel:+923412875468" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">+92
+                        3412875468</a>
                 </div>
             </div>
 

@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Terms & Conditions — Online Community Book Exchange</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --accent: #f8ca30
+        }
+
+        body {
+            background: #f8f9fa
+        }
+
+        .hero {
+            background: linear-gradient(90deg, rgba(13, 110, 253, 0.06), rgba(13, 110, 253, 0.02));
+            border-left: 4px solid var(--accent)
+        }
+
+        .terms-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 6px 18px rgba(20, 20, 50, 0.05)
+        }
+
+        .toc a {
+            color: var(--accent);
+            text-decoration: none
+        }
+
+        .toc a:hover {
+            text-decoration: underline
+        }
+
+        .small-muted {
+            font-size: .9rem;
+            color: #6c757d
+        }
+
+        @media (max-width:767px) {
+            .toc {
+                display: none
+            }
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            color: black !important;
+            font-weight: 500;
+            margin: 0 10px;
+            font-weight: 300;
+        }
+
+        .nav-link:hover {
+            color: #f8ca30 !important;
+            font-weight: 500;
+            margin: 0 10px;
+            text-decoration: underline;
+        }
+
+        /* styling all btn */
+        .btn-primary,
+        .text-primary,
+        .bg-primary,
+        .border-primary {
+            background-color: #f8ca30 !important;
+            border-color: #f8ca30 !important;
+            color: #000 !important;
+        }
+
+        .book-info .btn {
+            background-color: #007bff;
+            /* blue */
+            color: white;
+        }
+
+        .book-info .btn:hover {
+            background-color: #0056b3;
+            /* darker blue on hover */
+        }
+
+        /* Styling footer */
+        footer {
+            background-color: #f5f2f2;
+            padding: 40px 0 10px;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .footer-logo img {
+            width: 150px;
+            height: 40px;
+            margin-right: 8px;
+
+        }
+
+        .footer-quote {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            display: block;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 6px;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            border-top: 2px solid #f1c40f;
+            padding-top: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        /* Fix for footer social icons */
+        footer .social-icons {
+            text-align: right;
+        }
+
+        footer .social-icons img {
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <img src="Assets/main logo.png" alt="main-logo" id="main-logo" style="width:150px; margin-right:100px;">
+
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-3">
+                <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
+                <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="login.html" class="nav-link">Log In</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Register / Sign Up</a></li>
+            </ul>
+        </div>
+        <div class="d-flex">
+            <a href="add-book.html" class="btn btn-warning">
+                <i class="fas fa-plus me-1"></i> Add Book
+            </a>
+        </div>
+    </nav>
+
+    <!-- Quick links box -->
+    <main class="container my-5">
+        <div class="row g-4">
+            <aside class="col-lg-4">
+                <div class="sticky-top" style="top:96px">
+                    <div class="terms-box hero mb-3">
+                        <h5 class="mb-2">Terms &amp; Conditions</h5>
+                        <p class="small-muted mb-2">Please read these terms before using the platform.</p>
+
+                        <div class="mb-3">
+                            <button class="btn btn-sm  w-100" id="printBtn"
+                                style="border: 1px solid #f8ca30; color:#f8ca30;"><i
+                                    class="bi bi-printer me-2"></i>Print / Save</button>
+                        </div>
+
+                        <div class="mb-3">
+                            <a class="btn btn-sm btn-primary w-100" href="#acceptSection" id="acceptBtn"><i
+                                    class="bi bi-check2-circle me-2"></i>Accept Terms</a>
+                        </div>
+
+                        <hr>
+                        <div class="toc">
+                            <strong>Quick links</strong>
+                            <ul class="list-unstyled mt-2 mb-0">
+                                <li><a href="#introduction">1. Introduction</a></li>
+                                <li><a href="#accounts">2. User Accounts</a></li>
+                                <li><a href="#book-listing">3. Book Listing & Ownership</a></li>
+                                <li><a href="#borrowing">4. Borrowing & Swapping</a></li>
+                                <li><a href="#communication">5. Communication</a></li>
+                                <li><a href="#ratings">6. Ratings & Reviews</a></li>
+                                <li><a href="#privacy">10. Privacy</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="terms-box small-muted text-center">
+                        <div>Need help?</div>
+                        <div class="mt-2"><a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a></div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="col-lg-8">
+                <div class="terms-box">
+
+                    <header class="mb-4">
+                        <h1 class="h3">Terms and Conditions</h1>
+                        <p class="small-muted mb-0">Online Community Book Exchange System — Please read carefully.</p>
+                    </header>
+
+                    <article id="introduction" class="mb-4">
+                        <h2 class="h5">1. Introduction</h2>
+                        <p>Welcome to the <strong>Online Community Book Exchange System</strong> ("Platform", "Service",
+                            "We", "Us", or "Our"). By accessing or using our website, you agree to comply with and be
+                            bound by these Terms and Conditions. If you do not agree with these terms, you must not use
+                            this service.</p>
+                    </article>
+
+                    <article id="accounts" class="mb-4">
+                        <h2 class="h5">2. User Accounts</h2>
+                        <ul>
+                            <li>Users must register for an account to access certain features, including listing and
+                                borrowing books.</li>
+                            <li>You are responsible for maintaining the confidentiality of your login credentials and
+                                all activities that occur under your account.</li>
+                            <li>You agree to provide accurate and complete information during registration and to keep
+                                it updated.</li>
+                        </ul>
+                    </article>
+
+                    <article id="book-listing" class="mb-4">
+                        <h2 class="h5">3. Book Listing and Ownership</h2>
+                        <ul>
+                            <li>Users can list books they own and make them available for borrowing or swapping.</li>
+                            <li>By listing a book, you confirm that you are the rightful owner or have the authority to
+                                lend or exchange the book.</li>
+                            <li>You must provide correct details regarding the book’s title, author, condition, and
+                                availability.</li>
+                        </ul>
+                    </article>
+
+                    <article id="borrowing" class="mb-4">
+                        <h2 class="h5">4. Borrowing and Swapping</h2>
+                        <ul>
+                            <li>The borrowing or swapping of books is a mutual agreement between users.</li>
+                            <li>The platform does not guarantee the completion of any exchange and is not responsible
+                                for lost or damaged books.</li>
+                            <li>Users must respect borrowing durations and ensure timely return of borrowed books.</li>
+                        </ul>
+                    </article>
+
+                    <article id="communication" class="mb-4">
+                        <h2 class="h5">5. Communication and Messaging</h2>
+                        <ul>
+                            <li>The platform provides a messaging feature for users to coordinate exchanges.</li>
+                            <li>Users are expected to communicate respectfully.</li>
+                            <li>Any misuse of the messaging system, including harassment or inappropriate content, may
+                                lead to account suspension.</li>
+                        </ul>
+                    </article>
+
+                    <article id="ratings" class="mb-4">
+                        <h2 class="h5">6. Ratings and Reviews</h2>
+                        <ul>
+                            <li>After each transaction, users may rate and review one another.</li>
+                            <li>Reviews should be honest and based on actual experiences.</li>
+                            <li>The platform reserves the right to remove reviews that are offensive or misleading.</li>
+                        </ul>
+                    </article>
+
+                    <article id="notifications" class="mb-4">
+                        <h2 class="h5">7. Notifications</h2>
+                        <ul>
+                            <li>Users may receive email or SMS notifications related to book requests, approvals, and
+                                due date reminders.</li>
+                            <li>By registering, you consent to receive such notifications from the platform.</li>
+                        </ul>
+                    </article>
+
+                    <article id="responsibilities" class="mb-4">
+                        <h2 class="h5">8. User Responsibilities</h2>
+                        <ul>
+                            <li>You agree not to use the platform for any illegal or unauthorized purpose.</li>
+                            <li>You must not upload, post, or share any harmful, false, or misleading content.</li>
+                            <li>You are solely responsible for your interactions with other users.</li>
+                        </ul>
+                    </article>
+
+                    <article id="admin" class="mb-4">
+                        <h2 class="h5">9. Admin Rights</h2>
+                        <ul>
+                            <li>Administrators have the right to monitor user activities to ensure compliance with these
+                                Terms.</li>
+                            <li>The admin may suspend or delete any account that violates platform policies or engages
+                                in fraudulent activities.</li>
+                            <li>Disputes between users can be reviewed and resolved by the admin; however, the admin’s
+                                decision shall be final.</li>
+                        </ul>
+                    </article>
+
+                    <article id="privacy" class="mb-4">
+                        <h2 class="h5">10. Privacy</h2>
+                        <ul>
+                            <li>Your personal data is collected and used in accordance with our <strong>Privacy
+                                    Policy</strong>.</li>
+                            <li>We do not share your personal information with third parties except as required by law.
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article id="liability" class="mb-4">
+                        <h2 class="h5">11. Limitation of Liability</h2>
+                        <ul>
+                            <li>The platform acts only as an intermediary to facilitate book exchanges between users.
+                            </li>
+                            <li>We are not responsible for any damages, losses, or disputes arising from user
+                                interactions or transactions.</li>
+                            <li>Use of this service is at your own risk.</li>
+                        </ul>
+                    </article>
+
+                    <article id="changes" class="mb-4">
+                        <h2 class="h5">12. Changes to Terms</h2>
+                        <ul>
+                            <li>We reserve the right to modify these Terms and Conditions at any time.</li>
+                            <li>Any changes will be effective immediately upon posting on the website.</li>
+                            <li>Continued use of the platform after updates implies your acceptance of the revised
+                                terms.</li>
+                        </ul>
+                    </article>
+
+                    <article id="termination" class="mb-4">
+                        <h2 class="h5">13. Termination</h2>
+                        <ul>
+                            <li>We may suspend or terminate your account if you breach these Terms or misuse the
+                                platform.</li>
+                            <li>Upon termination, you lose access to all user features, and your data may be deleted.
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article id="acceptSection" class="mb-4">
+                        <h2 class="h5">14. Acceptance of Terms</h2>
+                        <p>By creating an account or using any part of this platform, you acknowledge that you have
+                            read, understood, and agreed to abide by these Terms and Conditions.</p>
+
+                        <div class="form-check mt-3">
+                            <input class="form-check-input" type="checkbox" value="" id="agreeChk">
+                            <label class="form-check-label" for="agreeChk">I have read and accept the Terms &amp;
+                                Conditions.</label>
+                        </div>
+
+                        <div class="mt-3">
+                            <button id="continueBtn" class="btn btn-warning" disabled>Continue</button>
+                        </div>
+                    </article>
+
+                    <footer id="contact" class="mt-4 small-muted" style="background-color: #ffff;">
+                        <strong>Contact Information</strong>
+                        <br>
+                        <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
+                        <br>
+                        <a href="tel:+923412875468">+923412875468</a>
+                    </footer>
+
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Making Footer section -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <!-- Logo & Quote -->
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center footer-logo">
+                        <img src="Assets/main logo.png" alt="Logo" class="footer-logo">
+
+                    </div>
+                    <div class="footer-quote">
+                        "Thank you for being a part of our story-sharing family—<br>
+                        every book you share brings knowledge, kindness, and connection to someone new."
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">User Action</div>
+                    <p><span class="footer-user-actions">Register / Login</span><br>
+                        <span class="footer-user-actions">Add a Book</span><br>
+                        <span class="footer-user-actions">Search Books</span><br>
+                        <span class="footer-user-actions">My Profile</span><br>
+                        <span class="footer-user-actions">Messages</span>
+                    </p>
+                </div>
+
+                <!-- About -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">About</div>
+                    <a href="About-us.html" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">About Us</a>
+                </div>
+
+                <!-- Policies -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">Policies</div>
+                    <a href="terms-and-conditions.html" style="color: #000; text-decoration: none;" onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">Terms & Conditions</a>
+                </div>
+
+                <!-- Get in Touch -->
+                <div class="col-md-3 footer-links">
+                    <div class="footer-title">Got In Touch</div>
+                    <a href="mailto:bookcrossing@gmail.com" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">bookcrossing@gmail.com</a>
+                    <a href="#" style="color: #000; text-decoration: none;" onmouseover="this.style.color='#f1c40f';"
+                        onmouseout="this.style.color='#000';">Bookcrossing.com</a>
+                    <a href="tel:+923412875468" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">+92
+                        3412875468</a>
+                </div>
+            </div>
+
+            <!-- Bottom -->
+            <div class="row footer-bottom">
+                <div class="col-md-6">
+                    © 2025 BookCrossing, Inc. All rights reserved.
+                </div>
+                <div class="col-md-6 text-end social-icons">
+                    <img src="Assets/facebook logo.png" alt="fb">
+                    <img src="Assets/tik tok logo.png" alt="tiktok">
+                    <img src="Assets/insta logo.png" alt="insta">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Print button
+        document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+
+        // Enable continue button when checkbox checked
+        const agreeChk = document.getElementById('agreeChk');
+        const continueBtn = document.getElementById('continueBtn');
+        agreeChk.addEventListener('change', function () { continueBtn.disabled = !this.checked; });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+            })
+        });
+
+        // Accept button shows modal/toast (example)
+        document.getElementById('acceptBtn').addEventListener('click', function (e) {
+            // If user doesn't want to scroll, allow default anchor behavior; otherwise prevent and focus
+        });
+
+        // Optional: persist acceptance locally (example)
+        continueBtn.addEventListener('click', function () {
+            if (agreeChk.checked) { localStorage.setItem('termsAccepted', '1'); alert('Thank you — Terms accepted.'); }
+        });
+    </script>
+</body>
+
+</html>
