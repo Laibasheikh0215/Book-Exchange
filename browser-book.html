@@ -2,354 +2,383 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BookCrossing - Browse Books</title>
-  <link rel="website icon" type="png" href="Assets/logo icon.png" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #fff;
-      color: #333;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookCrossing - Browse Books</title>
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @font-face {
+            font-family: Alex-brush;
+            src: url(Alex_Brush/AlexBrush-Regular.ttf);
+        }
 
-    /* Navbar */
-    .navbar {
-      background-color: #f8f9fa;
-      border-bottom: 1px solid #ddd;
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff;
+            color: #333;
+        }
 
-    .navbar-brand img {
-      height: 35px;
-      margin-right: 10px;
-    }
+        /* Navbar */
+        .navbar {
+            background-color: #f8f9fa;
+        }
 
-    /* Styling banner */
-    #banner-container {
-      background-image: url(Assets/browser\ banner.PNG);
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
+        .navbar-brand img {
+            height: 35px;
+            margin-right: 10px;
+        }
+
+        .nav-link {
+            color: black !important;
+            font-weight: 500;
+            margin: 0 10px;
+            font-weight: 300;
+        }
+
+        .nav-link:hover {
+            color: #f8ca30 !important;
+            font-weight: 500;
+            margin: 0 10px;
+            text-decoration: underline;
+        }
 
 
-    /* Category Heading */
-    .category-title {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 600;
-      margin-top: 60px;
-      margin-bottom: 20px;
-      font-family: 'Playfair Display', serif;
-    }
+        /* Styling banner */
+        #banner-container {
+            background-image: url(Assets/browser\ banner.PNG);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
 
-    /* Book Cards */
-    .book-card {
-      border: 1px solid #eee;
-      border-radius: 10px;
-      transition: 0.3s;
-      height: 100%;
-    }
+        .main-heading1 {
+            font-family: Alex-brush;
+        }
 
-    .book-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
+        .sub-heading1 {
+            font-family: 'Times New Roman', Times, serif;
+        }
 
-    .book-card img {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
-      height: 280px;
-      object-fit: cover;
-      width: 100%;
-    }
+        /* Category Heading */
+        .category-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
 
-    .book-info {
-      padding: 15px;
-      text-align: center;
-    }
+        /* Book Cards */
+        .book-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            transition: 0.3s;
+            height: 100%;
+        }
 
-    .book-info h6 {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-top: 8px;
-      margin-bottom: 5px;
-    }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
 
-    .book-info p {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 8px;
-    }
+        .book-card img {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            height: 280px;
+            object-fit: cover;
+            width: 100%;
+        }
 
-    .book-info .btn {
-      background-color: white;
-    color: #c8c5c5;
-    border: none;
-    padding: 2px 5px 2px 5px;
-    margin-top: 10px;
-    border-radius: 20px 0px 20px 0px;
-    border: 2px solid #f8ca30;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    }
+        .book-info {
+            padding: 15px;
+            text-align: center;
+        }
 
-    .book-info .btn:hover {
-       background-color: white;
-    }
+        .book-info h6 {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 8px;
+            margin-bottom: 5px;
+        }
 
-    .rating {
-      color: #f1c40f;
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
+        .book-info p {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
 
-    /* Search Section */
-    .search-section {
-      background-color: #f8f9fa;
-      padding: 40px 0;
-      margin-bottom: 40px;
-    }
+        .book-info .btn {
+            background-color: white;
+            color: #c8c5c5;
+            border: none;
+            padding: 2px 5px 2px 5px;
+            margin-top: 10px;
+            border-radius: 20px 0px 20px 0px;
+            border: 2px solid #f8ca30;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
 
-    .search-box {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+        .book-info .btn:hover {
+            background-color: white;
+        }
 
-    /* Styling footer */
-    footer {
-      background-color: #f5f2f2;
-      padding: 40px 0 10px;
-      font-size: 14px;
-      color: #000;
-    }
+        .rating {
+            color: #f1c40f;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
 
-    .footer-logo img {
-      width: 150px;
-      height: 40px;
-      margin-right: 8px;
+        /* Search Section */
+        .search-section {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
 
-    }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-    .footer-quote {
-      font-size: 14px;
-      line-height: 1.4;
-      margin-top: 10px;
-    }
+        /* Styling footer */
+        footer {
+            background-color: #f5f2f2;
+            padding: 40px 0 10px;
+            font-size: 14px;
+            color: #000;
+        }
 
-    .footer-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
+        .footer-logo img {
+            width: 150px;
+            height: 40px;
+            margin-right: 8px;
 
-    .footer-links a {
-      display: block;
-      color: #000;
-      text-decoration: none;
-      margin-bottom: 6px;
-    }
+        }
 
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
+        .footer-quote {
+            font-size: 14px;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
 
-    .footer-bottom {
-      border-top: 2px solid #f1c40f;
-      padding-top: 8px;
-      margin-top: 20px;
-      font-size: 13px;
-    }
+        .footer-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    /* Fix for footer social icons */
-    footer .social-icons {
-      text-align: right;
-    }
+        .footer-links a {
+            display: block;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 6px;
+        }
 
-    footer .social-icons img {
-      width: 30px;
-      height: 30px;
-      margin-left: 10px;
-      cursor: pointer;
-      border-radius: 50%;
-    }
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
 
-    /* Book details  */
-    .book-condition {
-      font-size: 0.9em;
-    }
+        .footer-bottom {
+            border-top: 2px solid #f1c40f;
+            padding-top: 8px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
 
-    .owner-info {
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #eee;
-    }
-  </style>
+        /* Fix for footer social icons */
+        footer .social-icons {
+            text-align: right;
+        }
+
+        footer .social-icons img {
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        /* Book details  */
+        .book-condition {
+            font-size: 0.9em;
+        }
+
+        .owner-info {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
 </head>
 
 <body>
 
-  <!-- Navbar from Code 1 -->
-  <nav class="navbar navbar-expand-lg px-4">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="Assets/main logo.png" alt="main-logo" id="main-logo" style="width:150px; margin-right:100px;">
+    <!-- Navbar from Code 1 -->
+    <nav class="navbar navbar-expand-lg px-4">
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img src="Assets/main logo.png" alt="main-logo" id="main-logo" style="width:150px; margin-right:100px;">
 
-    </a>
-    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-3">
-        <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
-        <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
-        <li class="nav-item"><a href="login.html" class="nav-link">Log In</a></li>
-        <li class="nav-item"><a href="#" class="nav-link">Register / Sign Up</a></li>
-      </ul>
-    </div>
-    <div class="d-flex">
-      <a href="add-book.html" class="btn btn-warning">
-        <i class="fas fa-plus me-1"></i> Add Book
-      </a>
-    </div>
-  </nav>
-
-  <!-- Making hero banner -->
-  <div class="container-fluid" id="banner-container">
-    <div class="row justify-content-between align-items-center" style="margin-right: 40px; margin-left: 40px;">
-      <!-- Left Side Content -->
-      <div class="col-lg-6 col-md-8 col-12 text-center text-lg-start">
-        <div class="text-content overflow">
-          <h2 class="main-heading1">Biggest Community in the World!</h2>
-          <h2 class="sub-heading1">Connecting readers across continents</h2>
-          <p class="main-content">-Where every books finds a home.</p>
+        </a>
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-3">
+                <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
+                <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+                <li class="nav-item"><a href="login.html" class="nav-link">Log In</a></li>
+                <li class="nav-item"><a href="#" class="nav-link">Register / Sign Up</a></li>
+            </ul>
         </div>
-        <div class="image d-flex justify-content-center justify-content-lg-start">
+        <div class="d-flex">
+            <a href="add-book.html" class="btn btn-warning">
+                <i class="fas fa-plus me-1"></i> Add Book
+            </a>
         </div>
-      </div>
+    </nav>
 
-      <!-- Right Side - Images (Moved Up on Large Screens) -->
-      <div class="col-lg-5 col-md-6 col-12 d-flex justify-content-center align-self-start mt-n5 move-up" id="design">
-        <div class="Square">
-          <div class="images overflow">
-            <img src="Assets/browser-book-img.png" alt="browser-book-img" class="img-fluid" />
-          </div>
+    <!-- Making hero banner -->
+    <div class="container-fluid" id="banner-container">
+        <div class="row justify-content-between align-items-center" style="margin-right: 50px; margin-left: 50px;">
+            <!-- Left Side Content -->
+            <div class="col-lg-6 col-md-8 col-12 text-center text-lg-start">
+                <div class="text-content overflow">
+                    <h2 class="main-heading1">Biggest <span style="color:#f8ca30">Community</span> in the <span
+                            style="color:#f8ca30">World</span>! </h2>
+                    <h2 class="sub-heading1">Connecting readers across continents</h2>
+                    <h2 class="sub-heading1">-Where every books finds a home.</h2>
+                </div>
+                <div class="image d-flex justify-content-center justify-content-lg-start">
+                </div>
+            </div>
+
+            <!-- Right Side - Images (Moved Up on Large Screens) -->
+            <div class="col-lg-5 col-md-6 col-12 d-flex justify-content-center align-self-start mt-n5 move-up"
+                id="design">
+                <div class="Square">
+                    <div class="images overflow">
+                        <img src="Assets/browser-book-img.png" alt="browser-book-img" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
 
-  <!-- Search Section from Code 2 -->
-  <section class="search-section">
+    <!-- Search Section from Code 2 -->
+    <section class="search-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="input-group search-box">
+                        <input type="text" id="searchInput" class="form-control"
+                            placeholder="Search by title, author, or genre...">
+                        <button class="btn btn-warning" onclick="searchBooks()">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Books Grid from Code 2 (with Code 1 design) -->
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="input-group search-box">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search by title, author, or genre...">
-            <button class="btn btn-warning" onclick="searchBooks()">
-              <i class="fas fa-search"></i> Search
-            </button>
-          </div>
+        <h3 class="category-title">Available Books</h3>
+        <div class="row" id="booksGrid">
+            <div class="col-12 text-center">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading books...</p>
+            </div>
         </div>
-      </div>
     </div>
-  </section>
 
-  <!-- Books Grid from Code 2 (with Code 1 design) -->
-  <div class="container">
-    <h3 class="category-title">Available Books</h3>
-    <div class="row" id="booksGrid">
-      <div class="col-12 text-center">
-        <div class="spinner-border text-warning" role="status">
-          <span class="visually-hidden">Loading...</span>
+    <!-- Making Footer section -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <!-- Logo & Quote -->
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center footer-logo">
+                        <img src="Assets/main logo.png" alt="Logo" class="footer-logo">
+
+                    </div>
+                    <div class="footer-quote">
+                        "Thank you for being a part of our story-sharing family—<br>
+                        every book you share brings knowledge, kindness, and connection to someone new."
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">User Action</div>
+                    <p><span class="footer-user-actions">Register / Login</span><br>
+                        <span class="footer-user-actions">Add a Book</span><br>
+                        <span class="footer-user-actions">Search Books</span><br>
+                        <span class="footer-user-actions">My Profile</span><br>
+                        <span class="footer-user-actions">Messages</span>
+                    </p>
+                </div>
+
+                <!-- About -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">About</div>
+                    <a href="#">About Us</a>
+                </div>
+
+                <!-- Policies -->
+                <div class="col-md-2 footer-links">
+                    <div class="footer-title">Policies</div>
+                    <a href="#">Terms & Conditions</a>
+                </div>
+
+                <!-- Get in Touch -->
+                <div class="col-md-3 footer-links">
+                    <div class="footer-title">Got In Touch</div>
+                    <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
+                    <a href="#">Bookcrossing.com</a>
+                    <a href="tel:+923412875468">+92 3412875468</a>
+                </div>
+            </div>
+
+            <!-- Bottom -->
+            <div class="row footer-bottom">
+                <div class="col-md-6">
+                    © 2025 BookCrossing, Inc. All rights reserved.
+                </div>
+                <div class="col-md-6 text-end social-icons">
+                    <img src="Assets/facebook logo.png" alt="fb">
+                    <img src="Assets/tik tok logo.png" alt="tiktok">
+                    <img src="Assets/insta logo.png" alt="insta">
+                </div>
+            </div>
         </div>
-        <p class="mt-2">Loading books...</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Making Footer section -->
-  <footer>
-    <div class="container">
-      <div class="row">
-        <!-- Logo & Quote -->
-        <div class="col-md-3">
-          <div class="d-flex align-items-center footer-logo">
-            <img src="Assets/main logo.png" alt="Logo" class="footer-logo">
-
-          </div>
-          <div class="footer-quote">
-            "Thank you for being a part of our story-sharing family—<br>
-            every book you share brings knowledge, kindness, and connection to someone new."
-          </div>
-        </div>
-
-        <!-- Services -->
-        <div class="col-md-2 footer-links">
-          <div class="footer-title">User Action</div>
-          <p><span class="footer-user-actions">Register / Login</span><br>
-            <span class="footer-user-actions">Add a Book</span><br>
-            <span class="footer-user-actions">Search Books</span><br>
-            <span class="footer-user-actions">My Profile</span><br>
-            <span class="footer-user-actions">Messages</span>
-          </p>
-        </div>
-
-        <!-- About -->
-        <div class="col-md-2 footer-links">
-          <div class="footer-title">About</div>
-          <a href="#">About Us</a>
-        </div>
-
-        <!-- Policies -->
-        <div class="col-md-2 footer-links">
-          <div class="footer-title">Policies</div>
-          <a href="#">Terms & Conditions</a>
-        </div>
-
-        <!-- Get in Touch -->
-        <div class="col-md-3 footer-links">
-          <div class="footer-title">Got In Touch</div>
-          <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
-          <a href="#">Bookcrossing.com</a>
-          <a href="tel:+923412875468">+92 3412875468</a>
-        </div>
-      </div>
-
-      <!-- Bottom -->
-      <div class="row footer-bottom">
-        <div class="col-md-6">
-          © 2025 BookCrossing, Inc. All rights reserved.
-        </div>
-        <div class="col-md-6 text-end social-icons">
-          <img src="Assets/facebook logo.png" alt="fb">
-          <img src="Assets/tik tok logo.png" alt="tiktok">
-          <img src="Assets/insta logo.png" alt="insta">
-        </div>
-      </div>
-    </div>
-  </footer>
+    </footer>
 
 
-  <script>
-    // Load all books when page loads
-    document.addEventListener('DOMContentLoaded', function () {
-      loadAllBooks();
-    });
+    <script>
+        // Load all books when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAllBooks();
+        });
 
-    // Load all available books
-    async function loadAllBooks() {
-      try {
-        const response = await fetch('http://localhost/book-exchange/backend/api/books/read.php');
-        const data = await response.json();
+        // Load all available books
+        async function loadAllBooks() {
+            try {
+                const response = await fetch('http://localhost/book-exchange/backend/api/books/read.php');
+                const data = await response.json();
 
-        displayBooks(data.books || []);
-      } catch (error) {
-        console.error('Error loading books:', error);
-        document.getElementById('booksGrid').innerHTML = `
+                displayBooks(data.books || []);
+            } catch (error) {
+                console.error('Error loading books:', error);
+                document.getElementById('booksGrid').innerHTML = `
           <div class="col-12 text-center">
             <div class="alert alert-danger">
               <i class="fas fa-exclamation-triangle me-2"></i>
@@ -357,34 +386,34 @@
             </div>
           </div>
         `;
-      }
-    }
+            }
+        }
 
-    // Search books
-    async function searchBooks() {
-      const searchTerm = document.getElementById('searchInput').value.trim();
+        // Search books
+        async function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
 
-      if (searchTerm === '') {
-        loadAllBooks();
-        return;
-      }
+            if (searchTerm === '') {
+                loadAllBooks();
+                return;
+            }
 
-      try {
-        const response = await fetch(`http://localhost/book-exchange/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
-        const data = await response.json();
+            try {
+                const response = await fetch(`http://localhost/book-exchange/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
 
-        displayBooks(data.books || []);
-      } catch (error) {
-        console.error('Error searching books:', error);
-      }
-    }
+                displayBooks(data.books || []);
+            } catch (error) {
+                console.error('Error searching books:', error);
+            }
+        }
 
-    // Display books in grid WITH CODE 1 DESIGN
-    function displayBooks(books) {
-      const booksGrid = document.getElementById('booksGrid');
+        // Display books in grid WITH CODE 1 DESIGN
+        function displayBooks(books) {
+            const booksGrid = document.getElementById('booksGrid');
 
-      if (books.length === 0) {
-        booksGrid.innerHTML = `
+            if (books.length === 0) {
+                booksGrid.innerHTML = `
           <div class="col-12 text-center">
             <div class="alert alert-info">
               <i class="fas fa-info-circle me-2"></i>
@@ -392,23 +421,23 @@
             </div>
           </div>
         `;
-        return;
-      }
+                return;
+            }
 
-      let html = '';
-      books.forEach(book => {
-        // Generate random rating for demo (like code 1)
-        const randomRating = Math.floor(Math.random() * 2) + 3; // 3-5 stars
-        const stars = '⭐'.repeat(randomRating);
+            let html = '';
+            books.forEach(book => {
+                // Generate random rating for demo (like code 1)
+                const randomRating = Math.floor(Math.random() * 2) + 3; // 3-5 stars
+                const stars = '⭐'.repeat(randomRating);
 
-        html += `
+                html += `
           <div class="col-md-2 col-sm-6 mb-4">
             <div class="book-card">
               <div class="book-image">
                 ${book.image_path ?
-            `<img src="${book.image_path}" alt="${book.title}">` :
-            `<img src="https://via.placeholder.com/200x280/4A90E2/FFFFFF?text=Book+Image" alt="${book.title}">`
-          }
+                        `<img src="${book.image_path}" alt="${book.title}">` :
+                        `<img src="https://via.placeholder.com/200x280/4A90E2/FFFFFF?text=Book+Image" alt="${book.title}">`
+                    }
               </div>
               <div class="book-info">
                 <h6>${book.title}</h6>
@@ -434,25 +463,25 @@
             </div>
           </div>
         `;
-      });
+            });
 
-      booksGrid.innerHTML = html;
-    }
+            booksGrid.innerHTML = html;
+        }
 
-    // View book details page
-    function viewBookDetails(bookId) {
-      window.location.href = `book-details.html?id=${bookId}`;
-    }
+        // View book details page
+        function viewBookDetails(bookId) {
+            window.location.href = `book-details.html?id=${bookId}`;
+        }
 
-    // Search on Enter key press
-    document.getElementById('searchInput').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        searchBooks();
-      }
-    });
-  </script>
+        // Search on Enter key press
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+    </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
