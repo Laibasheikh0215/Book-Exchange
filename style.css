@@ -354,6 +354,12 @@ footer {
 .footer-title {
     font-weight: bold;
     margin-bottom: 10px;
+    color: red;
+}
+
+.footer-title a:hover{
+    text-decoration: none;
+    color:#f1c40f;
 }
 
 .footer-links a {
@@ -365,6 +371,7 @@ footer {
 
 .footer-links a:hover {
     text-decoration: underline;
+    color:#f1c40f;
 }
 
 .footer-bottom {
