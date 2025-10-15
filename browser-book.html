@@ -71,6 +71,39 @@
         }
 
         /* Book Cards */
+        /* Book Card Styles */
+        .book-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-top: 8px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .borrow-btn {
+            background-color: white;
+            color: #c8c5c5;
+            border: none;
+            padding: 2px 5px 2px 5px;
+            margin-top: 20px;
+            border-radius: 20px 0px 20px 0px;
+            border: 2px solid #f8ca30;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .borrow-btn:hover {
+            background-color: #f8ca30;
+            color: #000;
+        }
+
         .book-card {
             background: #fff;
             border: 3px solid #ececec;
@@ -85,8 +118,6 @@
         }
 
         .book-card img {
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
             height: 280px;
             object-fit: cover;
             width: 100%;
@@ -97,9 +128,13 @@
             text-align: center;
         }
 
+        .book-info{
+            padding: 10px 5px;
+            text-align: center;
+        }
         .book-info h6 {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 15px;
             margin-top: 8px;
             margin-bottom: 5px;
         }
@@ -287,7 +322,7 @@
         </div>
     </section>
 
-    <!-- Books Grid from Code 2 (with Code 1 design) -->
+    <!-- Books Grid-->
     <div class="container">
         <h3 class="category-title">Available Books</h3>
         <div class="row" id="booksGrid">
@@ -372,33 +407,33 @@
 
 
     <script>
-    // Load all books when page loads
-    document.addEventListener('DOMContentLoaded', function () {
-        loadAllBooks();
-    });
+        // Load all books when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadAllBooks();
+        });
 
-    async function loadAllBooks() {
-        try {
-            console.log("Fetching books from API...");
-            
-            const response = await fetch('http://localhost/project/backend/api/books/read.php');
-            console.log("Response status:", response.status);
-            
-            const data = await response.json();
-            console.log("Full API Response:", data);
-            console.log("Books data:", data.books);
+        async function loadAllBooks() {
+            try {
+                console.log("Fetching books from API...");
 
-            // Check if books array exists
-            if (data.books && Array.isArray(data.books)) {
-                displayBooks(data.books);
-            } else {
-                console.log("No books array found in response");
-                displayBooks([]);
-            }
-            
-        } catch (error) {
-            console.error('Error loading books:', error);
-            document.getElementById('booksGrid').innerHTML = `
+                const response = await fetch('http://localhost/project/backend/api/books/read.php');
+                console.log("Response status:", response.status);
+
+                const data = await response.json();
+                console.log("Full API Response:", data);
+                console.log("Books data:", data.books);
+
+                // Check if books array exists
+                if (data.books && Array.isArray(data.books)) {
+                    displayBooks(data.books);
+                } else {
+                    console.log("No books array found in response");
+                    displayBooks([]);
+                }
+
+            } catch (error) {
+                console.error('Error loading books:', error);
+                document.getElementById('booksGrid').innerHTML = `
                 <div class="col-12 text-center">
                     <div class="alert alert-danger">
                         <i class="fas fa-exclamation-triangle me-2"></i>
@@ -406,36 +441,35 @@
                     </div>
                 </div>
             `;
-        }
-    }
-
-    // Search books
-    async function searchBooks() {
-        const searchTerm = document.getElementById('searchInput').value.trim();
-
-        if (searchTerm === '') {
-            loadAllBooks();
-            return;
+            }
         }
 
-        try {
-            // ✅ CORRECTED API URL
-            const response = await fetch(`http://localhost/project/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
-            const data = await response.json();
+        // Search books
+        async function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
 
-            displayBooks(data.books || []);
-        } catch (error) {
-            console.error('Error searching books:', error);
+            if (searchTerm === '') {
+                loadAllBooks();
+                return;
+            }
+
+            try {
+                // CORRECTED API URL
+                const response = await fetch(`http://localhost/project/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
+                const data = await response.json();
+
+                displayBooks(data.books || []);
+            } catch (error) {
+                console.error('Error searching books:', error);
+            }
         }
-    }
 
-// Displaybook function
-// ✅ DISPLAY BOOKS WITH ACTUAL IMAGES
-function displayBooks(books) {
-    const booksGrid = document.getElementById('booksGrid');
+        // DISPLAY BOOKS WITH ACTUAL IMAGES
+        function displayBooks(books) {
+            const booksGrid = document.getElementById('booksGrid');
 
-    if (books.length === 0) {
-        booksGrid.innerHTML = `
+            if (books.length === 0) {
+                booksGrid.innerHTML = `
             <div class="col-12 text-center">
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle me-2"></i>
@@ -443,143 +477,179 @@ function displayBooks(books) {
                 </div>
             </div>
         `;
-        return;
-    }
+                return;
+            }
 
-    console.log("📚 Displaying books with ACTUAL images...");
-    console.log("Books data:", books); // ✅ DEBUG
+            console.log("📚 Displaying books with HOVER EFFECTS...");
 
-    let html = '';
-    books.forEach(book => {
-        const randomRating = Math.floor(Math.random() * 2) + 3;
-        const stars = '⭐'.repeat(randomRating);
+            let html = '';
+            books.forEach(book => {
+                const randomRating = Math.floor(Math.random() * 2) + 3;
+                const stars = '⭐'.repeat(randomRating);
 
-     
-       // ✅ USE ACTUAL IMAGE PATHS
-// ✅ USE CORRECT IMAGE PATHS
-const mainImage = book.image_path ? book.image_path : 'Assets/Atomic habit (1).png';
-const secondImage = book.image_path2 ? book.image_path2 : mainImage;
-const thirdImage = book.image_path3 ? book.image_path3 : mainImage;
+                // ✅ ACTUAL BOOK IMAGES FROM DATABASE
+                const mainImage = book.image_path || 'Assets/default-book.jpg';
+                const secondImage = book.image_path2 || book.image_path || 'Assets/default-book.jpg';
+                const thirdImage = book.image_path3 || book.image_path || 'Assets/default-book.jpg';
 
-console.log(`📖 ${book.title} Images:`, {
-    main: mainImage,
-    second: secondImage,
-    third: thirdImage
-});
+                console.log(`📖 ${book.title} Images:`, {
+                    main: book.image_path || 'No image',
+                    second: book.image_path2 || 'No image',
+                    third: book.image_path3 || 'No image'
+                });
 
-        const hasMultipleImages = book.image_path && (book.image_path2 || book.image_path3);
-        
-        html += `
+                // ✅ HOVER EFFECTS WALA CARD (Aapke Atomic Habits card jaise)
+                html += `
             <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                <div class="book-card" style="height: 325px;">
-                    <div class="book-image">
-                        <img src="${mainImage}" 
-                             id="bookImage_${book.id}"
-                             ${hasMultipleImages ? `onmouseover="this.src='${secondImage}'"` : ''}
-                             ${hasMultipleImages ? `onmouseout="this.src='${mainImage}'"` : ''}
-                             ${hasMultipleImages ? `onclick="this.src='${thirdImage}'"` : ''}
-                             alt="${book.title}"
-                             style="cursor: ${hasMultipleImages ? 'pointer' : 'default'}; height: 180px; object-fit: cover; width: 100%;"
-                             onerror="this.src='Assets/Atomic habit (1).png'">
-                    </div>
-                    <div class="book-info">
-                        <h6>${book.title}</h6>
-                        <p>By ${book.author}</p>
+                <div class="book-card" style="height: 375px;">
+                    <img src="${mainImage}" 
+                         id="bookImage_${book.id}"
+                         onmouseover="swapPic('bookImage_${book.id}', '${secondImage}')"
+                         onmouseout="swapPic('bookImage_${book.id}', '${thirdImage}')"
+                         alt="${book.title}"
+                         style="height: 180px; object-fit: cover; width: 100%; cursor: pointer;"
+                         onclick="cycleBookImage('bookImage_${book.id}', '${mainImage}', '${secondImage}', '${thirdImage}')">
+                   
+                         <div class="book-info">
+                        <h6 class="book-title">${book.title}</h6>
+                        <p class="book-author">By ${book.author}</p>
                         <div class="rating">${stars}</div>
                         
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-primary">${book.genre || 'General'}</span>
-                            <span class="badge bg-secondary book-condition">${book.condition || 'Good'}</span>
-                        </div>
-                        
-                        <div class="owner-info">
-                            <small class="text-muted">
-                                <i class="fas fa-book me-1"></i>Available for Exchange
-                            </small>
-                        </div>
-                        
-                        <button class="btn btn-sm mt-2" onclick="viewBookDetails(${book.id})">
+                        <button class="btn btn-sm mt-2 borrow-btn" onclick="viewBookDetails(${book.id})">
                             <i class="fas fa-eye me-1"></i> View Details
                         </button>
                     </div>
                 </div>
             </div>
         `;
-    });
+            });
 
-    booksGrid.innerHTML = html;
-}
+            booksGrid.innerHTML = html;
+        }
 
-
-// ✅ IMPROVED ERROR HANDLING FOR BASE64
-// ✅ HANDLE CUSTOM IMAGE UPLOAD - SIMPLE VERSION
-function handleCustomImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    if (selectedImages.length >= 3) {
-        alert('Maximum 3 images allowed');
-        return;
-    }
-    
-    // ✅ TEMPORARY PREVIEW KE LIYE BASE64
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const previewDataUrl = e.target.result;
-        
-        // Preview mein dikhane ke liye
-        selectedImages.push(previewDataUrl);
-        
-        // Actual file store karein upload ke liye
-        customImages.push({
-            file: file,
-            previewData: previewDataUrl
-        });
-        
-        console.log("✅ Custom image added for upload:", file.name);
-        updateSelectedImagesPreview();
-    };
-    
-    reader.readAsDataURL(file);
-    event.target.value = ''; // Reset file input
-}
-
-
-    function cycleImages(elementId, images) {
-        const element = document.getElementById(elementId);
-        if (element && images.length > 1) {
-            const currentSrc = element.src;
-            const currentIndex = images.findIndex(img => currentSrc.includes(img));
-            const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % images.length;
-            
-            // Only cycle if not SVG placeholder
-            if (!images[nextIndex].includes('data:image/svg')) {
-                element.src = images[nextIndex];
+        // ✅ HOVER EFFECT FUNCTION (Aapke swapPic jaise)
+        function swapPic(elementId, newImage) {
+            const element = document.getElementById(elementId);
+            if (element && newImage) {
+                element.src = newImage;
             }
         }
-    }
 
-    // ✅ VIEW BOOK DETAILS FUNCTION
-    function viewBookDetails(bookId) {
-        alert(`View details for book ID: ${bookId}`);
-        // Yahan aap book details page par redirect kar sakte hain
-        // window.location.href = `book-details.html?id=${bookId}`;
-    }
+        // ✅ CLICK EFFECT FUNCTION - 3 Images Cycle Karega
+        function cycleBookImage(elementId, mainImage, secondImage, thirdImage) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
 
-    // ✅ SEARCH ON ENTER KEY PRESS
-    document.getElementById('searchInput').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            searchBooks();
+            const currentSrc = element.src;
+            const images = [mainImage, secondImage, thirdImage];
+
+            // Find current image index
+            let currentIndex = 0;
+            for (let i = 0; i < images.length; i++) {
+                if (currentSrc.includes(images[i])) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            // Next image show karein
+            const nextIndex = (currentIndex + 1) % images.length;
+            element.src = images[nextIndex];
+
+            // Reset hover effects for new image
+            element.onmouseover = function () {
+                const hoverIndex = (nextIndex + 1) % images.length;
+                this.src = images[hoverIndex];
+            };
+
+            element.onmouseout = function () {
+                this.src = images[nextIndex];
+            };
         }
-    });
 
-    // ✅ CREATE DEFAULT BOOK COVER IF NOT EXISTS
-    function createDefaultBookCover() {
-        // Ensure default book cover exists
-        const defaultCover = 'Assets/default-book-cover.jpg';
-        // Agar nahi hai toh colored SVG use karega automatically
-    }
-</script>
+        // ✅ SIMPLE ERROR HANDLING
+        function handleImageError(imgElement, bookId) {
+            console.log(`❌ Image failed to load for book ${bookId}`);
+
+            // Simple colored placeholder
+            const colors = ['#4A90E2', '#3498db', '#2ecc71', '#e74c3c', '#f39c12'];
+            const color = colors[bookId % colors.length];
+
+            imgElement.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="280" viewBox="0 0 200 280"><rect width="200" height="280" fill="${color}"/><text x="100" y="140" text-anchor="middle" fill="white" font-family="Arial" font-size="16">Book Cover</text></svg>`;
+
+            // Remove hover effects
+            imgElement.onmouseover = null;
+            imgElement.onmouseout = null;
+        }
+
+        // IMPROVED ERROR HANDLING FOR BASE64
+        // HANDLE CUSTOM IMAGE UPLOAD - SIMPLE VERSION
+        function handleCustomImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (selectedImages.length >= 3) {
+                alert('Maximum 3 images allowed');
+                return;
+            }
+
+            //  TEMPORARY PREVIEW KE LIYE BASE64
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const previewDataUrl = e.target.result;
+
+                // Preview mein dikhane ke liye
+                selectedImages.push(previewDataUrl);
+
+                // Actual file store karein upload ke liye
+                customImages.push({
+                    file: file,
+                    previewData: previewDataUrl
+                });
+
+                console.log("Custom image added for upload:", file.name);
+                updateSelectedImagesPreview();
+            };
+
+            reader.readAsDataURL(file);
+            event.target.value = ''; // Reset file input
+        }
+
+        function cycleImages(elementId, images) {
+            const element = document.getElementById(elementId);
+            if (element && images.length > 1) {
+                const currentSrc = element.src;
+                const currentIndex = images.findIndex(img => currentSrc.includes(img));
+                const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % images.length;
+
+                // Only cycle if not SVG placeholder
+                if (!images[nextIndex].includes('data:image/svg')) {
+                    element.src = images[nextIndex];
+                }
+            }
+        }
+
+        // VIEW BOOK DETAILS FUNCTION
+        function viewBookDetails(bookId) {
+            alert(`View details for book ID: ${bookId}`);
+            // Yahan aap book details page par redirect kar sakte hain
+            // window.location.href = `book-details.html?id=${bookId}`;
+        }
+
+        //  SEARCH ON ENTER KEY PRESS
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                searchBooks();
+            }
+        });
+
+        //  CREATE DEFAULT BOOK COVER IF NOT EXISTS
+        function createDefaultBookCover() {
+            // Ensure default book cover exists
+            const defaultCover = 'Assets/default-book-cover.jpg';
+            // Agar nahi hai toh colored SVG use karega automatically
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

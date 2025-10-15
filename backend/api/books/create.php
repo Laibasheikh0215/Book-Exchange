@@ -25,7 +25,7 @@ try {
         throw new Exception("Database connection failed");
     }
 
-    // ✅ UPLOADS FOLDER BANAYEIN - ABSOLUTE PATH USE KAREIN
+    //  UPLOADS FOLDER BANAYEIN - ABSOLUTE PATH USE KAREIN
     $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/project/uploads/';
     error_log("📁 Upload directory: " . $upload_dir);
     
@@ -33,24 +33,24 @@ try {
         if (!mkdir($upload_dir, 0777, true)) {
             throw new Exception("Failed to create upload directory");
         }
-        error_log("✅ Upload directory created");
+        error_log(" Upload directory created");
     }
 
-    // ✅ CHECK PERMISSIONS
+    //  CHECK PERMISSIONS
     if (!is_writable($upload_dir)) {
         throw new Exception("Upload directory is not writable");
     }
-    error_log("✅ Upload directory is writable");
+    error_log(" Upload directory is writable");
 
     $image_path = '';
     $image_path2 = '';
     $image_path3 = '';
 
-    // ✅ DEBUG FILES
+    //  DEBUG FILES
     error_log("📦 Files received: " . print_r($_FILES, true));
     error_log("📦 Post data: " . print_r($_POST, true));
 
-    // ✅ UPLOADED FILES HANDLE KAREIN
+    //  UPLOADED FILES HANDLE KAREIN
     for ($i = 1; $i <= 3; $i++) {
         if (isset($_FILES["image$i"]) && $_FILES["image$i"]['error'] == 0) {
             $file = $_FILES["image$i"];
@@ -79,7 +79,7 @@ try {
         }
     }
 
-    // ✅ PREDEFINED IMAGES HANDLE KAREIN
+    //  PREDEFINED IMAGES HANDLE KAREIN
     for ($i = 1; $i <= 3; $i++) {
         if (isset($_POST["predefined_image$i"]) && !empty($_POST["predefined_image$i"])) {
             $predefined_image = $_POST["predefined_image$i"];
@@ -90,7 +90,7 @@ try {
         }
     }
 
-    // ✅ FORM DATA GET KAREIN
+    //  FORM DATA GET KAREIN
     $title = $_POST['title'] ?? '';
     $author = $_POST['author'] ?? '';
     $user_id = $_POST['user_id'] ?? '';
@@ -118,8 +118,8 @@ try {
     $book->image_path2 = $image_path2;
     $book->image_path3 = $image_path3;
 
-    error_log("🎯 Creating book: " . $book->title);
-    error_log("📸 Final image paths: " . $image_path . ", " . $image_path2 . ", " . $image_path3);
+    error_log(" Creating book: " . $book->title);
+    error_log(" Final image paths: " . $image_path . ", " . $image_path2 . ", " . $image_path3);
 
     if ($book->create()) {
         $response = [
@@ -127,7 +127,7 @@ try {
             "message" => "Book added successfully",
             "book_id" => $book->id
         ];
-        error_log("✅ Book created successfully with ID: " . $book->id);
+        error_log(" Book created successfully with ID: " . $book->id);
         
         echo json_encode($response);
     } else {
@@ -135,7 +135,7 @@ try {
     }
 
 } catch (Exception $e) {
-    error_log("❌ Error in create.php: " . $e->getMessage());
+    error_log(" Error in create.php: " . $e->getMessage());
     
     http_response_code(400);
     echo json_encode([
