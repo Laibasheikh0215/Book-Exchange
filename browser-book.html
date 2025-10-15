@@ -337,8 +337,9 @@
                 <!-- Policies -->
                 <div class="col-md-2 footer-links">
                     <div class="footer-title">Policies</div>
-                    <a href="terms-and-conditions.html" style="color: #000; text-decoration: none;" onmouseover="this.style.color='#f1c40f';"
-                        onmouseout="this.style.color='#000';">Terms & Conditions</a>
+                    <a href="terms-and-conditions.html" style="color: #000; text-decoration: none;"
+                        onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">Terms &
+                        Conditions</a>
                 </div>
 
                 <!-- Get in Touch -->
@@ -371,123 +372,214 @@
 
 
     <script>
-        // Load all books when page loads
-        document.addEventListener('DOMContentLoaded', function () {
+    // Load all books when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        loadAllBooks();
+    });
+
+    async function loadAllBooks() {
+        try {
+            console.log("Fetching books from API...");
+            
+            const response = await fetch('http://localhost/project/backend/api/books/read.php');
+            console.log("Response status:", response.status);
+            
+            const data = await response.json();
+            console.log("Full API Response:", data);
+            console.log("Books data:", data.books);
+
+            // Check if books array exists
+            if (data.books && Array.isArray(data.books)) {
+                displayBooks(data.books);
+            } else {
+                console.log("No books array found in response");
+                displayBooks([]);
+            }
+            
+        } catch (error) {
+            console.error('Error loading books:', error);
+            document.getElementById('booksGrid').innerHTML = `
+                <div class="col-12 text-center">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading books: ${error.message}
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Search books
+    async function searchBooks() {
+        const searchTerm = document.getElementById('searchInput').value.trim();
+
+        if (searchTerm === '') {
             loadAllBooks();
-        });
-
-        // Load all available books
-        async function loadAllBooks() {
-            try {
-                const response = await fetch('http://localhost/book-exchange/backend/api/books/read.php');
-                const data = await response.json();
-
-                displayBooks(data.books || []);
-            } catch (error) {
-                console.error('Error loading books:', error);
-                document.getElementById('booksGrid').innerHTML = `
-          <div class="col-12 text-center">
-            <div class="alert alert-danger">
-              <i class="fas fa-exclamation-triangle me-2"></i>
-              Error loading books. Please try again later.
-            </div>
-          </div>
-        `;
-            }
+            return;
         }
 
-        // Search books
-        async function searchBooks() {
-            const searchTerm = document.getElementById('searchInput').value.trim();
+        try {
+            // ✅ CORRECTED API URL
+            const response = await fetch(`http://localhost/project/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
+            const data = await response.json();
 
-            if (searchTerm === '') {
-                loadAllBooks();
-                return;
-            }
-
-            try {
-                const response = await fetch(`http://localhost/book-exchange/backend/api/books/search.php?q=${encodeURIComponent(searchTerm)}`);
-                const data = await response.json();
-
-                displayBooks(data.books || []);
-            } catch (error) {
-                console.error('Error searching books:', error);
-            }
+            displayBooks(data.books || []);
+        } catch (error) {
+            console.error('Error searching books:', error);
         }
+    }
 
-        // Display books in grid WITH CODE 1 DESIGN
-        function displayBooks(books) {
-            const booksGrid = document.getElementById('booksGrid');
+// Displaybook function
+// ✅ DISPLAY BOOKS WITH ACTUAL IMAGES
+function displayBooks(books) {
+    const booksGrid = document.getElementById('booksGrid');
 
-            if (books.length === 0) {
-                booksGrid.innerHTML = `
-          <div class="col-12 text-center">
-            <div class="alert alert-info">
-              <i class="fas fa-info-circle me-2"></i>
-              No books found. Be the first to add a book!
-            </div>
-          </div>
-        `;
-                return;
-            }
-
-            let html = '';
-            books.forEach(book => {
-                // Generate random rating for demo (like code 1)
-                const randomRating = Math.floor(Math.random() * 2) + 3; // 3-5 stars
-                const stars = '⭐'.repeat(randomRating);
-
-                html += `
-          <div class="col-md-2 col-sm-6 mb-4">
-            <div class="book-card">
-              <div class="book-image">
-                ${book.image_path ?
-                        `<img src="${book.image_path}" alt="${book.title}">` :
-                        `<img src="https://via.placeholder.com/200x280/4A90E2/FFFFFF?text=Book+Image" alt="${book.title}">`
-                    }
-              </div>
-              <div class="book-info">
-                <h6>${book.title}</h6>
-                <p>By ${book.author}</p>
-                <div class="rating">${stars}</div>
-                
-                <!-- Additional info from code 2 -->
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="badge bg-primary">${book.genre || 'General'}</span>
-                  <span class="badge bg-secondary book-condition">${book.condition || 'Good'}</span>
+    if (books.length === 0) {
+        booksGrid.innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No books found. Be the first to add a book!
                 </div>
-                
-                <div class="owner-info">
-                  <small class="text-muted">
-                    <i class="fas fa-user me-1"></i>${book.owner_name || 'Unknown User'}
-                  </small>
-                </div>
-                
-                <button class="btn btn-sm mt-2" onclick="viewBookDetails(${book.id})">
-                  <i class="fas fa-eye me-1"></i> View Details
-                </button>
-              </div>
             </div>
-          </div>
         `;
-            });
+        return;
+    }
 
-            booksGrid.innerHTML = html;
-        }
+    console.log("📚 Displaying books with ACTUAL images...");
+    console.log("Books data:", books); // ✅ DEBUG
 
-        // View book details page
-        function viewBookDetails(bookId) {
-            window.location.href = `book-details.html?id=${bookId}`;
-        }
+    let html = '';
+    books.forEach(book => {
+        const randomRating = Math.floor(Math.random() * 2) + 3;
+        const stars = '⭐'.repeat(randomRating);
 
-        // Search on Enter key press
-        document.getElementById('searchInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                searchBooks();
-            }
+     
+       // ✅ USE ACTUAL IMAGE PATHS
+// ✅ USE CORRECT IMAGE PATHS
+const mainImage = book.image_path ? book.image_path : 'Assets/Atomic habit (1).png';
+const secondImage = book.image_path2 ? book.image_path2 : mainImage;
+const thirdImage = book.image_path3 ? book.image_path3 : mainImage;
+
+console.log(`📖 ${book.title} Images:`, {
+    main: mainImage,
+    second: secondImage,
+    third: thirdImage
+});
+
+        const hasMultipleImages = book.image_path && (book.image_path2 || book.image_path3);
+        
+        html += `
+            <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
+                <div class="book-card" style="height: 325px;">
+                    <div class="book-image">
+                        <img src="${mainImage}" 
+                             id="bookImage_${book.id}"
+                             ${hasMultipleImages ? `onmouseover="this.src='${secondImage}'"` : ''}
+                             ${hasMultipleImages ? `onmouseout="this.src='${mainImage}'"` : ''}
+                             ${hasMultipleImages ? `onclick="this.src='${thirdImage}'"` : ''}
+                             alt="${book.title}"
+                             style="cursor: ${hasMultipleImages ? 'pointer' : 'default'}; height: 180px; object-fit: cover; width: 100%;"
+                             onerror="this.src='Assets/Atomic habit (1).png'">
+                    </div>
+                    <div class="book-info">
+                        <h6>${book.title}</h6>
+                        <p>By ${book.author}</p>
+                        <div class="rating">${stars}</div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-primary">${book.genre || 'General'}</span>
+                            <span class="badge bg-secondary book-condition">${book.condition || 'Good'}</span>
+                        </div>
+                        
+                        <div class="owner-info">
+                            <small class="text-muted">
+                                <i class="fas fa-book me-1"></i>Available for Exchange
+                            </small>
+                        </div>
+                        
+                        <button class="btn btn-sm mt-2" onclick="viewBookDetails(${book.id})">
+                            <i class="fas fa-eye me-1"></i> View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    booksGrid.innerHTML = html;
+}
+
+
+// ✅ IMPROVED ERROR HANDLING FOR BASE64
+// ✅ HANDLE CUSTOM IMAGE UPLOAD - SIMPLE VERSION
+function handleCustomImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (selectedImages.length >= 3) {
+        alert('Maximum 3 images allowed');
+        return;
+    }
+    
+    // ✅ TEMPORARY PREVIEW KE LIYE BASE64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const previewDataUrl = e.target.result;
+        
+        // Preview mein dikhane ke liye
+        selectedImages.push(previewDataUrl);
+        
+        // Actual file store karein upload ke liye
+        customImages.push({
+            file: file,
+            previewData: previewDataUrl
         });
-    </script>
+        
+        console.log("✅ Custom image added for upload:", file.name);
+        updateSelectedImagesPreview();
+    };
+    
+    reader.readAsDataURL(file);
+    event.target.value = ''; // Reset file input
+}
 
+
+    function cycleImages(elementId, images) {
+        const element = document.getElementById(elementId);
+        if (element && images.length > 1) {
+            const currentSrc = element.src;
+            const currentIndex = images.findIndex(img => currentSrc.includes(img));
+            const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % images.length;
+            
+            // Only cycle if not SVG placeholder
+            if (!images[nextIndex].includes('data:image/svg')) {
+                element.src = images[nextIndex];
+            }
+        }
+    }
+
+    // ✅ VIEW BOOK DETAILS FUNCTION
+    function viewBookDetails(bookId) {
+        alert(`View details for book ID: ${bookId}`);
+        // Yahan aap book details page par redirect kar sakte hain
+        // window.location.href = `book-details.html?id=${bookId}`;
+    }
+
+    // ✅ SEARCH ON ENTER KEY PRESS
+    document.getElementById('searchInput').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            searchBooks();
+        }
+    });
+
+    // ✅ CREATE DEFAULT BOOK COVER IF NOT EXISTS
+    function createDefaultBookCover() {
+        // Ensure default book cover exists
+        const defaultCover = 'Assets/default-book-cover.jpg';
+        // Agar nahi hai toh colored SVG use karega automatically
+    }
+</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

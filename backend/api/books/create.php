@@ -1,143 +1,146 @@
 <?php
-// Enable full error reporting temporarily
+// Enable detailed error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Set absolute path for log file
-$log_file = __DIR__ . '/add_book_debug.log';
-
-// Enhanced debug function
-function log_debug($message) {
-    global $log_file;
-    $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($log_file, "{$timestamp} - {$message}" . PHP_EOL, FILE_APPEND);
-}
-
-// Start with detailed information
-log_debug("=== ADD BOOK REQUEST STARTED ===");
-
-// CORS headers
-header("Access-Control-Allow-Origin: http://localhost");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    log_debug("Handling OPTIONS preflight request");
     http_response_code(200);
     exit();
 }
 
-try {
-    log_debug("Including database files...");
-    
-    // CORRECT PATHS - Use absolute paths with correct structure
-    $database_path = __DIR__ . '/../../config/database.php'; // Fixed path
-    $book_model_path = __DIR__ . '/../../models/Book.php';   // Fixed path
-    
-    log_debug("Database path: " . $database_path);
-    log_debug("Book model path: " . $book_model_path);
-    
-    if (!file_exists($database_path)) {
-        throw new Exception("Database config file not found: " . $database_path);
-    }
-    
-    if (!file_exists($book_model_path)) {
-        throw new Exception("Book model file not found: " . $book_model_path);
-    }
-    
-    include_once $database_path;
-    include_once $book_model_path;
-    
-    log_debug("Files included successfully");
+include_once '../../config/database.php';
+include_once '../../models/Book.php';
 
-    // Get database connection
+try {
     $database = new Database();
     $db = $database->getConnection();
-    
+
     if (!$db) {
         throw new Exception("Database connection failed");
     }
 
-    log_debug("Database connection successful");
-
-    // Get posted data
-    $input = file_get_contents("php://input");
-    log_debug("Raw input length: " . strlen($input) . " characters");
+    // ✅ UPLOADS FOLDER BANAYEIN - ABSOLUTE PATH USE KAREIN
+    $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/project/uploads/';
+    error_log("📁 Upload directory: " . $upload_dir);
     
-    if (empty($input)) {
-        throw new Exception("No input data received");
+    if (!file_exists($upload_dir)) {
+        if (!mkdir($upload_dir, 0777, true)) {
+            throw new Exception("Failed to create upload directory");
+        }
+        error_log("✅ Upload directory created");
     }
 
-    $data = json_decode($input);
-    
-    if (!$data) {
-        $json_error = json_last_error_msg();
-        throw new Exception("Invalid JSON data: " . $json_error);
+    // ✅ CHECK PERMISSIONS
+    if (!is_writable($upload_dir)) {
+        throw new Exception("Upload directory is not writable");
+    }
+    error_log("✅ Upload directory is writable");
+
+    $image_path = '';
+    $image_path2 = '';
+    $image_path3 = '';
+
+    // ✅ DEBUG FILES
+    error_log("📦 Files received: " . print_r($_FILES, true));
+    error_log("📦 Post data: " . print_r($_POST, true));
+
+    // ✅ UPLOADED FILES HANDLE KAREIN
+    for ($i = 1; $i <= 3; $i++) {
+        if (isset($_FILES["image$i"]) && $_FILES["image$i"]['error'] == 0) {
+            $file = $_FILES["image$i"];
+            error_log("📸 Processing image $i: " . $file['name']);
+            
+            $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $file_name = "book_" . uniqid() . "_$i." . $file_extension;
+            $file_path = $upload_dir . $file_name;
+            
+            error_log("💾 Saving to: " . $file_path);
+            
+            if (move_uploaded_file($file['tmp_name'], $file_path)) {
+                $saved_path = "uploads/" . $file_name;
+                if ($i == 1) $image_path = $saved_path;
+                if ($i == 2) $image_path2 = $saved_path;
+                if ($i == 3) $image_path3 = $saved_path;
+                error_log("✅ File uploaded successfully: " . $saved_path);
+            } else {
+                error_log("❌ File upload failed for: " . $file['name']);
+                error_log("❌ Upload error: " . $file['error']);
+            }
+        } else {
+            if (isset($_FILES["image$i"])) {
+                error_log("❌ File error for image$i: " . $_FILES["image$i"]['error']);
+            }
+        }
     }
 
-    log_debug("JSON parsed successfully");
+    // ✅ PREDEFINED IMAGES HANDLE KAREIN
+    for ($i = 1; $i <= 3; $i++) {
+        if (isset($_POST["predefined_image$i"]) && !empty($_POST["predefined_image$i"])) {
+            $predefined_image = $_POST["predefined_image$i"];
+            if ($i == 1 && empty($image_path)) $image_path = $predefined_image;
+            if ($i == 2 && empty($image_path2)) $image_path2 = $predefined_image;
+            if ($i == 3 && empty($image_path3)) $image_path3 = $predefined_image;
+            error_log("📸 Using predefined image $i: " . $predefined_image);
+        }
+    }
+
+    // ✅ FORM DATA GET KAREIN
+    $title = $_POST['title'] ?? '';
+    $author = $_POST['author'] ?? '';
+    $user_id = $_POST['user_id'] ?? '';
+    $isbn = $_POST['isbn'] ?? '';
+    $genre = $_POST['genre'] ?? '';
+    $condition = $_POST['condition'] ?? 'Good';
+    $description = $_POST['description'] ?? '';
 
     // Validate required fields
-    if (empty($data->user_id)) {
-        throw new Exception("User ID is required");
-    }
-    
-    if (empty($data->title)) {
-        throw new Exception("Title is required");
-    }
-    
-    if (empty($data->author)) {
-        throw new Exception("Author is required");
+    if (empty($title) || empty($author) || empty($user_id)) {
+        throw new Exception("Missing required fields: title, author, user_id");
     }
 
-    log_debug("Required fields validation passed");
-
-    // Prepare book object
     $book = new Book($db);
     
-    $book->user_id = $data->user_id;
-    $book->title = $data->title;
-    $book->author = $data->author;
-    $book->isbn = $data->isbn ?? '';
-    $book->genre = $data->genre ?? '';
-    $book->condition = $data->condition ?? 'Good';
-    $book->description = $data->description ?? '';
+    // Set book properties
+    $book->title = $title;
+    $book->author = $author;
+    $book->user_id = $user_id;
+    $book->isbn = $isbn;
+    $book->genre = $genre;
+    $book->condition = $condition;
+    $book->description = $description;
+    $book->image_path = $image_path;
+    $book->image_path2 = $image_path2;
+    $book->image_path3 = $image_path3;
 
-    log_debug("Book object prepared: " . $book->title . " by " . $book->author);
+    error_log("🎯 Creating book: " . $book->title);
+    error_log("📸 Final image paths: " . $image_path . ", " . $image_path2 . ", " . $image_path3);
 
-    // Create the book
     if ($book->create()) {
         $response = [
             "success" => true,
-            "message" => "Book was added successfully.",
+            "message" => "Book added successfully",
             "book_id" => $book->id
         ];
+        error_log("✅ Book created successfully with ID: " . $book->id);
         
-        log_debug("Book created successfully with ID: " . $book->id);
-        
-        http_response_code(201);
         echo json_encode($response);
     } else {
-        throw new Exception("Unable to add book. Database operation failed.");
+        throw new Exception("Failed to create book in database");
     }
 
 } catch (Exception $e) {
-    log_debug("ERROR: " . $e->getMessage());
-    
-    $error_details = [
-        "success" => false,
-        "message" => "Failed to add book.",
-        "error" => $e->getMessage(),
-        "file" => $e->getFile(),
-        "line" => $e->getLine()
-    ];
+    error_log("❌ Error in create.php: " . $e->getMessage());
     
     http_response_code(400);
-    echo json_encode($error_details);
+    echo json_encode([
+        "success" => false,
+        "message" => $e->getMessage()
+    ]);
 }
-
-log_debug("=== ADD BOOK REQUEST COMPLETED ===");
 ?>
