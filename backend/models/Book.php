@@ -66,17 +66,16 @@ class Book {
 
     // READ ALL METHOD 
 public function readAll() {
-        $query = "SELECT 
-                    b.*
-                FROM " . $this->table_name . " b
-                WHERE b.status = 'Available'
-                ORDER BY b.created_at DESC";
-        
-        $stmt = $this->conn->prepare($query);
-        $stmt->execute();
-        
-        return $stmt;
-    }
+    $query = "SELECT b.* FROM " . $this->table_name . " b 
+              WHERE b.status = 'Available' 
+              ORDER BY b.created_at DESC";
+    
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+    
+    return $stmt;
+}
+
 
     // SEARCH METHOD
         public function search($search_term) {

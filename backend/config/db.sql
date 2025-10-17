@@ -57,19 +57,6 @@ CREATE TABLE book_requests (
     FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Messages table
-CREATE TABLE messages (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    conversation_id VARCHAR(100) NOT NULL,
-    sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
-    message TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
 -- Reviews table
 CREATE TABLE reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -199,4 +186,50 @@ CREATE TABLE IF NOT EXISTS book_reviews (
     FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY unique_review (book_id, user_id)
+);
+
+-- Messages table add karen
+CREATE TABLE messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message_text TEXT NOT NULL,
+    is_read TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+
+-- Conversations table (optional but recommended)
+CREATE TABLE conversations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    last_message TEXT,
+    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_conversation (user1_id, user2_id)
+);
+
+-- 1. Messages table create karen with correct columns
+CREATE TABLE IF NOT EXISTS messages (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message_text TEXT NOT NULL,
+    is_read TINYINT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+
+-- 2. Conversations table create karen
+CREATE TABLE IF NOT EXISTS conversations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user1_id INT NOT NULL,
+    user2_id INT NOT NULL,
+    last_message TEXT,
+    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_conversation (user1_id, user2_id),
+    FOREIGN KEY (user1_id) REFERENCES users(id),
+    FOREIGN KEY (user2_id) REFERENCES users(id)
 );

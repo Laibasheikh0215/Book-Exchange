@@ -1,148 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Book - Book Exchange</title>
-        <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #f8ca30;
+            border-color: #f8ca30;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #e0b420;
+            border-color: #e0b420;
+        }
+
+        .btn-update {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .image-selection-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .image-option {
+            width: 120px;
+            height: 160px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .image-option:hover {
+            border-color: #f8ca30;
+            transform: scale(1.05);
+        }
+
+        .image-option.selected {
+            border-color: #f8ca30;
+            border-width: 3px;
+        }
+
+        .image-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .custom-image-upload {
+            border: 2px dashed #f8ca30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .current-images {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg px-4" style="background-color: #f3efee;">
-        <a class="navbar-brand" href="dashboard.html">
+        <a class="navbar-brand d-flex align-items-center" href="dashboard.html">
             <img src="Assets/main logo.png" alt="main-logo" style="width:150px;">
         </a>
     </nav>
 
     <div class="container mt-4">
-        <h2>Update Book</h2>
-        <div id="bookForm">
-            <div class="text-center">
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-                <p>Loading book details...</p>
-            </div>
-        </div>
-    </div>
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card p-4">
+                    <h2 class="text-center mb-4">Edit Book</h2>
+                    
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="visually-hidden">Loading book details...</span>
+                        </div>
+                        <p class="mt-2">Loading book details...</p>
+                    </div>
 
-    <script>
-        // Get book ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const bookId = urlParams.get('id');
-        const userData = JSON.parse(localStorage.getItem('user'));
-
-        if (!userData || !bookId) {
-            alert("Invalid access");
-            window.location.href = "dashboard.html";
-        }
-
-        // Load book details
-        fetch(`http://localhost/book-exchange/backend/api/books/read_one.php?id=${bookId}&user_id=${userData.user_id}`)
-            .then(response => response.json())
-            .then(book => {
-                document.getElementById('bookForm').innerHTML = `
-                    <form id="editBookForm">
-                        <input type="hidden" id="bookId" value="${book.id}">
+                    <!-- Edit Form -->
+                    <form id="editBookForm" style="display: none;">
+                        <input type="hidden" id="book_id">
+                        
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Book Title *</label>
-                                    <input type="text" class="form-control" id="title" value="${book.title}" required>
+                                    <input type="text" class="form-control" id="title" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Author *</label>
-                                    <input type="text" class="form-control" id="author" value="${book.author}" required>
+                                    <input type="text" class="form-control" id="author" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">ISBN</label>
-                                    <input type="text" class="form-control" id="isbn" value="${book.isbn || ''}">
+                                    <input type="text" class="form-control" id="isbn">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Genre</label>
-                                    <input type="text" class="form-control" id="genre" value="${book.genre || ''}">
+                                    <input type="text" class="form-control" id="genre" placeholder="Fiction, Mystery, etc.">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Condition *</label>
                                     <select class="form-select" id="condition" required>
-                                        <option value="New" ${book.condition === 'New' ? 'selected' : ''}>New</option>
-                                        <option value="Like New" ${book.condition === 'Like New' ? 'selected' : ''}>Like New</option>
-                                        <option value="Very Good" ${book.condition === 'Very Good' ? 'selected' : ''}>Very Good</option>
-                                        <option value="Good" ${book.condition === 'Good' ? 'selected' : ''}>Good</option>
-                                        <option value="Fair" ${book.condition === 'Fair' ? 'selected' : ''}>Fair</option>
-                                        <option value="Poor" ${book.condition === 'Poor' ? 'selected' : ''}>Poor</option>
+                                        <option value="">Select Condition</option>
+                                        <option value="New">New</option>
+                                        <option value="Like New">Like New</option>
+                                        <option value="Very Good">Very Good</option>
+                                        <option value="Good">Good</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Poor">Poor</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status *</label>
                                     <select class="form-select" id="status" required>
-                                        <option value="Available" ${book.status === 'Available' ? 'selected' : ''}>Available</option>
-                                        <option value="Lent Out" ${book.status === 'Lent Out' ? 'selected' : ''}>Lent Out</option>
+                                        <option value="Available">Available</option>
+                                        <option value="Not Available">Not Available</option>
+                                        <option value="Exchanged">Exchanged</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Current Images -->
+                        <div class="current-images">
+                            <h5>Current Images</h5>
+                            <div class="image-selection-container" id="currentImagesContainer">
+                                <!-- Current images will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Update Images Section -->
+                        <div class="mb-4">
+                            <label class="form-label">Update Images (Choose up to 3 new images - optional)</label>
+                            <div class="image-selection-container" id="imageSelectionContainer">
+                                <div class="image-option custom-image-upload" onclick="document.getElementById('customImageInput').click()">
+                                    <i class="fas fa-plus mb-2"></i>
+                                    <small class="text-center">Upload New Images</small>
+                                    <input type="file" id="customImageInput" accept="image/*" style="display: none;" 
+                                           onchange="handleCustomImage(event)" multiple>
+                                </div>
+                            </div>
+                            
+                            <!-- New Selected Images Preview -->
+                            <div class="mt-3">
+                                <label class="form-label">New Selected Images:</label>
+                                <div class="image-selection-container" id="selectedImagesPreview">
+                                    <div class="text-muted">No new images selected</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="3">${book.description || ''}</textarea>
+                            <textarea class="form-control" id="description" rows="3" placeholder="Describe the book's content and condition..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Update Book</button>
-                        <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
-                    </form>
-                `;
 
-                // Add form submit handler
-                document.getElementById("editBookForm").addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    updateBook();
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('bookForm').innerHTML = `
-                    <div class="alert alert-danger">
-                        Error loading book details. <a href="dashboard.html">Return to Dashboard</a>
-                    </div>
-                `;
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="submit" class="btn btn-update me-md-2">
+                                <i class="fas fa-save me-1"></i> Update Book
+                            </button>
+                            <a href="dashboard.html" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables
+        let selectedImages = [];
+        let customImages = [];
+        let currentBookData = null;
+
+        // Get book ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
+
+        // Check if user is logged in
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (!userData) {
+            alert("Please login first");
+            window.location.href = "index.html";
+        }
+
+        // Load book data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!bookId) {
+                showError("No book ID provided");
+                return;
+            }
+            loadBookData(bookId);
+        });
+
+        // Load book data from API
+        async function loadBookData(bookId) {
+            try {
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const data = await response.json();
+
+                if (data.books && data.books.length > 0) {
+                    currentBookData = data.books[0];
+                    
+                    // Check if user owns this book
+                    if (currentBookData.user_id != userData.user_id) {
+                        showError("You can only edit your own books");
+                        return;
+                    }
+
+                    // Populate form with current data
+                    populateForm(currentBookData);
+                    
+                    // Show form, hide spinner
+                    document.getElementById('loadingSpinner').style.display = 'none';
+                    document.getElementById('editBookForm').style.display = 'block';
+                } else {
+                    showError("Book not found");
+                }
+            } catch (error) {
+                console.error('Error loading book:', error);
+                showError("Error loading book details");
+            }
+        }
+
+        // Populate form with current book data
+        function populateForm(book) {
+            document.getElementById('book_id').value = book.id;
+            document.getElementById('title').value = book.title;
+            document.getElementById('author').value = book.author;
+            document.getElementById('isbn').value = book.isbn || '';
+            document.getElementById('genre').value = book.genre || '';
+            document.getElementById('condition').value = book.condition;
+            document.getElementById('status').value = book.status;
+            document.getElementById('description').value = book.description || '';
+
+            // Display current images
+            displayCurrentImages(book);
+        }
+
+        // Display current book images
+        function displayCurrentImages(book) {
+            const container = document.getElementById('currentImagesContainer');
+            container.innerHTML = '';
+
+            const images = [
+                { path: book.image_path, label: 'Image 1' },
+                { path: book.image_path2, label: 'Image 2' },
+                { path: book.image_path3, label: 'Image 3' }
+            ];
+
+            images.forEach((img, index) => {
+                if (img.path) {
+                    const imgDiv = document.createElement('div');
+                    imgDiv.className = 'image-option';
+                    imgDiv.innerHTML = `
+                        <img src="${img.path}" alt="${img.label}" 
+                             onerror="this.src='Assets/default-book.jpg'">
+                        <small class="text-center d-block mt-1">${img.label}</small>
+                    `;
+                    container.appendChild(imgDiv);
+                }
             });
 
-        function updateBook() {
-            const bookData = {
-                id: document.getElementById('bookId').value,
-                user_id: userData.user_id,
-                title: document.getElementById('title').value,
-                author: document.getElementById('author').value,
-                isbn: document.getElementById('isbn').value,
-                genre: document.getElementById('genre').value,
-                condition: document.getElementById('condition').value,
-                status: document.getElementById('status').value,
-                description: document.getElementById('description').value
-            };
+            if (container.children.length === 0) {
+                container.innerHTML = '<div class="text-muted">No images available</div>';
+            }
+        }
 
-            fetch('http://localhost/book-exchange/backend/api/books/update.php', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(bookData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message.includes("updated")) {
+        // Handle custom image upload
+        function handleCustomImage(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            if (selectedImages.length + files.length > 3) {
+                alert('Maximum 3 images allowed');
+                return;
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imageDataUrl = e.target.result;
+                    
+                    selectedImages.push(imageDataUrl);
+                    customImages.push({
+                        file: file,
+                        dataUrl: imageDataUrl
+                    });
+
+                    updateSelectedImagesPreview();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            event.target.value = '';
+        }
+
+        // Update selected images preview
+        function updateSelectedImagesPreview() {
+            const previewContainer = document.getElementById('selectedImagesPreview');
+            previewContainer.innerHTML = '';
+
+            if (selectedImages.length === 0) {
+                previewContainer.innerHTML = '<div class="text-muted">No new images selected</div>';
+                return;
+            }
+
+            selectedImages.forEach((image, index) => {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-option position-relative';
+                previewDiv.innerHTML = `
+                    <img src="${image}" alt="Selected ${index + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" 
+                            onclick="removeSelectedImage(${index})" style="padding: 2px 6px; font-size: 12px;">×</button>
+                `;
+                previewContainer.appendChild(previewDiv);
+            });
+        }
+
+        // Remove selected image
+        function removeSelectedImage(index) {
+            selectedImages.splice(index, 1);
+            if (customImages.length > index) {
+                customImages.splice(index, 1);
+            }
+            updateSelectedImagesPreview();
+        }
+
+        // Form submission
+        document.getElementById("editBookForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+            submitBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                
+                // Add book details
+                formData.append('id', document.getElementById('book_id').value);
+                formData.append('title', document.getElementById('title').value);
+                formData.append('author', document.getElementById('author').value);
+                formData.append('isbn', document.getElementById('isbn').value);
+                formData.append('genre', document.getElementById('genre').value);
+                formData.append('condition', document.getElementById('condition').value);
+                formData.append('status', document.getElementById('status').value);
+                formData.append('description', document.getElementById('description').value);
+                formData.append('user_id', userData.user_id);
+
+                // Add new images
+                customImages.forEach((customImage, index) => {
+                    formData.append(`image${index + 1}`, customImage.file);
+                });
+
+                const response = await fetch('http://localhost/project/backend/api/books/update.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                console.log("Update Response:", result);
+
+                if (result.success) {
                     alert("Book updated successfully!");
                     window.location.href = "dashboard.html";
                 } else {
-                    alert("Error: " + data.message);
+                    alert("Error: " + (result.message || "Failed to update book"));
                 }
-            })
-            .catch(error => {
+
+            } catch (error) {
                 console.error('Error:', error);
-                alert("An error occurred while updating the book.");
-            });
+                alert("Error updating book: " + error.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Show error message
+        function showError(message) {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorMessage').style.display = 'block';
         }
     </script>
 </body>
+
 </html>

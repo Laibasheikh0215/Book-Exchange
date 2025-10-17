@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - Book Exchange</title>
-        <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -51,6 +51,214 @@
             width: 1rem;
             height: 1rem;
         }
+
+        /* ✅ SIDEBAR STYLES */
+        .sidebar {
+            background: linear-gradient(to bottom, #084779, #113b5e);
+            color: white;
+            min-height: 100vh;
+            padding: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #f8ca30;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #f8ca30;
+            color: #000;
+        }
+
+        .sidebar .user-info {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #f8ca30;
+            margin-bottom: 10px;
+        }
+
+        /* Avatar Styles */
+        .user-avatar,
+        .profile-pic-preview {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: bold;
+        }
+
+        .bg-primary {
+            background-color: #007bff !important;
+        }
+
+        .bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+
+        /* ✅ PROFILE MODAL STYLES */
+        .profile-pic-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f8ca30;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .upload-btn-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* Message system */
+        /* ✅ MESSAGING STYLES */
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .conversation-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .conversation-item.active {
+            background-color: #e3f2fd;
+        }
+
+        #messagesContainer {
+            background-color: #f8f9fa;
+        }
+
+        /* Scrollbar styling */
+        #messagesContainer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messagesContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #messagesContainer::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        /* ✅ MESSAGING STYLES */
+        #messagesInterface {
+            display: none;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .conversation-item {
+            border: none;
+            border-bottom: 1px solid #eee;
+            padding: 12px 15px;
+        }
+
+        .conversation-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .conversation-item.active {
+            background-color: #e3f2fd;
+        }
+
+        #messagesContainer {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        /* Scrollbar styling */
+        #messagesContainer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #messagesContainer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #messagesContainer::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        /* Avatar Colors */
+        .bg-primary {
+            background-color: #007bff !important;
+        }
+
+        .bg-success {
+            background-color: #28a745 !important;
+        }
+
+        .bg-warning {
+            background-color: #ffc107 !important;
+            color: #000 !important;
+        }
+
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
+
+        .bg-info {
+            background-color: #17a2b8 !important;
+        }
     </style>
 </head>
 
@@ -73,98 +281,181 @@
         </div>
     </nav>
 
-    <!-- Dashboard Header -->
-    <div class="dashboard-header text-center">
-        <div class="container">
-            <h1>Welcome to Your Book Exchange Dashboard</h1>
-            <p>Manage your books, requests, and connections with other book lovers</p>
-        </div>
-    </div>
-
-    <!-- Dashboard Content -->
-    <div class="container">
+    <div class="container-fluid">
         <div class="row">
-            <!-- Quick Stats -->
-            <div class="col-md-3 mb-4">
-                <div class="card text-center p-3">
-                    <h3 id="booksCount">0</h3>
-                    <p>Books Listed</p>
+            <!-- ✅ SIDEBAR -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="user-info">
+                    <div class="user-avatar bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
+                        id="sidebarAvatar"
+                        style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #f8ca30; font-size: 24px;">
+                        <span id="sidebarAvatarText">U</span>
+                    </div>
+                    <h5 id="sidebarUserName">User Name</h5>
+                    <p id="sidebarUserEmail">user@email.com</p>
                 </div>
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="#" onclick="showDashboard()">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a class="nav-link" href="#" onclick="showProfile()">
+                        <i class="fas fa-user me-2"></i>My Profile
+                    </a>
+                    <a class="nav-link" href="#" onclick="showMyBooks()">
+                        <i class="fas fa-book me-2"></i>My Books
+                    </a>
+                    <a class="nav-link" href="#" onclick="showTransactions()">
+                        <i class="fas fa-exchange-alt me-2"></i>Transactions
+                    </a>
+                    <a class="nav-link" href="#" onclick="showMessages()">
+                        <i class="fas fa-comments me-2"></i>Messages
+                        <span class="badge bg-danger ms-1" id="unreadMessagesBadge">2</span>
+                    </a>
+                    <a class="nav-link" href="browse-book.html">
+                        <i class="fas fa-search me-2"></i>Browse Books
+                    </a>
+                    <a class="nav-link" href="#" onclick="addBook()">
+                        <i class="fas fa-plus me-2"></i>Add Book
+                    </a>
+                </nav>
             </div>
-            <div class="col-md-3 mb-4">
-                <div class="card text-center p-3">
-                    <h3 id="requestsCount">0</h3>
-                    <p>Pending Requests</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card text-center p-3">
-                    <h3 id="messagesCount">0</h3>
-                    <p>Unread Messages</p>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card text-center p-3">
-                    <h3 id="rating">4.5</h3>
-                    <p>Your Rating</p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card p-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Quick Actions</h4>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
-                            ↻ Refresh
-                        </button>
-                    </div>
-                    <div class="d-flex gap-2 mt-3">
-                        <button class="btn btn-primary" onclick="addBook()">Add New Book</button>
-                        <button class="btn btn-outline-primary" onclick="searchbook()">Browse Books</button>
-                        <button class="btn btn-outline-primary" onclick="viewRequests()">View Requests</button>
+            <!-- ✅ MAIN CONTENT -->
+            <div class="col-md-9 col-lg-10 ml-sm-auto px-4">
+                <!-- Dashboard Header -->
+                <div class="dashboard-header text-center">
+                    <div class="container-fluid">
+                        <h1>Welcome to Your Book Exchange Dashboard</h1>
+                        <p>Manage your books, requests, and connections with other book lovers</p>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!-- Recent Activity -->
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card p-4">
-                    <h4>Recent Books</h4>
-                    <div id="recentBooks">
-                        <p class="text-muted">No books listed yet.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 mb-4">
-                <div class="card p-4">
-                    <h4>Recent Requests</h4>
-                    <div id="recentRequests">
-                        <p class="text-muted">No recent requests.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Add this to your dashboard after the Quick Actions section -->
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Requests</h5>
-                    <a href="requests.html" class="btn btn-sm btn-outline-primary">View All</a>
-                </div>
-                <div class="card-body">
-                    <div id="recentRequests">
-                        <div class="text-center">
-                            <div class="spinner-border spinner-border-sm" role="status">
-                                <span class="visually-hidden">Loading requests...</span>
+                <!-- Dashboard Content -->
+                <div class="container-fluid">
+                    <div class="row">
+                        <!-- Quick Stats -->
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center p-3">
+                                <h3 id="booksCount">0</h3>
+                                <p>Books Listed</p>
                             </div>
-                            <p class="mt-2">Loading requests...</p>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center p-3">
+                                <h3 id="requestsCount">0</h3>
+                                <p>Pending Requests</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center p-3">
+                                <h3 id="messagesCount">0</h3>
+                                <p>Unread Messages</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center p-3">
+                                <h3 id="rating">4.5</h3>
+                                <p>Your Rating</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card p-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0">Quick Actions</h4>
+                                    <button class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+                                        ↻ Refresh
+                                    </button>
+                                </div>
+                                <div class="d-flex gap-2 mt-3">
+                                    <button class="btn btn-primary" onclick="addBook()">Add New Book</button>
+                                    <button class="btn btn-outline-primary" onclick="searchbook()">Browse Books</button>
+                                    <button class="btn btn-outline-primary" onclick="viewRequests()">View
+                                        Requests</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card p-4">
+                                <h4>Recent Books</h4>
+                                <div id="recentBooks">
+                                    <p class="text-muted">No books listed yet.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card p-4">
+                                <h4>Recent Requests</h4>
+                                <div id="recentRequests">
+                                    <p class="text-muted">No recent requests.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ MAIN CONTENT - Dashboard content ke baad add karen -->
+                    <!-- ✅ MESSAGES INTERFACE -->
+                    <div id="messagesInterface" class="container-fluid" style="display: none;">
+                        <div class="row">
+                            <!-- Conversations List -->
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div
+                                        class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">
+                                            <i class="fas fa-comments me-2"></i>Messages
+                                        </h5>
+                                        <button class="btn btn-sm btn-light" onclick="refreshMessages()">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <div class="list-group list-group-flush" id="conversationsList">
+                                            <div class="text-center p-3">
+                                                <div class="spinner-border spinner-border-sm"></div> Loading
+                                                conversations...
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chat Area -->
+                            <div class="col-md-8">
+                                <div class="card h-100">
+                                    <div class="card-header bg-light">
+                                        <div id="chatHeader" class="d-flex align-items-center">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Select a conversation to start messaging</h6>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0 d-flex flex-column">
+                                        <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 15px;">
+                                            <div class="text-center text-muted mt-5">
+                                                <i class="fas fa-comments fa-3x mb-3"></i>
+                                                <p>Select a conversation to view messages</p>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer" id="messageInputContainer" style="display: none;">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="messageInput"
+                                                    placeholder="Type your message...">
+                                                <button class="btn btn-primary" onclick="sendMessage()">
+                                                    <i class="fas fa-paper-plane"></i> Send
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -172,111 +463,250 @@
         </div>
     </div>
 
+    <!-- ✅ PROFILE MODAL -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="text-center mb-4">
+                            <div class="profile-pic-preview bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
+                                id="profilePreview"
+                                style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #f8ca30; font-size: 48px;">
+                                <span id="profilePreviewText">U</span>
+                            </div>
+                            <div class="upload-btn-wrapper mt-2">
+                                <button class="btn btn-outline-primary btn-sm" type="button">
+                                    <i class="fas fa-camera me-1"></i> Change Photo
+                                </button>
+                                <input type="file" id="profilePicture" accept="image/*"
+                                    onchange="previewProfileImage(this)">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="profileName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="profileEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="profileCity">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" id="profileAddress">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Bio</label>
+                                <textarea class="form-control" id="profileBio" rows="3"
+                                    placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <small><i class="fas fa-info-circle me-1"></i> Changes will be saved automatically when you
+                                update any field.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Check if user is logged in - FIXED: No const redeclaration
+        // Check if user is logged in
         const userData = JSON.parse(localStorage.getItem('user')) || null;
 
         if (!userData || !userData.loggedIn) {
             alert("Please login first");
             window.location.href = "index.html";
         } else {
+            initializeDashboard();
+        }
+
+        function initializeDashboard() {
             document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-            loadUserBooks(); // Load user's books
-            loadDashboardStats(); // Load other dashboard stats
-        }
-
-        // Auto-refresh every 30 seconds (optional)
-        setInterval(() => {
-            console.log("Auto-refreshing dashboard data...");
+            updateSidebarInfo();
             loadUserBooks();
             loadDashboardStats();
-        }, 30000);
-
-        function refreshDashboard() {
-            console.log("Manual refresh requested");
-
-            // Show loading animation
-            const refreshBtn = event.target;
-            const originalHtml = refreshBtn.innerHTML;
-            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
-            refreshBtn.disabled = true;
-
-            // Reload data
-            loadUserBooks();
-            loadDashboardStats();
-
-            // Re-enable button after 2 seconds
-            setTimeout(() => {
-                refreshBtn.innerHTML = originalHtml;
-                refreshBtn.disabled = false;
-
-                // Show confirmation
-                const toast = document.createElement('div');
-                toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
-                toast.style.zIndex = '1000';
-                toast.innerHTML = 'Dashboard refreshed successfully!';
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
-            }, 2000);
         }
 
-        function loadDashboardStats() {
-            // Load requests count
-            if (userData && userData.user_id) {
-                fetch(`http://localhost/book-exchange/backend/api/requests/count.php?user_id=${userData.user_id}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.count !== undefined) {
-                            document.getElementById('requestsCount').textContent = data.count;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error loading requests count:', error);
-                    });
+        function updateSidebarInfo() {
+            document.getElementById('sidebarUserName').textContent = userData.name || 'User Name';
+            document.getElementById('sidebarUserEmail').textContent = userData.email || 'user@email.com';
+
+            const storedProfile = localStorage.getItem('userProfile');
+            if (storedProfile) {
+                const profile = JSON.parse(storedProfile);
+                if (profile.profile_picture) {
+                    document.getElementById('sidebarAvatar').src = profile.profile_picture;
+                }
             }
-
-            // Load messages count (placeholder)
-            document.getElementById('messagesCount').textContent = "0";
         }
 
-        function loadUserBooks() {
-            // Show loading state
-            const booksCountElement = document.getElementById('booksCount');
-            const originalText = booksCountElement.textContent;
-            booksCountElement.textContent = 'Loading...';
+        // ✅ SIDEBAR NAVIGATION FUNCTIONS
+        function showDashboard() {
+            document.querySelector('.dashboard-header').style.display = 'block';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
+            document.getElementById('messagesInterface').style.display = 'none';
+            setActiveNavLink('dashboard');
+        }
 
+        function showProfile() {
+            setActiveNavLink('profile');
+            loadProfileData();
+            const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+            profileModal.show();
+        }
+
+        function showMyBooks() {
+            setActiveNavLink('mybooks');
+            window.location.href = "my-books.html";
+        }
+
+        function showTransactions() {
+            setActiveNavLink('transactions');
+            window.location.href = "user-transactions.html";
+        }
+
+        function showMessages() {
+            console.log('showMessages function called');
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'block';
+            setActiveNavLink('messages');
+            loadConversations();
+        }
+
+        function setActiveNavLink(activeItem) {
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            switch (activeItem) {
+                case 'dashboard': navLinks[0].classList.add('active'); break;
+                case 'profile': navLinks[1].classList.add('active'); break;
+                case 'mybooks': navLinks[2].classList.add('active'); break;
+                case 'transactions': navLinks[3].classList.add('active'); break;
+                case 'messages': navLinks[4].classList.add('active'); break;
+            }
+        }
+
+        // ✅ PROFILE FUNCTIONS
+        function loadProfileData() {
+            const storedProfile = localStorage.getItem('userProfile');
+            if (storedProfile) {
+                const profile = JSON.parse(storedProfile);
+                document.getElementById('profileName').value = profile.name || userData.name || '';
+                document.getElementById('profileEmail').value = profile.email || userData.email || '';
+                document.getElementById('profileCity').value = profile.city || '';
+                document.getElementById('profileAddress').value = profile.address || '';
+                document.getElementById('profileBio').value = profile.bio || '';
+                if (profile.profile_picture) {
+                    document.getElementById('profilePreview').src = profile.profile_picture;
+                }
+            } else {
+                document.getElementById('profileName').value = userData.name || '';
+                document.getElementById('profileEmail').value = userData.email || '';
+            }
+        }
+
+        function previewProfileImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profilePreview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateProfile() {
+            const profileData = {
+                name: document.getElementById('profileName').value,
+                email: document.getElementById('profileEmail').value,
+                city: document.getElementById('profileCity').value,
+                address: document.getElementById('profileAddress').value,
+                bio: document.getElementById('profileBio').value,
+                profile_picture: document.getElementById('profilePreview').src
+            };
+
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+            userData.name = profileData.name;
+            userData.email = profileData.email;
+            localStorage.setItem('user', JSON.stringify(userData));
+
+            updateSidebarInfo();
+            document.getElementById('userWelcome').textContent = `Welcome, ${profileData.name}!`;
+            showToast('Profile updated successfully!', 'success');
+
+            const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
+            profileModal.hide();
+        }
+
+        // ✅ AUTO-SAVE PROFILE
+        document.getElementById('profileForm').addEventListener('input', function () {
+            clearTimeout(window.profileSaveTimeout);
+            window.profileSaveTimeout = setTimeout(() => {
+                const name = document.getElementById('profileName').value;
+                const email = document.getElementById('profileEmail').value;
+                if (name && email) {
+                    updateProfile();
+                }
+            }, 2000);
+        });
+
+        // ✅ TOAST NOTIFICATION FUNCTION
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+            toast.style.zIndex = '1000';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ✅ BOOK MANAGEMENT FUNCTIONS
+        function loadUserBooks() {
+            const booksCountElement = document.getElementById('booksCount');
             const recentBooksDiv = document.getElementById('recentBooks');
+
+            booksCountElement.textContent = 'Loading...';
             recentBooksDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading books...</div>';
 
-            // Check if user data exists before making API call
             if (!userData || !userData.user_id) {
                 booksCountElement.textContent = '0';
                 recentBooksDiv.innerHTML = '<p class="text-muted">Please login to view your books</p>';
                 return;
             }
 
-            fetch(`http://localhost/book-exchange/backend/api/books/read.php?user_id=${userData.user_id}`)
+            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                    if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
                 })
                 .then(data => {
                     if (data.books && data.books.length > 0) {
-                        // Update book count with animation
                         booksCountElement.textContent = data.books.length;
                         booksCountElement.classList.add('text-success');
-                        setTimeout(() => {
-                            booksCountElement.classList.remove('text-success');
-                        }, 2000);
+                        setTimeout(() => booksCountElement.classList.remove('text-success'), 2000);
 
-                        // Show recent books WITH EDIT/DELETE BUTTONS
                         recentBooksDiv.innerHTML = '';
-
                         data.books.slice(0, 3).forEach(book => {
                             recentBooksDiv.innerHTML += `
                             <div class="border-bottom pb-2 mb-2">
@@ -291,19 +721,14 @@
                                         </small>
                                     </div>
                                     <div class="btn-group ms-2">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">
-                                            Delete
-                                        </button>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">Edit</button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">Delete</button>
                                     </div>
                                 </div>
                             </div>
                         `;
                         });
 
-                        // Add "View All Books" link
                         if (data.books.length > 3) {
                             recentBooksDiv.innerHTML += `
                             <div class="text-center mt-2">
@@ -333,44 +758,27 @@
 
         function deleteBook(bookId) {
             if (confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
-                // Use the existing userData variable
                 if (!userData || !userData.user_id) {
                     alert("Please login again");
                     window.location.href = "index.html";
                     return;
                 }
 
-                // Show loading
                 const deleteBtn = event.target;
                 const originalText = deleteBtn.innerHTML;
                 deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
                 deleteBtn.disabled = true;
 
-                fetch('http://localhost/book-exchange/backend/api/books/delete.php', {
+                fetch('http://localhost/project/backend/api/books/delete.php', {
                     method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        id: bookId,
-                        user_id: userData.user_id
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: bookId, user_id: userData.user_id })
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.message && data.message.includes("deleted")) {
-                            // Show success message
-                            const toast = document.createElement('div');
-                            toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
-                            toast.style.zIndex = '1000';
-                            toast.innerHTML = 'Book deleted successfully!';
-                            document.body.appendChild(toast);
-
-                            // Refresh the books list
-                            setTimeout(() => {
-                                toast.remove();
-                                loadUserBooks();
-                            }, 2000);
+                            showToast('Book deleted successfully!', 'success');
+                            setTimeout(() => loadUserBooks(), 1000);
                         } else {
                             alert("Error: " + (data.message || "Failed to delete book"));
                             deleteBtn.innerHTML = originalText;
@@ -386,18 +794,317 @@
             }
         }
 
-        function logout() {
-            fetch('http://localhost/book-exchange/backend/api/auth/logout.php', {
-                method: 'POST'
-            })
+        // ✅ DASHBOARD STATS FUNCTIONS
+        function loadDashboardStats() {
+            if (userData && userData.user_id) {
+                fetch(`http://localhost/project/backend/api/requests/count.php?user_id=${userData.user_id}`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('API not found');
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.count !== undefined) {
+                            document.getElementById('requestsCount').textContent = data.count;
+                            if (data.count > 0) loadRecentRequests();
+                        }
+                    })
+                    .catch(error => {
+                        console.log('Requests count API not available, using mock data');
+                        document.getElementById('requestsCount').textContent = "2";
+                        loadMockRequests();
+                    });
+            }
+            updateMessagesCount();
+        }
+
+        function loadRecentRequests() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}&type=incoming`)
                 .then(response => {
-                    // Clear local storage and redirect regardless of response
+                    if (!response.ok) throw new Error('API not available');
+                    return response.json();
+                })
+                .then(requests => {
+                    const recentRequestsDiv = document.getElementById('recentRequests');
+                    if (requests.length === 0) {
+                        recentRequestsDiv.innerHTML = '<p class="text-muted">No recent requests.</p>';
+                        return;
+                    }
+
+                    recentRequestsDiv.innerHTML = requests.slice(0, 3).map(request => `
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${request.book_title}</h6>
+                                <p class="mb-1 text-muted">Requested by: ${request.requester_name}</p>
+                                <small class="text-muted">
+                                    Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span> •
+                                    ${new Date(request.created_at).toLocaleDateString()}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                    if (requests.length > 3) {
+                        recentRequestsDiv.innerHTML += `
+                        <div class="text-center mt-2">
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewAllRequests()">View All ${requests.length} Requests</button>
+                        </div>
+                    `;
+                    }
+                })
+                .catch(error => {
+                    console.log('Using mock requests data');
+                    loadMockRequests();
+                });
+        }
+
+        function loadMockRequests() {
+            const recentRequestsDiv = document.getElementById('recentRequests');
+            recentRequestsDiv.innerHTML = `
+            <div class="border-bottom pb-2 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">To Kill a Mockingbird</h6>
+                        <p class="mb-1 text-muted">Requested by: John Doe</p>
+                        <small class="text-muted">
+                            Status: <span class="badge bg-warning">pending</span> •
+                            ${new Date().toLocaleDateString()}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="border-bottom pb-2 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">1984</h6>
+                        <p class="mb-1 text-muted">Requested by: Jane Smith</p>
+                        <small class="text-muted">
+                            Status: <span class="badge bg-warning">pending</span> •
+                            ${new Date().toLocaleDateString()}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `;
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-warning';
+                case 'approved': return 'bg-success';
+                case 'rejected': return 'bg-danger';
+                case 'cancelled': return 'bg-secondary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function updateMessagesCount() {
+            document.getElementById('messagesCount').textContent = "3";
+            document.getElementById('unreadMessagesBadge').textContent = "3";
+        }
+
+        // ✅ MESSAGING FUNCTIONS
+        let currentChatUser = null;
+
+        function loadConversations() {
+            console.log('Loading conversations...');
+            const conversationsList = document.getElementById('conversationsList');
+            conversationsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading conversations...</div>';
+
+            setTimeout(() => {
+                conversationsList.innerHTML = `
+                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(2, 'John Doe')">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                            <span class="fw-bold">J</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">John Doe</h6>
+                                <span class="badge bg-danger">2</span>
+                            </div>
+                            <p class="mb-0 text-muted small text-truncate">Hi, is your book available?</p>
+                            <small class="text-muted">2 min ago</small>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(3, 'Jane Smith')">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle me-3 bg-success text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                            <span class="fw-bold">J</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Jane Smith</h6>
+                                <span class="badge bg-danger">1</span>
+                            </div>
+                            <p class="mb-0 text-muted small text-truncate">When can I pick up the book?</p>
+                            <small class="text-muted">1 hour ago</small>
+                        </div>
+                    </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(4, 'Mike Johnson')">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle me-3 bg-warning text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                            <span class="fw-bold">M</span>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Mike Johnson</h6>
+                                <span class="badge bg-secondary">0</span>
+                            </div>
+                            <p class="mb-0 text-muted small text-truncate">I have a book you might like!</p>
+                            <small class="text-muted">5 hours ago</small>
+                        </div>
+                    </div>
+                </a>
+            `;
+            }, 1000);
+        }
+
+        function openChat(otherUserId, otherUserName) {
+            console.log('Opening chat with:', otherUserName);
+            currentChatUser = { id: otherUserId, name: otherUserName };
+
+            const initial = otherUserName.charAt(0).toUpperCase();
+            document.getElementById('chatHeader').innerHTML = `
+            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                <span class="fw-bold">${initial}</span>
+            </div>
+            <div class="flex-grow-1">
+                <h6 class="mb-0">${otherUserName}</h6>
+                <small class="text-muted">Online</small>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="closeChat()">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+
+            document.getElementById('messageInputContainer').style.display = 'block';
+            loadMockMessages(otherUserId, otherUserName);
+        }
+
+        function loadMockMessages(otherUserId, otherUserName) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const mockMessages = [
+                {
+                    id: 1, sender_id: otherUserId, receiver_id: 1,
+                    message_text: `Hi! I'm interested in your book. Is it still available?`,
+                    is_read: 0, created_at: new Date(Date.now() - 300000).toISOString(),
+                    sender_name: otherUserName
+                },
+                {
+                    id: 2, sender_id: 1, receiver_id: otherUserId,
+                    message_text: `Yes, it's available! When would you like to pick it up?`,
+                    is_read: 1, created_at: new Date(Date.now() - 180000).toISOString(),
+                    sender_name: 'You'
+                },
+                {
+                    id: 3, sender_id: otherUserId, receiver_id: 1,
+                    message_text: `Great! Can I come tomorrow afternoon?`,
+                    is_read: 0, created_at: new Date(Date.now() - 60000).toISOString(),
+                    sender_name: otherUserName
+                }
+            ];
+
+            messagesContainer.innerHTML = mockMessages.map(msg => `
+            <div class="d-flex mb-3 ${msg.sender_id === 1 ? 'justify-content-end' : 'justify-content-start'}">
+                <div class="message-bubble ${msg.sender_id === 1 ? 'bg-primary text-white' : 'bg-light'}">
+                    ${msg.sender_id !== 1 ? `<small class="text-muted">${msg.sender_name}</small><br>` : ''}
+                    ${msg.message_text}
+                    <div class="message-time">${formatTime(msg.created_at)}</div>
+                </div>
+            </div>
+        `).join('');
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            if (!currentChatUser) {
+                alert('Please select a conversation first');
+                return;
+            }
+
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            if (!messageText) return;
+
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML += `
+            <div class="d-flex mb-3 justify-content-end">
+                <div class="message-bubble bg-primary text-white">
+                    ${messageText}
+                    <div class="message-time">${formatTime(new Date().toISOString())}</div>
+                </div>
+            </div>
+        `;
+
+            messageInput.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            setTimeout(() => {
+                messagesContainer.innerHTML += `
+                <div class="d-flex mb-3 justify-content-start">
+                    <div class="message-bubble bg-light">
+                        <small class="text-muted">${currentChatUser.name}</small><br>
+                        Thanks for your message! I'll get back to you soon.
+                        <div class="message-time">${formatTime(new Date().toISOString())}</div>
+                    </div>
+                </div>
+            `;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+        }
+
+        function closeChat() {
+            currentChatUser = null;
+            document.getElementById('messageInputContainer').style.display = 'none';
+            document.getElementById('messagesContainer').innerHTML = `
+            <div class="text-center text-muted mt-5">
+                <i class="fas fa-comments fa-3x mb-3"></i>
+                <p>Select a conversation to view messages</p>
+            </div>
+        `;
+            document.getElementById('chatHeader').innerHTML = `
+            <div class="flex-grow-1">
+                <h6 class="mb-0">Select a conversation to start messaging</h6>
+            </div>
+        `;
+        }
+
+        function refreshMessages() {
+            console.log('Refreshing messages...');
+            if (currentChatUser) {
+                loadMockMessages(currentChatUser.id, currentChatUser.name);
+            }
+            loadConversations();
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        // ✅ UTILITY FUNCTIONS
+        function logout() {
+            fetch('http://localhost/project/backend/api/auth/logout.php', { method: 'POST' })
+                .then(() => {
                     localStorage.removeItem('user');
+                    localStorage.removeItem('userProfile');
                     window.location.href = "index.html";
                 })
                 .catch(error => {
                     console.error('Logout error:', error);
                     localStorage.removeItem('user');
+                    localStorage.removeItem('userProfile');
                     window.location.href = "index.html";
                 });
         }
@@ -407,75 +1114,52 @@
         }
 
         function searchbook() {
-            window.location.href = "search.html";
+            window.location.href = "browse-book.html";
         }
 
         function viewRequests() {
             alert("View requests functionality will be implemented soon");
         }
 
-        function loadRecentRequests() {
-            fetch('http://localhost/book-exchange/backend/api/requests/my_requests.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const incoming = data.incoming_requests.slice(0, 3);
-                        const outgoing = data.outgoing_requests.slice(0, 3);
-
-                        let html = '';
-
-                        if (incoming.length === 0 && outgoing.length === 0) {
-                            html = '<p class="text-muted">No recent requests</p>';
-                        } else {
-                            // Show incoming requests
-                            incoming.forEach(request => {
-                                html += `
-                            <div class="mb-2 p-2 border rounded">
-                                <div class="d-flex justify-content-between">
-                                    <strong>Incoming: ${request.book_title}</strong>
-                                    <span class="badge bg-${request.status === 'Pending' ? 'warning' :
-                                        request.status === 'Approved' ? 'success' : 'danger'}">
-                                        ${request.status}
-                                    </span>
-                                </div>
-                                <small class="text-muted">From: ${request.requester_name}</small>
-                            </div>
-                        `;
-                            });
-
-                            // Show outgoing requests
-                            outgoing.forEach(request => {
-                                html += `
-                            <div class="mb-2 p-2 border rounded">
-                                <div class="d-flex justify-content-between">
-                                    <strong>Outgoing: ${request.book_title}</strong>
-                                    <span class="badge bg-${request.status === 'Pending' ? 'warning' :
-                                        request.status === 'Approved' ? 'success' : 'danger'}">
-                                        ${request.status}
-                                    </span>
-                                </div>
-                                <small class="text-muted">To: ${request.owner_name}</small>
-                            </div>
-                        `;
-                            });
-                        }
-
-                        document.getElementById('recentRequests').innerHTML = html;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading requests:', error);
-                    document.getElementById('recentRequests').innerHTML =
-                        '<p class="text-danger">Error loading requests</p>';
-                });
+        function viewAllRequests() {
+            window.location.href = 'my-requests.html';
         }
 
-        // Call this function when dashboard loads
-        document.addEventListener('DOMContentLoaded', function () {
+        function refreshDashboard() {
+            console.log("Manual refresh requested");
+            const refreshBtn = event.target;
+            const originalHtml = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
+            refreshBtn.disabled = true;
+
             loadUserBooks();
             loadDashboardStats();
-            loadRecentRequests(); // Add this line
+
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalHtml;
+                refreshBtn.disabled = false;
+                showToast('Dashboard refreshed successfully!', 'success');
+            }, 2000);
+        }
+
+        // Enter key to send message
+        document.addEventListener('DOMContentLoaded', function () {
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') sendMessage();
+                });
+            }
+            loadUserBooks();
+            loadDashboardStats();
         });
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            console.log("Auto-refreshing dashboard data...");
+            loadUserBooks();
+            loadDashboardStats();
+        }, 30000);
     </script>
 
     <!-- Bootstrap JS -->

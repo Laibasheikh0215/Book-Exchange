@@ -28,35 +28,75 @@ try {
         throw new Exception("Database connection failed");
     }
 
-    // Create book object and get all books
-    $book = new Book($db);
-    $stmt = $book->readAll();
-    
-    $books_arr = array();
-    $books_arr["books"] = array();
+    // ✅ CHECK IF SINGLE BOOK REQUEST
+    if (isset($_GET['id']) && !empty($_GET['id'])) {
+        // Get single book by ID - WITHOUT USERNAME
+        $book_id = $_GET['id'];
+        
+        $query = "SELECT b.* FROM books b WHERE b.id = :id";
+        
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(":id", $book_id);
+        $stmt->execute();
+        
+        $books_arr = array();
+        $books_arr["books"] = array();
 
-    // Check if any books found
-    if ($stmt->rowCount() > 0) {
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            // Ensure all image fields are set
-            $row['image_path'] = $row['image_path'] ?? null;
-            $row['image_path2'] = $row['image_path2'] ?? null;
-            $row['image_path3'] = $row['image_path3'] ?? null;
-            $row['owner_name'] = $row['owner_name'] ?? 'Unknown User';
+        if ($stmt->rowCount() > 0) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // Ensure all image fields are set
+                $row['image_path'] = $row['image_path'] ?? null;
+                $row['image_path2'] = $row['image_path2'] ?? null;
+                $row['image_path3'] = $row['image_path3'] ?? null;
+                $row['owner_name'] = 'User ' . $row['user_id']; // Simple owner name
+                
+                array_push($books_arr["books"], $row);
+            }
             
-            array_push($books_arr["books"], $row);
+            http_response_code(200);
+            echo json_encode($books_arr, JSON_PRETTY_PRINT);
+            
+        } else {
+            http_response_code(404);
+            echo json_encode(array(
+                "success" => false,
+                "message" => "Book not found"
+            ));
         }
         
-        http_response_code(200);
-        echo json_encode($books_arr, JSON_PRETTY_PRINT);
-        
     } else {
-        // No books found - return empty array
-        http_response_code(200);
-        echo json_encode(array(
-            "books" => array(),
-            "message" => "No books found in database."
-        ), JSON_PRETTY_PRINT);
+        // Get all books - WITHOUT USERNAME JOIN
+        $query = "SELECT b.* FROM books b WHERE b.status = 'Available' ORDER BY b.created_at DESC";
+        
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+        
+        $books_arr = array();
+        $books_arr["books"] = array();
+
+        // Check if any books found
+        if ($stmt->rowCount() > 0) {
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // Ensure all image fields are set
+                $row['image_path'] = $row['image_path'] ?? null;
+                $row['image_path2'] = $row['image_path2'] ?? null;
+                $row['image_path3'] = $row['image_path3'] ?? null;
+                $row['owner_name'] = 'User ' . $row['user_id']; // Simple owner name
+                
+                array_push($books_arr["books"], $row);
+            }
+            
+            http_response_code(200);
+            echo json_encode($books_arr, JSON_PRETTY_PRINT);
+            
+        } else {
+            // No books found - return empty array
+            http_response_code(200);
+            echo json_encode(array(
+                "books" => array(),
+                "message" => "No books found in database."
+            ), JSON_PRETTY_PRINT);
+        }
     }
 
 } catch (Exception $e) {
@@ -64,8 +104,7 @@ try {
     http_response_code(500);
     echo json_encode(array(
         "success" => false,
-        "message" => "Server Error: " . $e->getMessage(),
-        "error_details" => "Check if Book model has readAll method"
+        "message" => "Server Error: " . $e->getMessage()
     ), JSON_PRETTY_PRINT);
 }
 ?>

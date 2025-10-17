@@ -1,75 +1,48 @@
 <?php
-// Enable error logging but don't display errors
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/my_requests_errors.log');
-error_reporting(E_ALL);
-
-header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
+include_once '../../config/database.php';
+include_once '../../models/Request.php';
 
-// Simple debug function
-function log_debug($message) {
-    file_put_contents(__DIR__ . '/my_requests_debug.log', date('Y-m-d H:i:s') . ' - ' . $message . PHP_EOL, FILE_APPEND);
-}
+$database = new Database();
+$db = $database->getConnection();
 
-log_debug("=== MY_REQUESTS API CALLED ===");
+$request = new Request($db);
 
-try {
-    // Include database configuration
-    include_once '../../config/database.php';
-    include_once '../../models/Request.php';
+$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+$type = isset($_GET['type']) ? $_GET['type'] : 'outgoing'; // outgoing or incoming
 
-    $database = new Database();
-    $db = $database->getConnection();
-    
-    if (!$db) {
-        throw new Exception("Database connection failed");
+if($user_id) {
+    if($type === 'incoming') {
+        $result = $request->getByOwner($user_id);
+    } else {
+        $result = $request->getByRequester($user_id);
     }
 
-    // Get user ID from query parameter
-    $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+    $requests_arr = array();
     
-    log_debug("User ID: " . $user_id);
-
-    if (!$user_id) {
-        throw new Exception("User ID is required");
+    if($result->num_rows > 0){
+        while($row = $result->fetch_assoc()){
+            $request_item = array(
+                "id" => $row['id'],
+                "book_id" => $row['book_id'],
+                "book_title" => $row['book_title'],
+                "book_author" => $row['book_author'],
+                "book_image" => $row['book_image'],
+                "requester_name" => $row['requester_name'] ?? null,
+                "owner_name" => $row['owner_name'] ?? null,
+                "status" => $row['status'],
+                "request_type" => $row['request_type'],
+                "message" => $row['message'],
+                "created_at" => $row['created_at']
+            );
+            array_push($requests_arr, $request_item);
+        }
     }
-
-    $request = new BookRequest($db);
     
-    // Get both incoming and outgoing requests
-    log_debug("Fetching incoming requests...");
-    $incoming_stmt = $request->getByOwner($user_id);
-    $incoming_requests = $incoming_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    log_debug("Fetching outgoing requests...");
-    $outgoing_stmt = $request->getByRequester($user_id);
-    $outgoing_requests = $outgoing_stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    log_debug("Incoming: " . count($incoming_requests) . ", Outgoing: " . count($outgoing_requests));
-
-    echo json_encode(array(
-        "success" => true,
-        "incoming_requests" => $incoming_requests,
-        "outgoing_requests" => $outgoing_requests
-    ));
-
-} catch (Exception $e) {
-    log_debug("ERROR: " . $e->getMessage());
-    
-    http_response_code(500);
-    echo json_encode(array(
-        "success" => false,
-        "message" => "Error: " . $e->getMessage()
-    ));
+    echo json_encode($requests_arr);
+} else {
+    echo json_encode(array());
 }
 ?>
