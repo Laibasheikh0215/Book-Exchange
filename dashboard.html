@@ -92,6 +92,85 @@
             margin-bottom: 10px;
         }
 
+        /* ✅ IMPROVED AVATAR STYLES */
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #f8ca30;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: white;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-pic-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #f8ca30;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 48px;
+            color: white;
+            overflow: hidden;
+        }
+
+        .profile-pic-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Avatar background colors */
+        .avatar-bg-primary {
+            background-color: #007bff;
+        }
+
+        .avatar-bg-success {
+            background-color: #28a745;
+        }
+
+        .avatar-bg-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .avatar-bg-danger {
+            background-color: #dc3545;
+        }
+
+        .avatar-bg-info {
+            background-color: #17a2b8;
+        }
+
+        /* Message avatars */
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+
         /* Avatar Styles */
         .user-avatar,
         .profile-pic-preview {
@@ -270,7 +349,7 @@
         </a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-3">
-                <li class="nav-item"><a href="browse-book.html" class="nav-link">Browse Books</a></li>
+                <li class="nav-item"><a href="browser-book.html" class="nav-link">Browse Books</a></li>
                 <li class="nav-item"><a href="my-books.html" class="nav-link">My Book</a></li>
                 <li class="nav-item"><a href="user-transactions.html" class="nav-link">My Transactions</a></li>
             </ul>
@@ -551,9 +630,21 @@
             const storedProfile = localStorage.getItem('userProfile');
             if (storedProfile) {
                 const profile = JSON.parse(storedProfile);
-                if (profile.profile_picture) {
-                    document.getElementById('sidebarAvatar').src = profile.profile_picture;
+
+                // ✅ PROFILE PICTURE DISPLAY KAREN
+                if (profile.profile_picture && profile.profile_picture.startsWith('data:')) {
+                    // Agar data URL hai (base64 image)
+                    document.getElementById('sidebarAvatar').innerHTML =
+                        `<img src="${profile.profile_picture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                    // Agar base64 nahi hai, toh initial display karen
+                    const initial = (userData.name || 'U').charAt(0).toUpperCase();
+                    document.getElementById('sidebarAvatarText').textContent = initial;
                 }
+            } else {
+                // Default avatar
+                const initial = (userData.name || 'U').charAt(0).toUpperCase();
+                document.getElementById('sidebarAvatarText').textContent = initial;
             }
         }
 
@@ -607,8 +698,15 @@
         }
 
         // ✅ PROFILE FUNCTIONS
+        // ✅ PROFILE FUNCTIONS - IMPROVED
         function loadProfileData() {
             const storedProfile = localStorage.getItem('userProfile');
+
+            // Profile preview setup
+            const userName = userData.name || 'User';
+            const initial = userName.charAt(0).toUpperCase();
+            document.getElementById('profilePreviewText').textContent = initial;
+
             if (storedProfile) {
                 const profile = JSON.parse(storedProfile);
                 document.getElementById('profileName').value = profile.name || userData.name || '';
@@ -616,8 +714,11 @@
                 document.getElementById('profileCity').value = profile.city || '';
                 document.getElementById('profileAddress').value = profile.address || '';
                 document.getElementById('profileBio').value = profile.bio || '';
-                if (profile.profile_picture) {
-                    document.getElementById('profilePreview').src = profile.profile_picture;
+
+                // ✅ PROFILE PICTURE DISPLAY KAREN
+                if (profile.profile_picture && profile.profile_picture.startsWith('data:')) {
+                    document.getElementById('profilePreview').innerHTML =
+                        `<img src="${profile.profile_picture}" alt="Profile Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
                 }
             } else {
                 document.getElementById('profileName').value = userData.name || '';
@@ -630,20 +731,50 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    document.getElementById('profilePreview').src = e.target.result;
+                    // ✅ IMAGE KO BASE64 FORMAT MEIN STORE KAREN
+                    const base64Image = e.target.result;
+
+                    // Profile preview mein dikhayen
+                    document.getElementById('profilePreview').innerHTML =
+                        `<img src="${base64Image}" alt="Profile Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+
+                    // Automatically save to profile
+                    autoSaveProfilePicture(base64Image);
                 };
                 reader.readAsDataURL(file);
             }
         }
 
+        // ✅ AUTO-SAVE PROFILE PICTURE
+        function autoSaveProfilePicture(profilePicture) {
+            const profileData = {
+                name: document.getElementById('profileName').value || userData.name,
+                email: document.getElementById('profileEmail').value || userData.email,
+                city: document.getElementById('profileCity').value || '',
+                address: document.getElementById('profileAddress').value || '',
+                bio: document.getElementById('profileBio').value || '',
+                profile_picture: profilePicture
+            };
+
+            localStorage.setItem('userProfile', JSON.stringify(profileData));
+
+            // Sidebar mein bhi update karen
+            updateSidebarInfo();
+
+            showToast('Profile picture updated!', 'success');
+        }
         function updateProfile() {
+            const currentProfilePicture = document.getElementById('profilePreview').querySelector('img')?.src ||
+                document.getElementById('profilePreviewText').textContent;
+
             const profileData = {
                 name: document.getElementById('profileName').value,
                 email: document.getElementById('profileEmail').value,
                 city: document.getElementById('profileCity').value,
                 address: document.getElementById('profileAddress').value,
                 bio: document.getElementById('profileBio').value,
-                profile_picture: document.getElementById('profilePreview').src
+                profile_picture: typeof currentProfilePicture === 'string' && currentProfilePicture.startsWith('data:') ?
+                    currentProfilePicture : null
             };
 
             localStorage.setItem('userProfile', JSON.stringify(profileData));
@@ -658,6 +789,7 @@
             const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
             profileModal.hide();
         }
+
 
         // ✅ AUTO-SAVE PROFILE
         document.getElementById('profileForm').addEventListener('input', function () {
@@ -682,75 +814,79 @@
         }
 
         // ✅ BOOK MANAGEMENT FUNCTIONS
-        function loadUserBooks() {
-            const booksCountElement = document.getElementById('booksCount');
-            const recentBooksDiv = document.getElementById('recentBooks');
+       // ✅ BOOK MANAGEMENT FUNCTIONS - UPDATED
+function loadUserBooks() {
+    const booksCountElement = document.getElementById('booksCount');
+    const recentBooksDiv = document.getElementById('recentBooks');
 
-            booksCountElement.textContent = 'Loading...';
-            recentBooksDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading books...</div>';
+    booksCountElement.textContent = 'Loading...';
+    recentBooksDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading your books...</div>';
 
-            if (!userData || !userData.user_id) {
-                booksCountElement.textContent = '0';
-                recentBooksDiv.innerHTML = '<p class="text-muted">Please login to view your books</p>';
-                return;
-            }
+    if (!userData || !userData.user_id) {
+        booksCountElement.textContent = '0';
+        recentBooksDiv.innerHTML = '<p class="text-muted">Please login to view your books</p>';
+        return;
+    }
 
-            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
-                .then(response => {
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.books && data.books.length > 0) {
-                        booksCountElement.textContent = data.books.length;
-                        booksCountElement.classList.add('text-success');
-                        setTimeout(() => booksCountElement.classList.remove('text-success'), 2000);
+    // ✅ SPECIFIC USER KI BOOKS HI LOAD KAREN
+    fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
+        .then(data => {
+            console.log('User books data:', data);
+            
+            if (data.books && data.books.length > 0) {
+                booksCountElement.textContent = data.books.length;
+                booksCountElement.classList.add('text-success');
+                setTimeout(() => booksCountElement.classList.remove('text-success'), 2000);
 
-                        recentBooksDiv.innerHTML = '';
-                        data.books.slice(0, 3).forEach(book => {
-                            recentBooksDiv.innerHTML += `
-                            <div class="border-bottom pb-2 mb-2">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1">${book.title}</h6>
-                                        <p class="mb-1 text-muted">by ${book.author}</p>
-                                        <small class="text-muted">
-                                            Condition: ${book.condition} • 
-                                            Status: <span class="badge ${book.status === 'Available' ? 'bg-success' : 'bg-warning'}">${book.status}</span> •
-                                            Added: ${new Date(book.created_at).toLocaleDateString()}
-                                        </small>
-                                    </div>
-                                    <div class="btn-group ms-2">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">Edit</button>
-                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">Delete</button>
-                                    </div>
-                                </div>
+                recentBooksDiv.innerHTML = '';
+                data.books.slice(0, 3).forEach(book => {
+                    recentBooksDiv.innerHTML += `
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${book.title}</h6>
+                                <p class="mb-1 text-muted">by ${book.author}</p>
+                                <small class="text-muted">
+                                    Condition: ${book.condition} • 
+                                    Status: <span class="badge ${book.status === 'Available' ? 'bg-success' : 'bg-warning'}">${book.status}</span> •
+                                    Added: ${new Date(book.created_at).toLocaleDateString()}
+                                </small>
                             </div>
-                        `;
-                        });
-
-                        if (data.books.length > 3) {
-                            recentBooksDiv.innerHTML += `
-                            <div class="text-center mt-2">
-                                <a href="my-books.html" class="btn btn-sm btn-outline-primary">View All ${data.books.length} Books</a>
+                            <div class="btn-group ms-2">
+                                <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">Edit</button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">Delete</button>
                             </div>
-                        `;
-                        }
-                    } else {
-                        recentBooksDiv.innerHTML = `
-                        <div class="text-center text-muted">
-                            <p>No books listed yet.</p>
-                            <button class="btn btn-primary btn-sm" onclick="addBook()">Add Your First Book</button>
                         </div>
-                    `;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading books:', error);
-                    booksCountElement.textContent = '0';
-                    recentBooksDiv.innerHTML = '<p class="text-danger">Error loading books. Please try refreshing.</p>';
+                    </div>
+                `;
                 });
-        }
+
+                if (data.books.length > 3) {
+                    recentBooksDiv.innerHTML += `
+                    <div class="text-center mt-2">
+                        <a href="my-books.html" class="btn btn-sm btn-outline-primary">View All ${data.books.length} Books</a>
+                    </div>
+                `;
+                }
+            } else {
+                recentBooksDiv.innerHTML = `
+                <div class="text-center text-muted">
+                    <p>You haven't added any books yet.</p>
+                    <button class="btn btn-primary btn-sm" onclick="addBook()">Add Your First Book</button>
+                </div>
+            `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading user books:', error);
+            booksCountElement.textContent = '0';
+            recentBooksDiv.innerHTML = '<p class="text-danger">Error loading your books. Please try refreshing.</p>';
+        });
+}
 
         function editBook(bookId) {
             window.location.href = `edit-book.html?id=${bookId}`;

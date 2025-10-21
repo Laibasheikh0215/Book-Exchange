@@ -412,38 +412,37 @@
             loadAllBooks();
         });
 
-        async function loadAllBooks() {
-            try {
-                console.log("Fetching books from API...");
+        // Browse books page pe SARI AVAILABLE BOOKS load karen
+async function loadAllBooks() {
+    try {
+        console.log("Fetching ALL books from API...");
 
-                const response = await fetch('http://localhost/project/backend/api/books/read.php');
-                console.log("Response status:", response.status);
+        // ✅ BINA user_id KE CALL KAREN - SARI BOOKS KE LIYE
+        const response = await fetch('http://localhost/project/backend/api/books/read.php');
+        console.log("Response status:", response.status);
 
-                const data = await response.json();
-                console.log("Full API Response:", data);
-                console.log("Books data:", data.books);
+        const data = await response.json();
+        console.log("All books API Response:", data);
 
-                // Check if books array exists
-                if (data.books && Array.isArray(data.books)) {
-                    displayBooks(data.books);
-                } else {
-                    console.log("No books array found in response");
-                    displayBooks([]);
-                }
-
-            } catch (error) {
-                console.error('Error loading books:', error);
-                document.getElementById('booksGrid').innerHTML = `
-                <div class="col-12 text-center">
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Error loading books: ${error.message}
-                    </div>
-                </div>
-            `;
-            }
+        if (data.books && Array.isArray(data.books)) {
+            displayBooks(data.books);
+        } else {
+            console.log("No books array found in response");
+            displayBooks([]);
         }
 
+    } catch (error) {
+        console.error('Error loading books:', error);
+        document.getElementById('booksGrid').innerHTML = `
+        <div class="col-12 text-center">
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error loading books: ${error.message}
+            </div>
+        </div>
+    `;
+    }
+}
         // Search books
         async function searchBooks() {
             const searchTerm = document.getElementById('searchInput').value.trim();
@@ -630,11 +629,12 @@
         }
 
         // VIEW BOOK DETAILS FUNCTION
-        function viewBookDetails(bookId) {
-            alert(`View details for book ID: ${bookId}`);
-            // Yahan aap book details page par redirect kar sakte hain
-            // window.location.href = `book-details.html?id=${bookId}`;
-        }
+       // VIEW BOOK DETAILS FUNCTION - UPDATED
+function viewBookDetails(bookId) {
+    console.log('Opening book details for ID:', bookId);
+    // Redirect to book details page with book ID
+    window.location.href = `book-details.html?id=${bookId}`;
+}
 
         //  SEARCH ON ENTER KEY PRESS
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
