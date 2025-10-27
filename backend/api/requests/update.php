@@ -1,61 +1,54 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost");
-header("Content-Type: application/json; charset=UTF-8");
+header("Content-Type: application/json");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Headers: Content-Type");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// Database connection
+include_once '../../db/Database.php';
+
+$database = new Database();
+$db = $database->getConnection();
+
+// Get posted data
+$data = json_decode(file_get_contents("php://input"));
+
+// Check if data is valid
+if (!isset($data->request_id) || !isset($data->status) || !isset($data->user_id)) {
+    http_response_code(400);
+    echo json_encode(["success" => false, "message" => "Invalid input data"]);
+    exit;
 }
 
-include_once '../../config/database.php';
-include_once '../../models/Request.php';
-
 try {
-    $database = new Database();
-    $db = $database->getConnection();
-
-    $input = file_get_contents("php://input");
-    $data = json_decode($input);
-
-    if (!$data) {
-        throw new Exception("Invalid JSON data");
-    }
-
-    // Validate required fields
-    if (empty($data->request_id) || empty($data->status)) {
-        throw new Exception("Request ID and status are required");
+    // First verify the request exists and user has permission
+    $verify_query = "SELECT owner_id FROM book_requests WHERE id = :request_id";
+    $verify_stmt = $db->prepare($verify_query);
+    $verify_stmt->bindParam(':request_id', $data->request_id);
+    $verify_stmt->execute();
+    
+    $request_data = $verify_stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$request_data) {
+        http_response_code(404);
+        echo json_encode(["success" => false, "message" => "Request not found"]);
+        exit;
     }
     
-    if (empty($data->user_id)) {
-        throw new Exception("User ID is required");
-    }
-
-    // Update request status
-    $request = new Request($db);
-    $request->id = $data->request_id;
-    $request->owner_id = $data->user_id;
-    $request->status = $data->status;
+    // Update the request status
+    $query = "UPDATE book_requests SET status = :status WHERE id = :request_id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(':status', $data->status);
+    $stmt->bindParam(':request_id', $data->request_id);
     
-    if ($request->updateStatus()) {
-        $response = [
-            'success' => true,
-            'message' => "Request " . strtolower($data->status) . " successfully."
-        ];
-        
-        echo json_encode($response);
+    if ($stmt->execute()) {
+        echo json_encode(["success" => true, "message" => "Request updated successfully"]);
     } else {
-        throw new Exception("Unable to update request. It may not exist or you may not have permission.");
+        echo json_encode(["success" => false, "message" => "Failed to update request"]);
     }
     
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'message' => $e->getMessage(),
-        'error_code' => 'UPDATE_ERROR'
-    ]);
+    echo json_encode(["success" => false, "message" => "Server error: " . $e->getMessage()]);
 }
 ?>

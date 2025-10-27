@@ -1034,71 +1034,113 @@
         }
 
         // ✅ REQUEST TYPE CHANGE HANDLER - IMPROVED VERSION
-        function initializeRequestModal() {
-            // Request type change handler
-            document.querySelectorAll('input[name="requestType"]').forEach(radio => {
-                radio.addEventListener('change', function () {
-                    const isSwap = this.value === 'Swap';
-                    document.getElementById('swapBookSection').style.display = isSwap ? 'block' : 'none';
-                    document.getElementById('borrowOptions').style.display = isSwap ? 'none' : 'block';
-
-                    if (isSwap) {
-                        loadUserBooksForSwap();
-                    }
-                });
+     // ✅ INITIALIZE REQUEST MODAL - IMPROVED
+function initializeRequestModal() {
+    console.log('Initializing request modal...');
+    
+    // Request type change handler
+    const requestTypeRadios = document.querySelectorAll('input[name="requestType"]');
+    if (requestTypeRadios.length > 0) {
+        requestTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const isSwap = this.value === 'Swap';
+                const swapSection = document.getElementById('swapBookSection');
+                const borrowSection = document.getElementById('borrowOptions');
+                
+                if (swapSection) swapSection.style.display = isSwap ? 'block' : 'none';
+                if (borrowSection) borrowSection.style.display = isSwap ? 'none' : 'block';
+                
+                if (isSwap) {
+                    loadUserBooksForSwap();
+                }
             });
-
-            // Set minimum date for return (tomorrow)
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            document.getElementById('returnDate').min = tomorrow.toISOString().split('T')[0];
-        }
+        });
+        console.log('Request type handlers initialized');
+    }
+    
+    // Set minimum date for return (tomorrow)
+    const returnDateInput = document.getElementById('returnDate');
+    if (returnDateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        returnDateInput.min = tomorrow.toISOString().split('T')[0];
+        console.log('Return date min set to:', returnDateInput.min);
+    }
+    
+    console.log('Request modal initialized successfully');
+}
 
         // ✅ REQUEST BORROW FUNCTION - UPDATE KAREN
         function requestBorrow() {
-            if (!bookId) {
-                alert('Book ID not found');
-                return;
-            }
+    console.log('Request borrow button clicked');
+    
+    if (!bookId) {
+        alert('Book ID not found');
+        return;
+    }
 
-            if (!currentUserId) {
-                alert('Please login to request this book');
-                window.location.href = 'login.html';
-                return;
-            }
+    if (!currentUserId) {
+        alert('Please login to request this book');
+        window.location.href = 'login.html';
+        return;
+    }
 
-            // Check if user is trying to request their own book
-            checkIfOwnBook();
-        }
+    // Directly show modal - ownership check modal ke andar karenge
+    showRequestModal();
+}
+
+// ✅ NEW FUNCTION TO SHOW MODAL DIRECTLY
+function showRequestModal() {
+    console.log('Showing request modal');
+    
+    // Load user's books for swap options
+    loadUserBooksForSwap();
+    
+    // Initialize modal events
+    initializeRequestModal();
+    
+    // Set minimum date for return (tomorrow)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const returnDateInput = document.getElementById('returnDate');
+    if (returnDateInput) {
+        returnDateInput.min = tomorrow.toISOString().split('T')[0];
+    }
+    
+    // Show modal using Bootstrap
+    const requestModalElement = document.getElementById('requestModal');
+    if (requestModalElement) {
+        const requestModal = new bootstrap.Modal(requestModalElement);
+        requestModal.show();
+        console.log('Modal should be visible now');
+    } else {
+        console.error('Request modal element not found');
+        alert('Error: Could not open request form');
+    }
+}
 
         // ✅ CHECK IF USER'S OWN BOOK
-        async function checkIfOwnBook() {
-            try {
-                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
-                const data = await response.json();
+      
+async function checkIfOwnBook() {
+    try {
+        const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+        const data = await response.json();
 
-                if (data.books && data.books.length > 0) {
-                    const book = data.books[0];
-                    if (book.user_id == currentUserId) {
-                        alert("You cannot request your own book!");
-                        return;
-                    }
-
-                    // Load user's books for swap options
-                    loadUserBooksForSwap();
-
-                    // Initialize modal events
-                    initializeRequestModal();
-
-                    // Show modal
-                    const requestModal = new bootstrap.Modal(document.getElementById('requestModal'));
-                    requestModal.show();
-                }
-            } catch (error) {
-                console.error('Error checking book ownership:', error);
-                alert('Error loading book details');
+        if (data.books && data.books.length > 0) {
+            const book = data.books[0];
+            if (book.user_id == currentUserId) {
+                alert("You cannot request your own book!");
+                return true; // Is own book
             }
+            return false; // Not own book
         }
+        return false;
+    } catch (error) {
+        console.error('Error checking book ownership:', error);
+        // Continue anyway - don't block the user
+        return false;
+    }
+}
 
 
         // ✅ LOAD USER'S BOOKS FOR SWAP
@@ -1147,92 +1189,129 @@
             });
         });
 
+        // ✅ CHECK IF BOOK ID EXISTS ON PAGE LOAD - UPDATED
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('Page loaded, checking book ID:', bookId);
+
+    if (!bookId) {
+        showError('No book ID specified in URL. Please select a book from browse page.');
+        return;
+    }
+
+    // Get current user
+    getCurrentUser();
+
+    // Load book data
+    loadBookDetails(bookId);
+    loadBookReviews(bookId);
+    initializeRatingSystem();
+    
+    // ✅ ADD THIS LINE - Pre-initialize modal
+    initializeRequestModal();
+});
 
         // ✅ SUBMIT REQUEST FUNCTION
-        async function submitRequest() {
-            // Use currentUserId instead of userData.user_id
-            if (!currentUserId) {
-                alert('Please login to send request');
-                window.location.href = 'login.html';
-                return;
-            }
+  // ✅ IMPROVED SUBMIT REQUEST FUNCTION - BETTER ERROR HANDLING
+async function submitRequest() {
+    if (!currentUserId) {
+        alert('Please login to send request');
+        window.location.href = 'login.html';
+        return;
+    }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const bookId = urlParams.get('id');
+    const bookId = urlParams.get('id');
+    if (!bookId) {
+        alert('Book not found');
+        return;
+    }
 
-            if (!bookId) {
-                alert('Book not found');
-                return;
-            }
+    // Get form data
+    const requestType = document.querySelector('input[name="requestType"]:checked').value;
+    const message = document.getElementById('requestMessage').value.trim();
 
-            // Get request type from radio buttons
-            const requestType = document.querySelector('input[name="requestType"]:checked').value;
-            const message = document.getElementById('requestMessage').value.trim();
+    if (!message) {
+        alert('Please enter a message for your request');
+        return;
+    }
 
-            if (!message) {
-                alert('Please enter a message for your request');
-                return;
-            }
+    // Prepare request data
+    const requestData = {
+        book_id: parseInt(bookId),
+        user_id: currentUserId,
+        request_type: requestType,
+        message: message,
+        proposed_return_date: requestType === 'Borrow' ? 
+            document.getElementById('returnDate').value : null
+    };
 
-            // Prepare request data
-            const requestData = {
-                book_id: parseInt(bookId),
-                user_id: currentUserId, // Use currentUserId here
-                request_type: requestType,
-                message: message,
-                proposed_return_date: requestType === 'Borrow' ?
-                    document.getElementById('returnDate').value : null
-            };
+    console.log('Sending request:', requestData);
 
-            console.log('Sending request:', requestData);
+    const submitBtn = document.querySelector('#requestModal .btn-primary');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+    submitBtn.disabled = true;
 
-            const submitBtn = document.querySelector('#requestModal .btn-primary');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
-            submitBtn.disabled = true;
+    try {
+        const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
 
-            try {
-                const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData)
-                });
+        // ✅ BETTER ERROR HANDLING - FIRST GET RAW RESPONSE
+        const responseText = await response.text();
+        console.log('Raw server response:', responseText);
 
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-
-                let result;
-                try {
-                    result = JSON.parse(responseText);
-                } catch (parseError) {
-                    console.error('JSON parse error:', parseError);
-                    throw new Error('Invalid response from server. Please try again.');
-                }
-
-                console.log('Request response:', result);
-
-                if (response.ok && result.success) {
-                    alert('✅ Request sent successfully! The book owner will be notified.');
-                    // Close modal
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
-                    modal.hide();
-                    // Reset form
-                    document.getElementById('requestMessage').value = '';
-                    document.getElementById('returnDate').value = '';
-                } else {
-                    throw new Error(result.message || 'Failed to send request');
-                }
-
-            } catch (error) {
-                console.error('Error submitting request:', error);
-                alert('❌ Error: ' + error.message);
-            } finally {
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
+        // Check if response is HTML error
+        if (responseText.trim().startsWith('<') || responseText.includes('<br />') || responseText.includes('<b>')) {
+            console.error('Server returned HTML error:', responseText);
+            
+            // Try to extract error message from HTML
+            const errorMatch = responseText.match(/<b>(.*?)<\/b>/);
+            const errorMessage = errorMatch ? errorMatch[1] : 'Server configuration error';
+            
+            throw new Error(`Server Error: ${errorMessage}`);
         }
+
+        // Try to parse as JSON
+        let result;
+        try {
+            result = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('JSON parse error. Raw response:', responseText.substring(0, 200));
+            throw new Error('Server returned invalid JSON. Please check backend configuration.');
+        }
+
+        console.log('Parsed response:', result);
+
+        if (result.success) {
+            alert('✅ Request sent successfully! The book owner will be notified.');
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+            modal.hide();
+            // Reset form
+            document.getElementById('requestMessage').value = '';
+            document.getElementById('returnDate').value = '';
+        } else {
+            throw new Error(result.message || 'Failed to send request');
+        }
+
+    } catch (error) {
+        console.error('Error submitting request:', error);
+        alert('❌ Error: ' + error.message);
+        
+        // ✅ SHOW MORE DETAILED ERROR FOR DEBUGGING
+        if (error.message.includes('Server Error') || error.message.includes('HTML')) {
+            alert('Backend server error. Please contact administrator or try again later.');
+        }
+    } finally {
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Request';
+        submitBtn.disabled = false;
+    }
+}     
+  
 
         // ✅ GET BOOK OWNER ID FUNCTION
         async function getBookOwnerId() {

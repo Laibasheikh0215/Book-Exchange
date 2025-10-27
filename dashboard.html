@@ -359,43 +359,90 @@
 
         /* styling user chat avatars */
         /* ✅ AVATAR STYLES FOR INBOX */
-.avatar-placeholder {
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white;
-    flex-shrink: 0;
-}
+        .avatar-placeholder {
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
 
-.avatar-primary { background-color: #007bff; }
-.avatar-success { background-color: #28a745; }
-.avatar-warning { background-color: #ffc107; color: #000; }
-.avatar-danger { background-color: #dc3545; }
-.avatar-info { background-color: #17a2b8; }
+        .avatar-primary {
+            background-color: #007bff;
+        }
 
-/* Conversation item hover effects */
-.conversation-item {
-    transition: all 0.2s ease;
-    border: none !important;
-}
+        .avatar-success {
+            background-color: #28a745;
+        }
 
-.conversation-item:hover {
-    background-color: #f8f9fa !important;
-}
+        .avatar-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
 
-.conversation-item.active {
-    background-color: #e3f2fd !important;
-    border-left: 3px solid #007bff !important;
-}
+        .avatar-danger {
+            background-color: #dc3545;
+        }
 
-/* Ensure text doesn't overflow */
-.text-truncate {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+        .avatar-info {
+            background-color: #17a2b8;
+        }
+
+        /* Conversation item hover effects */
+        .conversation-item {
+            transition: all 0.2s ease;
+            border: none !important;
+        }
+
+        .conversation-item:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        .conversation-item.active {
+            background-color: #e3f2fd !important;
+            border-left: 3px solid #007bff !important;
+        }
+
+        /* Ensure text doesn't overflow */
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ✅ NOTIFICATION STYLES */
+        .notification-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none !important;
+        }
+
+        .notification-item:hover {
+            background-color: #f8f9fa !important;
+        }
+
+        .notification-item.bg-light {
+            border-left: 3px solid #007bff !important;
+        }
+
+        /* Notification icons */
+        .text-primary {
+            color: #007bff !important;
+        }
+
+        .text-success {
+            color: #28a745 !important;
+        }
+
+        .text-warning {
+            color: #ffc107 !important;
+        }
+
+        .text-info {
+            color: #17a2b8 !important;
+        }
     </style>
 </head>
 
@@ -457,6 +504,10 @@
                     <a class="nav-link" href="#" onclick="showRequests()">
                         <i class="fas fa-handshake me-2"></i>Requests
                         <span class="badge bg-danger ms-1" id="pendingRequestsBadge">0</span>
+                    </a>
+                    <a class="nav-link" href="#" onclick="showNotifications()">
+                        <i class="fas fa-bell me-2"></i>Notifications
+                        <span class="badge bg-danger ms-1" id="sidebarNotificationsBadge">0</span>
                     </a>
                 </nav>
             </div>
@@ -613,7 +664,6 @@
     </div>
 
     <!-- ✅ MESSAGES INTERFACE -->
-    <!-- ✅ MESSAGES INTERFACE -->
     <div id="messagesInterface" class="container-fluid" style="display: none;">
         <div class="row">
             <div class="col-12">
@@ -676,6 +726,38 @@
             </div>
         </div>
     </div>
+
+    <!-- ✅ NOTIFICATIONS INTERFACE - SEPARATE -->
+    <div id="notificationsInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bell me-2"></i>Notifications
+                            <span class="badge bg-danger ms-1" id="unreadNotificationsCount">0</span>
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-dark me-2" onclick="markAllNotificationsAsRead()">
+                                <i class="fas fa-check-double me-1"></i> Mark All Read
+                            </button>
+                            <button class="btn btn-sm btn-light" onclick="refreshNotifications()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="notificationsList">
+                            <div class="text-center p-3">
+                                <div class="spinner-border spinner-border-sm"></div> Loading notifications...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ✅ PROFILE MODAL -->
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -832,6 +914,84 @@
             }
         }
 
+        // ✅ INITIALIZE MODALS ON DASHBOARD LOAD
+function initializeModals() {
+    console.log('Initializing modals...');
+    
+    // Request type change handler
+    document.querySelectorAll('input[name="requestType"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const isSwap = this.value === 'Swap';
+            const swapSection = document.getElementById('swapBookSection');
+            const borrowSection = document.getElementById('borrowOptions');
+            
+            if (swapSection) swapSection.style.display = isSwap ? 'block' : 'none';
+            if (borrowSection) borrowSection.style.display = isSwap ? 'none' : 'block';
+            
+            if (isSwap) {
+                loadUserBooksForSwap();
+            }
+        });
+    });
+    
+    // Set minimum date for return (tomorrow)
+    const returnDateInput = document.getElementById('returnDate');
+    if (returnDateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        returnDateInput.min = tomorrow.toISOString().split('T')[0];
+    }
+    
+    console.log('Modals initialized successfully');
+}
+
+// ✅ IMPROVED REQUEST BORROW FUNCTION
+function requestBorrow() {
+    console.log('Request borrow clicked');
+    
+    if (!userData || !userData.user_id) {
+        alert('Please login to request this book');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Show modal immediately
+    const requestModalElement = document.getElementById('requestModal');
+    if (!requestModalElement) {
+        console.error('Request modal element not found');
+        return;
+    }
+    
+    const requestModal = new bootstrap.Modal(requestModalElement);
+    requestModal.show();
+    
+    // Initialize modal content
+    initializeModals();
+}
+
+// ✅ IMPROVED SHOW REQUESTS FUNCTION
+function showRequests() {
+    console.log('Showing requests interface');
+    
+    // Hide other sections
+    document.querySelector('.dashboard-header').style.display = 'none';
+    document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+    document.getElementById('messagesInterface').style.display = 'none';
+    document.getElementById('notificationsInterface').style.display = 'none';
+    
+    // Show requests interface
+    const requestsInterface = document.getElementById('requestsInterface');
+    if (requestsInterface) {
+        requestsInterface.style.display = 'block';
+    } else {
+        console.error('Requests interface not found');
+    }
+    
+    setActiveNavLink('requests');
+    loadRequests();
+    initializeModals(); // ✅ ADD THIS LINE
+}
+
         // ✅ UPDATE REQUESTS COUNT
         function updateRequestsCount() {
             if (!userData || !userData.user_id) return;
@@ -935,12 +1095,12 @@
         `;
         }
 
-        // ✅ SHOW REQUESTS FUNCTION
+        // ✅ SHOW REQUESTS FUNCTION UPDATE KAREN
         function showRequests() {
-            console.log('Opening requests page...');
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
             document.getElementById('messagesInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
             document.getElementById('requestsInterface').style.display = 'block';
             setActiveNavLink('requests');
             loadRequests();
@@ -1142,38 +1302,50 @@
         }
 
         // ✅ UPDATE REQUEST STATUS
-        function updateRequestStatus(requestId, newStatus) {
-            if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
+        // ✅ UPDATE REQUEST STATUS - IMPROVED ERROR HANDLING
+function updateRequestStatus(requestId, newStatus) {
+    if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
 
-            const requestData = {
-                request_id: parseInt(requestId),
-                status: newStatus,
-                user_id: parseInt(userData.user_id)
-            };
+    const requestData = {
+        request_id: parseInt(requestId),
+        status: newStatus,
+        user_id: parseInt(userData.user_id)
+    };
 
-            fetch('http://localhost/project/backend/api/requests/update.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
-                        loadRequests();
-                        updateRequestsCount();
-                        loadRecentRequests();
-                    } else {
-                        throw new Error(data.message || 'Failed to update request');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating request:', error);
-                    showToast('Error updating request', 'error');
-                });
+    console.log('Sending update request:', requestData);
+
+    fetch('http://localhost/project/backend/api/requests/update.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        // ✅ FIRST CHECK IF RESPONSE IS OK
+        if (!response.ok) {
+            return response.text().then(errorText => {
+                console.error('Server Error Response:', errorText);
+                throw new Error(`Server error: ${response.status}`);
+            });
         }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
+            loadRequests();
+            updateRequestsCount();
+            loadRecentRequests();
+        } else {
+            throw new Error(data.message || 'Failed to update request');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating request:', error);
+        showToast('Error updating request: ' + error.message, 'error');
+    });
+}
 
         // ✅ CANCEL REQUEST WITH UI UPDATE
         function cancelRequest(requestId, buttonElement) {
@@ -1320,17 +1492,16 @@
 
         // Show messages interface
         function showMessages() {
-            console.log('Opening messages interface...');
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
             document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
             document.getElementById('messagesInterface').style.display = 'block';
             setActiveNavLink('messages');
             loadConversations();
             updateUnreadMessagesCount();
         }
 
-        // Load conversations
         // ✅ LOAD CONVERSATIONS WITH DEBUGGING
         // ✅ LOAD CONVERSATIONS WITH ENHANCED DEBUGGING
         function loadConversations() {
@@ -1399,65 +1570,65 @@
 
 
         // Display conversations
-  // ✅ DISPLAY CONVERSATIONS WITH AVATARS
-function displayConversations(conversations) {
-    const conversationsList = document.getElementById('conversationsList');
-    
-    if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
-        conversationsList.innerHTML = `
+        // ✅ DISPLAY CONVERSATIONS WITH AVATARS
+        function displayConversations(conversations) {
+            const conversationsList = document.getElementById('conversationsList');
+
+            if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
+                conversationsList.innerHTML = `
             <div class="text-center text-muted p-3">
                 <i class="fas fa-comments fa-2x mb-2"></i>
                 <p>No conversations yet</p>
                 <small>When someone messages you, it will appear here</small>
             </div>
         `;
-        return;
-    }
-
-    console.log('Processing conversations with avatars:', conversations);
-
-    conversationsList.innerHTML = conversations.map((conv, index) => {
-        try {
-            if (!conv || typeof conv !== 'object') {
-                return '';
+                return;
             }
 
-            // ✅ USER IDENTIFICATION WITH AVATAR SUPPORT
-            let otherUserId, otherUserName;
-            
-            if (conv.user1_id !== undefined && conv.user2_id !== undefined) {
-                if (conv.user1_id == userData.user_id) {
-                    otherUserId = conv.user2_id;
-                    otherUserName = conv.user2_name || `User ${conv.user2_id}`;
-                } else {
-                    otherUserId = conv.user1_id;
-                    otherUserName = conv.user1_name || `User ${conv.user1_id}`;
-                }
-            } else if (conv.sender_id !== undefined) {
-                otherUserId = conv.sender_id == userData.user_id ? conv.receiver_id : conv.sender_id;
-                otherUserName = conv.sender_name || `User ${otherUserId}`;
-            } else {
-                otherUserId = index + 1;
-                otherUserName = 'Unknown User';
-            }
+            console.log('Processing conversations with avatars:', conversations);
 
-            // ✅ AVATAR GENERATION
-            const userInitial = otherUserName.charAt(0).toUpperCase();
-            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-            const colorIndex = otherUserId % avatarColors.length;
-            const avatarClass = avatarColors[colorIndex];
+            conversationsList.innerHTML = conversations.map((conv, index) => {
+                try {
+                    if (!conv || typeof conv !== 'object') {
+                        return '';
+                    }
 
-            // ✅ SAFE DATA HANDLING
-            const safeUserId = otherUserId || 0;
-            const safeUserName = String(otherUserName).replace(/'/g, "\\'");
-            const lastMessage = conv.last_message || conv.message_text || 'No messages yet';
-            const lastMessageTime = conv.last_message_at || conv.created_at || new Date();
-            const unreadCount = conv.unread_count || 0;
-            const unreadBadge = unreadCount > 0 ? `<span class="badge bg-danger ms-1">${unreadCount}</span>` : '';
+                    // ✅ USER IDENTIFICATION WITH AVATAR SUPPORT
+                    let otherUserId, otherUserName;
 
-            const isActive = currentConversation && currentConversation.other_user_id === safeUserId;
+                    if (conv.user1_id !== undefined && conv.user2_id !== undefined) {
+                        if (conv.user1_id == userData.user_id) {
+                            otherUserId = conv.user2_id;
+                            otherUserName = conv.user2_name || `User ${conv.user2_id}`;
+                        } else {
+                            otherUserId = conv.user1_id;
+                            otherUserName = conv.user1_name || `User ${conv.user1_id}`;
+                        }
+                    } else if (conv.sender_id !== undefined) {
+                        otherUserId = conv.sender_id == userData.user_id ? conv.receiver_id : conv.sender_id;
+                        otherUserName = conv.sender_name || `User ${otherUserId}`;
+                    } else {
+                        otherUserId = index + 1;
+                        otherUserName = 'Unknown User';
+                    }
 
-            return `
+                    // ✅ AVATAR GENERATION
+                    const userInitial = otherUserName.charAt(0).toUpperCase();
+                    const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+                    const colorIndex = otherUserId % avatarColors.length;
+                    const avatarClass = avatarColors[colorIndex];
+
+                    // ✅ SAFE DATA HANDLING
+                    const safeUserId = otherUserId || 0;
+                    const safeUserName = String(otherUserName).replace(/'/g, "\\'");
+                    const lastMessage = conv.last_message || conv.message_text || 'No messages yet';
+                    const lastMessageTime = conv.last_message_at || conv.created_at || new Date();
+                    const unreadCount = conv.unread_count || 0;
+                    const unreadBadge = unreadCount > 0 ? `<span class="badge bg-danger ms-1">${unreadCount}</span>` : '';
+
+                    const isActive = currentConversation && currentConversation.other_user_id === safeUserId;
+
+                    return `
                 <div class="conversation-item border-bottom p-3 ${isActive ? 'active' : ''}"
                      style="cursor: pointer; ${isActive ? 'background-color: #e3f2fd;' : ''}"
                      onclick="selectConversation(${safeUserId}, '${safeUserName}')">
@@ -1484,41 +1655,41 @@ function displayConversations(conversations) {
                     </div>
                 </div>
             `;
-        } catch (error) {
-            console.error('Error processing conversation:', error);
-            return '';
-        }
-    }).filter(html => html !== '').join('');
+                } catch (error) {
+                    console.error('Error processing conversation:', error);
+                    return '';
+                }
+            }).filter(html => html !== '').join('');
 
-    if (conversationsList.innerHTML.trim() === '') {
-        conversationsList.innerHTML = `
+            if (conversationsList.innerHTML.trim() === '') {
+                conversationsList.innerHTML = `
             <div class="text-center text-muted p-3">
                 <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                 <p>No valid conversations to display</p>
             </div>
         `;
-    }
-}
+            }
+        }
 
 
         // Select a conversation
-       // ✅ SELECT CONVERSATION WITH AVATAR IN HEADER
-function selectConversation(otherUserId, otherUserName) {
-    console.log('Selecting conversation with:', otherUserName, otherUserId);
-    
-    currentConversation = {
-        other_user_id: otherUserId,
-        other_user_name: otherUserName
-    };
+        // ✅ SELECT CONVERSATION WITH AVATAR IN HEADER
+        function selectConversation(otherUserId, otherUserName) {
+            console.log('Selecting conversation with:', otherUserName, otherUserId);
 
-    // ✅ AVATAR FOR CONVERSATION HEADER
-    const userInitial = otherUserName.charAt(0).toUpperCase();
-    const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-    const colorIndex = otherUserId % avatarColors.length;
-    const avatarClass = avatarColors[colorIndex];
+            currentConversation = {
+                other_user_id: otherUserId,
+                other_user_name: otherUserName
+            };
 
-    // Update UI with avatar
-    document.getElementById('conversationWith').innerHTML = `
+            // ✅ AVATAR FOR CONVERSATION HEADER
+            const userInitial = otherUserName.charAt(0).toUpperCase();
+            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+            const colorIndex = otherUserId % avatarColors.length;
+            const avatarClass = avatarColors[colorIndex];
+
+            // Update UI with avatar
+            document.getElementById('conversationWith').innerHTML = `
         <div class="d-flex align-items-center">
             <div class="avatar-placeholder ${avatarClass} me-2" 
                  style="width: 40px; height: 40px; font-size: 1rem;">
@@ -1531,21 +1702,21 @@ function selectConversation(otherUserId, otherUserName) {
             </div>
         </div>
     `;
-    
-    document.getElementById('selectedConversation').style.display = 'block';
-    document.getElementById('noConversationSelected').style.display = 'none';
 
-    // Highlight selected conversation
-    document.querySelectorAll('.conversation-item').forEach(item => {
-        item.classList.remove('active');
-        item.style.backgroundColor = '';
-    });
-    event.currentTarget.classList.add('active');
-    event.currentTarget.style.backgroundColor = '#e3f2fd';
+            document.getElementById('selectedConversation').style.display = 'block';
+            document.getElementById('noConversationSelected').style.display = 'none';
 
-    // Load messages
-    loadMessages(otherUserId);
-}
+            // Highlight selected conversation
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+                item.style.backgroundColor = '';
+            });
+            event.currentTarget.classList.add('active');
+            event.currentTarget.style.backgroundColor = '#e3f2fd';
+
+            // Load messages
+            loadMessages(otherUserId);
+        }
 
         // Load messages between current user and selected user
         function loadMessages(otherUserId) {
@@ -1577,33 +1748,33 @@ function selectConversation(otherUserId, otherUserName) {
         }
 
         // Display messages in the chat area
-// ✅ DISPLAY MESSAGES WITH AVATARS
-function displayMessages(messages) {
-    const messagesContainer = document.getElementById('messagesContainer');
-    
-    if (!messages || messages.length === 0) {
-        messagesContainer.innerHTML = `
+        // ✅ DISPLAY MESSAGES WITH AVATARS
+        function displayMessages(messages) {
+            const messagesContainer = document.getElementById('messagesContainer');
+
+            if (!messages || messages.length === 0) {
+                messagesContainer.innerHTML = `
             <div class="text-center text-muted p-3">
                 <i class="fas fa-comments me-2"></i>
                 No messages yet. Start the conversation!
             </div>
         `;
-        return;
-    }
+                return;
+            }
 
-    messagesContainer.innerHTML = messages.map(msg => {
-        const isSender = msg.sender_id == userData.user_id;
-        const messageTime = new Date(msg.created_at).toLocaleTimeString([], { 
-            hour: '2-digit', minute: '2-digit' 
-        });
+            messagesContainer.innerHTML = messages.map(msg => {
+                const isSender = msg.sender_id == userData.user_id;
+                const messageTime = new Date(msg.created_at).toLocaleTimeString([], {
+                    hour: '2-digit', minute: '2-digit'
+                });
 
-        // ✅ AVATAR FOR EACH MESSAGE
-        const senderInitial = (msg.sender_name || 'U').charAt(0).toUpperCase();
-        const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-        const colorIndex = (msg.sender_id || 0) % avatarColors.length;
-        const avatarClass = avatarColors[colorIndex];
+                // ✅ AVATAR FOR EACH MESSAGE
+                const senderInitial = (msg.sender_name || 'U').charAt(0).toUpperCase();
+                const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+                const colorIndex = (msg.sender_id || 0) % avatarColors.length;
+                const avatarClass = avatarColors[colorIndex];
 
-        return `
+                return `
             <div class="d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'} mb-3">
                 ${!isSender ? `
                     <!-- ✅ RECEIVER AVATAR -->
@@ -1638,12 +1809,12 @@ function displayMessages(messages) {
                 ` : ''}
             </div>
         `;
-    }).join('');
+            }).join('');
 
-    // Scroll to bottom
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-         
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
 
         // Send new message from dashboard
         function sendNewMessage() {
@@ -1765,6 +1936,210 @@ function displayMessages(messages) {
             document.getElementById('unreadMessagesBadge').textContent = "0";
         }
 
+        // ✅ NOTIFICATIONS FUNCTIONS - SEPARATE
+        // InititializeDAshboard Function   
+        function initializeDashboard() {
+            console.log('🚀 Initializing dashboard with user data...');
+
+            // Basic user info
+            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+            updateSidebarInfo();
+
+            // Load all data
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+            updateUnreadMessagesCount();
+            updateUnreadNotificationsCount(); // Add this line
+initializeModals();
+
+            console.log('✅ Dashboard fully initialized');
+        }
+
+        // ✅ SHOW NOTIFICATIONS FUNCTION
+        function showNotifications() {
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'block';
+            setActiveNavLink('notifications');
+            loadNotifications();
+            updateUnreadNotificationsCount();
+        }
+
+        // Load notifications
+        function loadNotifications() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/notifications/get.php?user_id=${userData.user_id}&limit=20`)
+                .then(response => response.json())
+                .then(notifications => {
+                    displayNotifications(notifications);
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    document.getElementById('notificationsList').innerHTML = `
+                <div class="text-center text-muted p-3">
+                    Error loading notifications
+                </div>
+            `;
+                });
+        }
+
+        // Display notifications
+        function displayNotifications(notifications) {
+            const notificationsList = document.getElementById('notificationsList');
+
+            if (!notifications || notifications.length === 0) {
+                notificationsList.innerHTML = `
+            <div class="text-center text-muted p-3">
+                <i class="fas fa-bell-slash fa-2x mb-2"></i>
+                <p>No notifications yet</p>
+                <small>You're all caught up!</small>
+            </div>
+        `;
+                return;
+            }
+
+            notificationsList.innerHTML = notifications.map(notif => {
+                const icon = getNotificationIcon(notif.type);
+                const timeAgo = formatTimeAgo(notif.created_at);
+                const isUnread = !notif.is_read;
+
+                return `
+            <div class="notification-item border-bottom p-3 ${isUnread ? 'bg-light' : ''}" 
+                 onclick="markNotificationAsRead(${notif.id})">
+                <div class="d-flex align-items-start">
+                    <div class="me-3 ${getNotificationIconColor(notif.type)}">
+                        <i class="${icon} fa-lg"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${notif.title}</h6>
+                        <p class="mb-1">${notif.message}</p>
+                        <small class="text-muted">${timeAgo}</small>
+                    </div>
+                    ${isUnread ? `<span class="badge bg-primary">New</span>` : ''}
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Get notification icon
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'Request': return 'fas fa-handshake';
+                case 'Message': return 'fas fa-comment';
+                case 'Reminder': return 'fas fa-clock';
+                default: return 'fas fa-info-circle';
+            }
+        }
+
+        // Get notification icon color
+        function getNotificationIconColor(type) {
+            switch (type) {
+                case 'Request': return 'text-primary';
+                case 'Message': return 'text-success';
+                case 'Reminder': return 'text-warning';
+                default: return 'text-info';
+            }
+        }
+
+        // Mark notification as read
+        function markNotificationAsRead(notificationId) {
+            if (!userData || !userData.user_id) return;
+
+            fetch('http://localhost/project/backend/api/notifications/mark_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userData.user_id,
+                    notification_id: notificationId
+                })
+            })
+                .then(() => {
+                    loadNotifications();
+                    updateUnreadNotificationsCount();
+                })
+                .catch(error => console.error('Error marking notification as read:', error));
+        }
+
+        // Mark all notifications as read
+        function markAllNotificationsAsRead() {
+            if (!userData || !userData.user_id) return;
+
+            fetch('http://localhost/project/backend/api/notifications/mark_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userData.user_id
+                })
+            })
+                .then(() => {
+                    loadNotifications();
+                    updateUnreadNotificationsCount();
+                    showToast('All notifications marked as read!', 'success');
+                })
+                .catch(error => console.error('Error marking all notifications as read:', error));
+        }
+
+        // Update unread notifications count
+        function updateUnreadNotificationsCount() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/notifications/unread_count.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const unreadCount = data.count || 0;
+                    document.getElementById('unreadNotificationsCount').textContent = unreadCount;
+                    document.getElementById('sidebarNotificationsBadge').textContent = unreadCount;
+                })
+                .catch(error => {
+                    console.error('Error updating unread count:', error);
+                });
+        }
+
+        // Refresh notifications
+        function refreshNotifications() {
+            loadNotifications();
+            updateUnreadNotificationsCount();
+            showToast('Notifications refreshed!', 'success');
+        }
+
+        // Time ago formatter
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
+        // ✅ AUTO-REFRESH EVERY 30 SECONDS
+        setInterval(() => {
+            if (userData && userData.user_id) {
+                updateRequestsCount();
+                loadRecentRequests();
+                updateUnreadMessagesCount();
+                updateUnreadNotificationsCount(); // Add this line
+            }
+        }, 30000);
+
         // ✅ REFRESH DASHBOARD
         function refreshDashboard() {
             console.log("Refreshing dashboard...");
@@ -1794,6 +2169,7 @@ function displayMessages(messages) {
             document.getElementById('sidebarAvatarText').textContent = initial;
         }
 
+        // ✅ SET ACTIVE NAV LINK FUNCTION
         function setActiveNavLink(activeItem) {
             document.querySelectorAll('.sidebar .nav-link').forEach(link => {
                 link.classList.remove('active');
@@ -1807,14 +2183,17 @@ function displayMessages(messages) {
                 case 'transactions': navLinks[3].classList.add('active'); break;
                 case 'messages': navLinks[4].classList.add('active'); break;
                 case 'requests': navLinks[7].classList.add('active'); break;
+                case 'notifications': navLinks[8].classList.add('active'); break; // ✅ NEW
             }
         }
 
+        // ✅ SHOW DASHBOARD FUNCTION 
         function showDashboard() {
             document.querySelector('.dashboard-header').style.display = 'block';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
             document.getElementById('messagesInterface').style.display = 'none';
             document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
             setActiveNavLink('dashboard');
         }
 
