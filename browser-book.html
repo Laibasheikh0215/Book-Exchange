@@ -649,6 +649,48 @@ function viewBookDetails(bookId) {
             const defaultCover = 'Assets/default-book-cover.jpg';
             // Agar nahi hai toh colored SVG use karega automatically
         }
+
+
+        // ✅ SEND BOOK REQUEST FUNCTION
+function sendBookRequest(bookId, requestType) {
+    if (!userData || !userData.user_id) {
+        alert('Please login to send request');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    const message = prompt(`Enter message for ${requestType} request:`);
+    if (message === null) return; // User cancelled
+
+    const requestData = {
+        book_id: bookId,
+        user_id: userData.user_id,
+        request_type: requestType,
+        message: message,
+        proposed_return_date: requestType === 'Borrow' ? 
+            new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null
+    };
+
+    fetch('http://localhost/project/backend/api/requests/create.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Request sent successfully!');
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error sending request:', error);
+        alert('Error sending request');
+    });
+}
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

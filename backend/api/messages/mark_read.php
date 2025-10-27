@@ -1,29 +1,45 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: http://localhost");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: PUT");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-include_once '../../config/database.php';
-include_once '../../models/Message.php';
+// Handle preflight OPTIONS request
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+// Include files with error handling
+try {
+    include_once '../../config/database.php';
+    include_once '../../models/Message.php';
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Server configuration error"]);
+    exit();
+}
 
 $database = new Database();
 $db = $database->getConnection();
 
-$message = new Message($db);
+$input = file_get_contents("php://input");
+$data = json_decode($input);
 
-$data = json_decode(file_get_contents("php://input"));
-
-if(!empty($data->user_id) && !empty($data->other_user_id)) {
-    if($message->markAsRead($data->user_id, $data->other_user_id)) {
-        http_response_code(200);
-        echo json_encode(array("message" => "Messages marked as read."));
-    } else {
-        http_response_code(503);
-        echo json_encode(array("message" => "Unable to mark messages as read."));
-    }
-} else {
+if (empty($data->sender_id) || empty($data->receiver_id)) {
     http_response_code(400);
-    echo json_encode(array("message" => "Data is incomplete."));
+    echo json_encode(["success" => false, "message" => "Sender ID and Receiver ID are required"]);
+    exit();
+}
+
+try {
+    $message = new Message($db);
+    $success = $message->markAsRead($data->sender_id, $data->receiver_id);
+    
+    echo json_encode(["success" => $success, "message" => "Messages marked as read"]);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(["success" => false, "message" => "Server error"]);
 }
 ?>

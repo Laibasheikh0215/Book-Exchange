@@ -375,6 +375,112 @@
         </div>
     </section>
 
+    <!-- ✅ REQUEST MODAL - book-details.html ke footer se pehle add karein -->
+    <div class="modal fade" id="requestModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Request Book</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="requestForm">
+                        <div class="mb-3">
+                            <label class="form-label">Request Type *</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="requestType" id="borrowRequest"
+                                    value="Borrow" checked>
+                                <label class="form-check-label" for="borrowRequest">
+                                    <i class="fas fa-hand-holding me-1"></i> Borrow Book
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="requestType" id="swapRequest"
+                                    value="Swap">
+                                <label class="form-check-label" for="swapRequest">
+                                    <i class="fas fa-exchange-alt me-1"></i> Swap Book
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Swap Book Selection (Conditional) -->
+                        <div class="mb-3" id="swapBookSection" style="display: none;">
+                            <label class="form-label">Select Your Book for Swap *</label>
+                            <select class="form-select" id="swapBookSelect">
+                                <option value="">Choose a book to swap...</option>
+                            </select>
+                            <small class="text-muted">Only your available books are shown</small>
+                        </div>
+
+                        <!-- Borrow Options -->
+                        <div class="mb-3" id="borrowOptions">
+                            <label class="form-label">Expected Return Date *</label>
+                            <input type="date" class="form-control" id="returnDate" min="">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Message to Owner</label>
+                            <textarea class="form-control" id="requestMessage" rows="3"
+                                placeholder="Write a friendly message to the book owner..."></textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                The owner will review your request and respond within 24 hours.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitRequest()">
+                        <i class="fas fa-paper-plane me-1"></i> Send Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ MESSAGE MODAL -->
+    <div class="modal fade" id="messageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Message Book Owner</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="messageForm">
+                        <div class="mb-3">
+                            <label class="form-label">To: <span id="receiverName" class="fw-bold"></span></label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">About Book: <span id="messageBookTitle"
+                                    class="fw-bold text-primary"></span></label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Your Message *</label>
+                            <textarea class="form-control" id="messageText" rows="4"
+                                placeholder="Write your message to the book owner..."></textarea>
+                        </div>
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle me-1"></i>
+                                The book owner will receive your message and can reply to you.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane me-1"></i> Send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Footer -->
     <footer class="text-center text-md-start">
         <div class="container">
@@ -927,26 +1033,392 @@
             }
         }
 
+        // ✅ REQUEST TYPE CHANGE HANDLER - IMPROVED VERSION
+        function initializeRequestModal() {
+            // Request type change handler
+            document.querySelectorAll('input[name="requestType"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const isSwap = this.value === 'Swap';
+                    document.getElementById('swapBookSection').style.display = isSwap ? 'block' : 'none';
+                    document.getElementById('borrowOptions').style.display = isSwap ? 'none' : 'block';
+
+                    if (isSwap) {
+                        loadUserBooksForSwap();
+                    }
+                });
+            });
+
+            // Set minimum date for return (tomorrow)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('returnDate').min = tomorrow.toISOString().split('T')[0];
+        }
+
+        // ✅ REQUEST BORROW FUNCTION - UPDATE KAREN
         function requestBorrow() {
             if (!bookId) {
                 alert('Book ID not found');
                 return;
             }
 
-            const bookTitle = document.getElementById('bookTitle').textContent;
-            const ownerName = document.getElementById('ownerName').textContent;
+            if (!currentUserId) {
+                alert('Please login to request this book');
+                window.location.href = 'login.html';
+                return;
+            }
 
-            if (confirm(`Request to borrow "${bookTitle}" from ${ownerName}?`)) {
-                console.log('Borrow request for book ID:', bookId);
-                alert('Borrow request sent successfully!');
+            // Check if user is trying to request their own book
+            checkIfOwnBook();
+        }
+
+        // ✅ CHECK IF USER'S OWN BOOK
+        async function checkIfOwnBook() {
+            try {
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const data = await response.json();
+
+                if (data.books && data.books.length > 0) {
+                    const book = data.books[0];
+                    if (book.user_id == currentUserId) {
+                        alert("You cannot request your own book!");
+                        return;
+                    }
+
+                    // Load user's books for swap options
+                    loadUserBooksForSwap();
+
+                    // Initialize modal events
+                    initializeRequestModal();
+
+                    // Show modal
+                    const requestModal = new bootstrap.Modal(document.getElementById('requestModal'));
+                    requestModal.show();
+                }
+            } catch (error) {
+                console.error('Error checking book ownership:', error);
+                alert('Error loading book details');
             }
         }
 
-        function messageOwner() {
-            const ownerName = document.getElementById('ownerName').textContent;
-            const bookTitle = document.getElementById('bookTitle').textContent;
 
-            alert(`This would open chat with ${ownerName} about "${bookTitle}"`);
+        // ✅ LOAD USER'S BOOKS FOR SWAP
+        function loadUserBooksForSwap() {
+            if (!currentUserId) return;
+
+            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${currentUserId}&status=Available`)
+                .then(response => response.json())
+                .then(data => {
+                    const swapBookSelect = document.getElementById('swapBookSelect');
+                    swapBookSelect.innerHTML = '<option value="">Choose a book to swap...</option>';
+
+                    if (data.books && data.books.length > 0) {
+                        data.books.forEach(book => {
+                            const option = document.createElement('option');
+                            option.value = book.id;
+                            option.textContent = `${book.title} by ${book.author} (${book.condition})`;
+                            swapBookSelect.appendChild(option);
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.value = "";
+                        option.textContent = "No available books for swap";
+                        option.disabled = true;
+                        swapBookSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user books:', error);
+                });
+        }
+
+        // ✅ REQUEST TYPE CHANGE HANDLER
+        document.addEventListener('DOMContentLoaded', function () {
+            // Request type change handler
+            document.querySelectorAll('input[name="requestType"]').forEach(radio => {
+                radio.addEventListener('change', function () {
+                    const isSwap = this.value === 'Swap';
+                    document.getElementById('swapBookSection').style.display = isSwap ? 'block' : 'none';
+                    document.getElementById('borrowOptions').style.display = isSwap ? 'none' : 'block';
+
+                    if (isSwap) {
+                        loadUserBooksForSwap();
+                    }
+                });
+            });
+        });
+
+
+        // ✅ SUBMIT REQUEST FUNCTION
+        async function submitRequest() {
+            // Use currentUserId instead of userData.user_id
+            if (!currentUserId) {
+                alert('Please login to send request');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+
+            if (!bookId) {
+                alert('Book not found');
+                return;
+            }
+
+            // Get request type from radio buttons
+            const requestType = document.querySelector('input[name="requestType"]:checked').value;
+            const message = document.getElementById('requestMessage').value.trim();
+
+            if (!message) {
+                alert('Please enter a message for your request');
+                return;
+            }
+
+            // Prepare request data
+            const requestData = {
+                book_id: parseInt(bookId),
+                user_id: currentUserId, // Use currentUserId here
+                request_type: requestType,
+                message: message,
+                proposed_return_date: requestType === 'Borrow' ?
+                    document.getElementById('returnDate').value : null
+            };
+
+            console.log('Sending request:', requestData);
+
+            const submitBtn = document.querySelector('#requestModal .btn-primary');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    throw new Error('Invalid response from server. Please try again.');
+                }
+
+                console.log('Request response:', result);
+
+                if (response.ok && result.success) {
+                    alert('✅ Request sent successfully! The book owner will be notified.');
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+                    modal.hide();
+                    // Reset form
+                    document.getElementById('requestMessage').value = '';
+                    document.getElementById('returnDate').value = '';
+                } else {
+                    throw new Error(result.message || 'Failed to send request');
+                }
+
+            } catch (error) {
+                console.error('Error submitting request:', error);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // ✅ GET BOOK OWNER ID FUNCTION
+        async function getBookOwnerId() {
+            try {
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const data = await response.json();
+                if (data.books && data.books.length > 0) {
+                    return data.books[0].user_id;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting book owner:', error);
+                return null;
+            }
+        }
+
+        // ✅ MESSAGE OWNER FUNCTION - UPDATE KAREN
+        async function messageOwner() {
+    if (!currentUserId) {
+        alert('Please login to send message');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    try {
+        // Check if user is trying to message themselves
+        const isOwnBook = await checkIfOwnBookForMessage();
+        
+        if (isOwnBook) {
+            alert("You cannot message yourself!");
+            return;
+        }
+
+        // Get owner and book details
+        const ownerName = document.getElementById('ownerName').textContent;
+        const bookTitle = document.getElementById('bookTitle').textContent;
+
+        // Set modal content
+        document.getElementById('receiverName').textContent = ownerName;
+        document.getElementById('messageBookTitle').textContent = bookTitle;
+
+        // Show modal
+        const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        messageModal.show();
+        
+    } catch (error) {
+        console.error('Error in messageOwner:', error);
+        alert('Error loading book details');
+    }
+}
+
+// ✅ CHECK IF USER'S OWN BOOK (SPECIFIC FOR MESSAGES)
+async function checkIfOwnBookForMessage() {
+    try {
+        const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+        const data = await response.json();
+
+        if (data.books && data.books.length > 0) {
+            const book = data.books[0];
+            return book.user_id == currentUserId;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking book ownership:', error);
+        return false;
+    }
+}
+
+
+        // ✅ CHECK IF USER'S OWN BOOK (Updated for messages)
+        async function checkIfOwnBook() {
+    try {
+        const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+        const data = await response.json();
+
+        if (data.books && data.books.length > 0) {
+            const book = data.books[0];
+            if (book.user_id == currentUserId) {
+                alert("You cannot request your own book!");
+                return true;
+            }
+            return false;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking book ownership:', error);
+        alert('Error loading book details');
+        return false;
+    }
+}
+
+        // ✅ SEND MESSAGE FUNCTION
+// ✅ SEND MESSAGE FUNCTION - IMPROVED ERROR HANDLING
+async function sendMessage() {
+    if (!currentUserId) {
+        alert('Please login to send message');
+        return;
+    }
+
+    const messageText = document.getElementById('messageText').value.trim();
+    
+    if (!messageText) {
+        alert('Please enter your message');
+        return;
+    }
+
+    // Get receiver ID (book owner)
+    const receiverId = await getBookOwnerId();
+    if (!receiverId) {
+        alert('Could not find book owner');
+        return;
+    }
+
+    const messageData = {
+        sender_id: currentUserId,
+        receiver_id: receiverId,
+        message_text: messageText
+    };
+
+    console.log('Sending message:', messageData);
+
+    const sendBtn = document.querySelector('#messageModal .btn-primary');
+    const originalText = sendBtn.innerHTML;
+    sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+    sendBtn.disabled = true;
+
+    try {
+        const response = await fetch('http://localhost/project/backend/api/messages/send.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messageData)
+        });
+
+        // First check if response is OK
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server response not OK:', errorText);
+            
+            // Try to parse as JSON, if fails then show raw error
+            try {
+                const errorData = JSON.parse(errorText);
+                throw new Error(errorData.message || `Server error: ${response.status}`);
+            } catch (parseError) {
+                throw new Error(`Server returned HTML error page. Status: ${response.status}`);
+            }
+        }
+
+        // If response is OK, parse as JSON
+        const result = await response.json();
+        console.log('Message response:', result);
+
+        if (result.success) {
+            alert('✅ Message sent successfully!');
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('messageModal'));
+            modal.hide();
+            // Reset form
+            document.getElementById('messageText').value = '';
+        } else {
+            throw new Error(result.message || 'Failed to send message');
+        }
+        
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('❌ Error: ' + error.message);
+    } finally {
+        sendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Message';
+        sendBtn.disabled = false;
+    }
+}
+
+        // ✅ GET BOOK OWNER ID FUNCTION
+        async function getBookOwnerId() {
+            try {
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const data = await response.json();
+                if (data.books && data.books.length > 0) {
+                    return data.books[0].user_id;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting book owner:', error);
+                return null;
+            }
         }
 
         function showSuccessMessage(message) {
@@ -975,6 +1447,58 @@
             </a>
         </div>
     `;
+        }
+
+        // ✅ SEND REQUEST FUNCTION - book-details.html mein
+        function sendBookRequest(requestType) {
+            if (!currentUserId) {
+                alert('Please login to send request');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookId = urlParams.get('id');
+
+            if (!bookId) {
+                alert('Book not found');
+                return;
+            }
+
+            const message = prompt(`Enter message for ${requestType} request:`);
+            if (message === null) return; // User cancelled
+
+            const requestData = {
+                book_id: parseInt(bookId),
+                user_id: currentUserId, // Use currentUserId here
+                request_type: requestType,
+                message: message,
+                proposed_return_date: requestType === 'Borrow' ?
+                    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null
+            };
+
+            console.log('Sending request:', requestData);
+
+            fetch('http://localhost/project/backend/api/requests/create.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Request response:', data);
+                    if (data.success) {
+                        alert('✅ Request sent successfully! The book owner will be notified.');
+                    } else {
+                        alert('❌ Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending request:', error);
+                    alert('❌ Error sending request. Please try again.');
+                });
         }
     </script>
 </body>

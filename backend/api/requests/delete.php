@@ -1,10 +1,9 @@
 <?php
 header("Access-Control-Allow-Origin: http://localhost");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: DELETE");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
-// Handle preflight OPTIONS request
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -32,16 +31,30 @@ try {
     $request->id = $data->request_id;
     $request->requester_id = $data->user_id;
 
-    if ($request->cancel()) {
+    // First check if user has permission
+    if (!$request->checkPermission($data->request_id, $data->user_id)) {
+        http_response_code(403);
+        echo json_encode(array(
+            "success" => false,
+            "message" => "You don't have permission to delete this request."
+        ));
+        exit();
+    }
+
+    $query = "DELETE FROM book_requests WHERE id = :id";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(":id", $data->request_id);
+
+    if ($stmt->execute()) {
         echo json_encode(array(
             "success" => true,
-            "message" => "Request cancelled successfully."
+            "message" => "Request deleted successfully."
         ));
     } else {
         http_response_code(500);
         echo json_encode(array(
             "success" => false,
-            "message" => "Unable to cancel request. It may not exist or you may not have permission."
+            "message" => "Unable to delete request."
         ));
     }
 

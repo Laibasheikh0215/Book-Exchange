@@ -90,15 +90,6 @@
             border-radius: 50%;
             border: 3px solid #f8ca30;
             margin-bottom: 10px;
-        }
-
-        /* ✅ IMPROVED AVATAR STYLES */
-        .user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #f8ca30;
-            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -171,28 +162,6 @@
             margin-right: 10px;
         }
 
-        /* Avatar Styles */
-        .user-avatar,
-        .profile-pic-preview {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-weight: bold;
-        }
-
-        .bg-primary {
-            background-color: #007bff !important;
-        }
-
-        .bg-success {
-            background-color: #28a745 !important;
-        }
-
-        .bg-warning {
-            background-color: #ffc107 !important;
-            color: #000 !important;
-        }
-
         /* ✅ PROFILE MODAL STYLES */
         .profile-pic-preview {
             width: 150px;
@@ -219,47 +188,6 @@
             width: 100%;
             height: 100%;
             cursor: pointer;
-        }
-
-        /* Message system */
-        /* ✅ MESSAGING STYLES */
-        .message-bubble {
-            max-width: 70%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            word-wrap: break-word;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .conversation-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .conversation-item.active {
-            background-color: #e3f2fd;
-        }
-
-        #messagesContainer {
-            background-color: #f8f9fa;
-        }
-
-        /* Scrollbar styling */
-        #messagesContainer::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #messagesContainer::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        #messagesContainer::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
         }
 
         /* ✅ MESSAGING STYLES */
@@ -338,6 +266,96 @@
         .bg-info {
             background-color: #17a2b8 !important;
         }
+
+        /* ✅ REQUESTS STYLING */
+        .request-card {
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+
+        .request-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .request-card .btn-group-vertical .btn {
+            margin-bottom: 5px;
+        }
+
+        /* Status specific border colors */
+        .request-card[data-status="Pending"] {
+            border-left-color: #ffc107;
+        }
+
+        .request-card[data-status="Approved"] {
+            border-left-color: #28a745;
+        }
+
+        .request-card[data-status="Rejected"] {
+            border-left-color: #dc3545;
+        }
+
+        .request-card[data-status="Completed"] {
+            border-left-color: #17a2b8;
+        }
+
+        /* Badge improvements */
+        .badge-sm {
+            font-size: 0.7rem;
+            padding: 0.25em 0.4em;
+        }
+
+        /* Dashboard stats animation */
+        .card.text-center h3 {
+            transition: all 0.3s ease;
+            font-size: 1.8rem;
+        }
+
+        .card.text-center h3.text-danger {
+            animation: pulse 1.5s infinite;
+            color: #dc3545 !important;
+            font-weight: bold;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Recent requests styling */
+        #recentRequests .border-bottom {
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        #recentRequests .border-bottom:hover {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            transform: translateX(5px);
+        }
+
+        /* Empty state styling */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
     </style>
 </head>
 
@@ -388,13 +406,17 @@
                     </a>
                     <a class="nav-link" href="#" onclick="showMessages()">
                         <i class="fas fa-comments me-2"></i>Messages
-                        <span class="badge bg-danger ms-1" id="unreadMessagesBadge">2</span>
+                        <span class="badge bg-danger ms-1" id="unreadMessagesBadge">0</span>
                     </a>
                     <a class="nav-link" href="browse-book.html">
                         <i class="fas fa-search me-2"></i>Browse Books
                     </a>
                     <a class="nav-link" href="#" onclick="addBook()">
                         <i class="fas fa-plus me-2"></i>Add Book
+                    </a>
+                    <a class="nav-link" href="#" onclick="showRequests()">
+                        <i class="fas fa-handshake me-2"></i>Requests
+                        <span class="badge bg-danger ms-1" id="pendingRequestsBadge">0</span>
                     </a>
                 </nav>
             </div>
@@ -465,7 +487,11 @@
                             <div class="card p-4">
                                 <h4>Recent Books</h4>
                                 <div id="recentBooks">
-                                    <p class="text-muted">No books listed yet.</p>
+                                    <div class="empty-state">
+                                        <i class="fas fa-book"></i>
+                                        <p>No books listed yet</p>
+                                        <small>Add your first book to get started</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -473,65 +499,10 @@
                             <div class="card p-4">
                                 <h4>Recent Requests</h4>
                                 <div id="recentRequests">
-                                    <p class="text-muted">No recent requests.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- ✅ MAIN CONTENT - Dashboard content ke baad add karen -->
-                    <!-- ✅ MESSAGES INTERFACE -->
-                    <div id="messagesInterface" class="container-fluid" style="display: none;">
-                        <div class="row">
-                            <!-- Conversations List -->
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div
-                                        class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                                        <h5 class="mb-0">
-                                            <i class="fas fa-comments me-2"></i>Messages
-                                        </h5>
-                                        <button class="btn btn-sm btn-light" onclick="refreshMessages()">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </button>
-                                    </div>
-                                    <div class="card-body p-0">
-                                        <div class="list-group list-group-flush" id="conversationsList">
-                                            <div class="text-center p-3">
-                                                <div class="spinner-border spinner-border-sm"></div> Loading
-                                                conversations...
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Chat Area -->
-                            <div class="col-md-8">
-                                <div class="card h-100">
-                                    <div class="card-header bg-light">
-                                        <div id="chatHeader" class="d-flex align-items-center">
-                                            <div class="flex-grow-1">
-                                                <h6 class="mb-0">Select a conversation to start messaging</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body p-0 d-flex flex-column">
-                                        <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 15px;">
-                                            <div class="text-center text-muted mt-5">
-                                                <i class="fas fa-comments fa-3x mb-3"></i>
-                                                <p>Select a conversation to view messages</p>
-                                            </div>
-                                        </div>
-                                        <div class="card-footer" id="messageInputContainer" style="display: none;">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="messageInput"
-                                                    placeholder="Type your message...">
-                                                <button class="btn btn-primary" onclick="sendMessage()">
-                                                    <i class="fas fa-paper-plane"></i> Send
-                                                </button>
-                                            </div>
-                                        </div>
+                                    <div class="empty-state">
+                                        <i class="fas fa-handshake"></i>
+                                        <p>No recent requests</p>
+                                        <small>When someone requests your book, it will appear here</small>
                                     </div>
                                 </div>
                             </div>
@@ -542,6 +513,129 @@
         </div>
     </div>
 
+    <!-- ✅ REQUESTS INTERFACE -->
+    <div id="requestsInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-handshake me-2"></i>Book Requests
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2" onclick="refreshRequests()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Requests Tabs -->
+                        <ul class="nav nav-tabs mb-3" id="requestsTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="incoming-tab" data-bs-toggle="tab" href="#incoming">
+                                    Incoming Requests <span class="badge bg-danger ms-1" id="incomingCount">0</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing">
+                                    Outgoing Requests <span class="badge bg-info ms-1" id="outgoingCount">0</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="requestsTabContent">
+                            <!-- Incoming Requests -->
+                            <div class="tab-pane fade show active" id="incoming">
+                                <div id="incomingRequestsList">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No incoming requests</p>
+                                        <small>Requests for your books will appear here</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Outgoing Requests -->
+                            <div class="tab-pane fade" id="outgoing">
+                                <div id="outgoingRequestsList">
+                                    <div class="empty-state">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <p>No outgoing requests</p>
+                                        <small>Your requests to other users will appear here</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ MESSAGES INTERFACE -->
+    <!-- ✅ MESSAGES INTERFACE -->
+    <div id="messagesInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Messages
+                            <span class="badge bg-danger ms-1" id="unreadMessagesCount">0</span>
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2" onclick="refreshMessages()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Conversations List -->
+                            <div class="col-md-4 border-end">
+                                <h6>Conversations</h6>
+                                <div id="conversationsList" style="max-height: 500px; overflow-y: auto;">
+                                    <div class="text-center p-3">
+                                        <div class="spinner-border spinner-border-sm"></div> Loading conversations...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Messages Area -->
+                            <div class="col-md-8">
+                                <div id="selectedConversation" style="display: none;">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 id="conversationWith"></h6>
+                                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshMessages()">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div id="messagesContainer"
+                                        style="height: 400px; overflow-y: auto; padding: 15px; background-color: #f8f9fa; border-radius: 10px; border: 1px solid #dee2e6;">
+                                        <!-- Messages will appear here -->
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="input-group">
+                                            <textarea class="form-control" id="newMessage" rows="2"
+                                                placeholder="Type your message..."></textarea>
+                                            <button class="btn btn-primary" onclick="sendNewMessage()">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="noConversationSelected" class="text-center p-5">
+                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                                    <p>Select a conversation to start messaging</p>
+                                    <small class="text-muted">Your messages with other users will appear here</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- ✅ PROFILE MODAL -->
     <div class="modal fade" id="profileModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -554,8 +648,7 @@
                     <form id="profileForm">
                         <div class="text-center mb-4">
                             <div class="profile-pic-preview bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
-                                id="profilePreview"
-                                style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid #f8ca30; font-size: 48px;">
+                                id="profilePreview">
                                 <span id="profilePreviewText">U</span>
                             </div>
                             <div class="upload-btn-wrapper mt-2">
@@ -590,11 +683,6 @@
                                     placeholder="Tell us about yourself..."></textarea>
                             </div>
                         </div>
-
-                        <div class="alert alert-info">
-                            <small><i class="fas fa-info-circle me-1"></i> Changes will be saved automatically when you
-                                update any field.</small>
-                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -616,70 +704,1003 @@
             initializeDashboard();
         }
 
+        // ✅ COMPLETE INITIALIZE DASHBOARD
         function initializeDashboard() {
+            console.log('🚀 Initializing dashboard with user data...');
+
+            // Basic user info
             document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
             updateSidebarInfo();
+
+            // Load all data
             loadUserBooks();
             loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+            updateUnreadMessagesCount(); // Add this line
+
+            console.log('✅ Dashboard fully initialized');
         }
 
-        function updateSidebarInfo() {
-            document.getElementById('sidebarUserName').textContent = userData.name || 'User Name';
-            document.getElementById('sidebarUserEmail').textContent = userData.email || 'user@email.com';
+        // ✅ LOAD USER'S ACTUAL BOOKS FROM DATABASE
+        function loadUserBooks() {
+            const booksCountElement = document.getElementById('booksCount');
+            const recentBooksDiv = document.getElementById('recentBooks');
 
-            const storedProfile = localStorage.getItem('userProfile');
-            if (storedProfile) {
-                const profile = JSON.parse(storedProfile);
+            if (!userData || !userData.user_id) {
+                booksCountElement.textContent = '0';
+                return;
+            }
 
-                // ✅ PROFILE PICTURE DISPLAY KAREN
-                if (profile.profile_picture && profile.profile_picture.startsWith('data:')) {
-                    // Agar data URL hai (base64 image)
-                    document.getElementById('sidebarAvatar').innerHTML =
-                        `<img src="${profile.profile_picture}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                } else {
-                    // Agar base64 nahi hai, toh initial display karen
-                    const initial = (userData.name || 'U').charAt(0).toUpperCase();
-                    document.getElementById('sidebarAvatarText').textContent = initial;
-                }
-            } else {
-                // Default avatar
-                const initial = (userData.name || 'U').charAt(0).toUpperCase();
-                document.getElementById('sidebarAvatarText').textContent = initial;
+            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('User books data:', data);
+
+                    if (data.books && data.books.length > 0) {
+                        booksCountElement.textContent = data.books.length;
+                        displayUserBooks(data.books);
+                    } else {
+                        booksCountElement.textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading user books:', error);
+                    booksCountElement.textContent = '0';
+                });
+        }
+
+        // ✅ DISPLAY ONLY USER'S UPLOADED BOOKS
+        function displayUserBooks(books) {
+            const recentBooksDiv = document.getElementById('recentBooks');
+
+            if (books.length === 0) {
+                recentBooksDiv.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-book"></i>
+                    <p>No books listed yet</p>
+                    <small>Add your first book to get started</small>
+                </div>
+            `;
+                return;
+            }
+
+            recentBooksDiv.innerHTML = books.slice(0, 3).map(book => `
+            <div class="border-bottom pb-2 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1">${book.title}</h6>
+                        <p class="mb-1 text-muted">by ${book.author}</p>
+                        <small class="text-muted">
+                            Condition: ${book.condition} • 
+                            Status: <span class="badge ${book.status === 'Available' ? 'bg-success' : 'bg-warning'}">${book.status}</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
+            if (books.length > 3) {
+                recentBooksDiv.innerHTML += `
+                <div class="text-center mt-2">
+                    <a href="my-books.html" class="btn btn-sm btn-outline-primary">View All ${books.length} Books</a>
+                </div>
+            `;
             }
         }
 
-        // ✅ SIDEBAR NAVIGATION FUNCTIONS
-        function showDashboard() {
-            document.querySelector('.dashboard-header').style.display = 'block';
-            document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
-            document.getElementById('messagesInterface').style.display = 'none';
-            setActiveNavLink('dashboard');
+        // ✅ UPDATE REQUESTS COUNT
+        function updateRequestsCount() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/requests/count.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const pendingCount = data.count || 0;
+
+                    // Update sidebar badge and dashboard card
+                    document.getElementById('pendingRequestsBadge').textContent = pendingCount;
+                    document.getElementById('requestsCount').textContent = pendingCount;
+
+                    // Color change based on count
+                    const requestsCountElement = document.getElementById('requestsCount');
+                    if (pendingCount > 0) {
+                        requestsCountElement.classList.add('text-danger', 'fw-bold');
+                    } else {
+                        requestsCountElement.classList.remove('text-danger', 'fw-bold');
+                    }
+
+                    console.log(`📊 Requests count updated: ${pendingCount}`);
+                })
+                .catch(error => {
+                    console.error('Error loading requests count:', error);
+                    document.getElementById('pendingRequestsBadge').textContent = '0';
+                    document.getElementById('requestsCount').textContent = '0';
+                });
         }
 
-        function showProfile() {
-            setActiveNavLink('profile');
-            loadProfileData();
-            const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
-            profileModal.show();
+        // ✅ LOAD RECENT REQUESTS FOR DASHBOARD
+        function loadRecentRequests() {
+            if (!userData || !userData.user_id) return;
+
+            const recentRequestsDiv = document.getElementById('recentRequests');
+
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}&type=incoming`)
+                .then(response => {
+                    if (!response.ok) throw new Error('API not available');
+                    return response.json();
+                })
+                .then(requests => {
+                    console.log('Recent requests loaded:', requests);
+                    displayRecentRequests(requests);
+                })
+                .catch(error => {
+                    console.error('Error loading recent requests:', error);
+                });
         }
 
-        function showMyBooks() {
-            setActiveNavLink('mybooks');
-            window.location.href = "my-books.html";
+        // ✅ DISPLAY RECENT REQUESTS IN DASHBOARD
+        function displayRecentRequests(requests) {
+            const recentRequestsDiv = document.getElementById('recentRequests');
+
+            if (!requests || requests.length === 0) {
+                recentRequestsDiv.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-handshake"></i>
+                    <p>No recent requests</p>
+                    <small>When someone requests your book, it will appear here</small>
+                </div>
+            `;
+                return;
+            }
+
+            recentRequestsDiv.innerHTML = requests.slice(0, 3).map(request => `
+            <div class="border-bottom pb-2 mb-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center mb-1">
+                            <h6 class="mb-0 me-2">${request.book_title}</h6>
+                            <span class="badge bg-primary badge-sm">Incoming</span>
+                        </div>
+                        <p class="mb-1 text-muted small">From: <strong>${request.requester_name}</strong></p>
+                        <p class="mb-1 text-muted small">
+                            Type: <span class="badge ${request.request_type === 'Borrow' ? 'bg-warning' : 'bg-success'}">${request.request_type}</span>
+                            • Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span>
+                        </p>
+                        <small class="text-muted">${new Date(request.created_at).toLocaleDateString()}</small>
+                    </div>
+                    ${request.status === 'Pending' ? `
+                        <div class="btn-group-vertical btn-group-sm">
+                            <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+            recentRequestsDiv.innerHTML += `
+            <div class="text-center mt-3">
+                <button class="btn btn-sm btn-outline-primary" onclick="showRequests()">
+                    <i class="fas fa-list me-1"></i> View All Requests
+                </button>
+            </div>
+        `;
         }
 
-        function showTransactions() {
-            setActiveNavLink('transactions');
-            window.location.href = "user-transactions.html";
-        }
-
-        function showMessages() {
-            console.log('showMessages function called');
+        // ✅ SHOW REQUESTS FUNCTION
+        function showRequests() {
+            console.log('Opening requests page...');
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'block';
+            setActiveNavLink('requests');
+            loadRequests();
+        }
+
+        // ✅ LOAD REQUESTS FUNCTION
+        function loadRequests() {
+            if (!userData || !userData.user_id) {
+                alert('Please login first');
+                return;
+            }
+
+            loadIncomingRequests();
+            loadOutgoingRequests();
+        }
+
+        // ✅ LOAD INCOMING REQUESTS
+        function loadIncomingRequests() {
+            const incomingList = document.getElementById('incomingRequestsList');
+            incomingList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading incoming requests...</div>';
+
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}&type=incoming`)
+                .then(response => {
+                    if (!response.ok) throw new Error('API not available');
+                    return response.json();
+                })
+                .then(requests => {
+                    console.log('Incoming requests:', requests);
+                    displayIncomingRequests(requests);
+                })
+                .catch(error => {
+                    console.error('Error loading incoming requests:', error);
+                    incomingList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No incoming requests</p>
+                        <small>Requests for your books will appear here</small>
+                    </div>
+                `;
+                });
+        }
+
+        // ✅ LOAD OUTGOING REQUESTS
+        function loadOutgoingRequests() {
+            const outgoingList = document.getElementById('outgoingRequestsList');
+            outgoingList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading outgoing requests...</div>';
+
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}&type=outgoing`)
+                .then(response => {
+                    if (!response.ok) throw new Error('API not available');
+                    return response.json();
+                })
+                .then(requests => {
+                    console.log('Outgoing requests:', requests);
+                    displayOutgoingRequests(requests);
+                })
+                .catch(error => {
+                    console.error('Error loading outgoing requests:', error);
+                    outgoingList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-paper-plane"></i>
+                        <p>No outgoing requests</p>
+                        <small>Your requests to other users will appear here</small>
+                    </div>
+                `;
+                });
+        }
+
+        // ✅ DISPLAY INCOMING REQUESTS
+        function displayIncomingRequests(requests) {
+            const incomingList = document.getElementById('incomingRequestsList');
+
+            if (!requests || requests.length === 0) {
+                incomingList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No incoming requests</p>
+                    <small>Requests for your books will appear here</small>
+                </div>
+            `;
+                document.getElementById('incomingCount').textContent = '0';
+                return;
+            }
+
+            document.getElementById('incomingCount').textContent = requests.length;
+
+            incomingList.innerHTML = requests.map(request => `
+            <div class="card mb-3 request-card" data-status="${request.status}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
+                            <p class="card-text mb-1">
+                                <strong>Requested by:</strong> ${request.requester_name || 'Unknown User'}
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Type:</strong> 
+                                <span class="badge ${request.request_type === 'Borrow' ? 'bg-info' : 'bg-warning'}">
+                                    ${request.request_type}
+                                </span>
+                            </p>
+                            ${request.request_type === 'Borrow' && request.proposed_return_date ? `
+                                <p class="card-text mb-1">
+                                    <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
+                                </p>
+                            ` : ''}
+                            <p class="card-text mb-2">
+                                <strong>Message:</strong> "${request.message || 'No message'}"
+                            </p>
+                            <small class="text-muted">
+                                Requested on: ${new Date(request.created_at).toLocaleDateString()}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="mb-2">
+                                <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
+                            </div>
+                            ${request.status === 'Pending' ? `
+                                <div class="btn-group-vertical">
+                                    <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
+                                        <i class="fas fa-check me-1"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
+                                        <i class="fas fa-times me-1"></i> Reject
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        // ✅ DISPLAY OUTGOING REQUESTS - UPDATED VERSION
+        function displayOutgoingRequests(requests) {
+            const outgoingList = document.getElementById('outgoingRequestsList');
+
+            if (!requests || requests.length === 0) {
+                outgoingList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-paper-plane"></i>
+                    <p>No outgoing requests</p>
+                    <small>Your requests to other users will appear here</small>
+                </div>
+            `;
+                document.getElementById('outgoingCount').textContent = '0';
+                return;
+            }
+
+            document.getElementById('outgoingCount').textContent = requests.length;
+
+            outgoingList.innerHTML = requests.map(request => `
+            <div class="card mb-3 request-card" data-status="${request.status}" id="request-${request.id}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
+                            <p class="card-text mb-1">
+                                <strong>Owner:</strong> ${request.owner_name || 'Unknown User'}
+                            </p>
+                            <p class="card-text mb-1">
+                                <strong>Type:</strong> 
+                                <span class="badge ${request.request_type === 'Borrow' ? 'bg-info' : 'bg-warning'}">
+                                    ${request.request_type}
+                                </span>
+                            </p>
+                            ${request.request_type === 'Borrow' && request.proposed_return_date ? `
+                                <p class="card-text mb-1">
+                                    <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
+                                </p>
+                            ` : ''}
+                            <p class="card-text mb-2">
+                                <strong>Your Message:</strong> "${request.message || 'No message'}"
+                            </p>
+                            <small class="text-muted">
+                                Sent on: ${new Date(request.created_at).toLocaleDateString()}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="mb-2">
+                                <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
+                            </div>
+                            ${request.status === 'Pending' ? `
+                                <button class="btn btn-sm btn-outline-danger" onclick="cancelRequest(${request.id}, this)">
+                                    <i class="fas fa-times me-1"></i> Cancel
+                                </button>
+                            ` : ''}
+                            ${request.status === 'Approved' ? `
+                                <button class="btn btn-sm btn-outline-success" onclick="markAsCompleted(${request.id}, this)">
+                                    <i class="fas fa-check me-1"></i> Mark Complete
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        }
+
+        // ✅ UPDATE REQUEST STATUS
+        function updateRequestStatus(requestId, newStatus) {
+            if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
+
+            const requestData = {
+                request_id: parseInt(requestId),
+                status: newStatus,
+                user_id: parseInt(userData.user_id)
+            };
+
+            fetch('http://localhost/project/backend/api/requests/update.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
+                        loadRequests();
+                        updateRequestsCount();
+                        loadRecentRequests();
+                    } else {
+                        throw new Error(data.message || 'Failed to update request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating request:', error);
+                    showToast('Error updating request', 'error');
+                });
+        }
+
+        // ✅ CANCEL REQUEST WITH UI UPDATE
+        function cancelRequest(requestId, buttonElement) {
+            if (!confirm('Are you sure you want to cancel this request?')) return;
+
+            // Show loading state on the button
+            if (buttonElement) {
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Cancelling...';
+                buttonElement.disabled = true;
+            }
+
+            const requestData = {
+                request_id: parseInt(requestId),
+                user_id: parseInt(userData.user_id)
+            };
+
+            fetch('http://localhost/project/backend/api/requests/cancel.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Request cancelled successfully!', 'success');
+
+                        // ✅ IMMEDIATELY REMOVE FROM UI
+                        const requestElement = document.getElementById(`request-${requestId}`);
+                        if (requestElement) {
+                            requestElement.style.opacity = '0';
+                            requestElement.style.transition = 'opacity 0.3s ease';
+                            setTimeout(() => {
+                                requestElement.remove();
+
+                                // ✅ UPDATE REQUEST COUNTS
+                                updateOutgoingRequestsCount();
+                                updateRequestsCount();
+
+                                // ✅ RELOAD IF NO REQUESTS LEFT
+                                const outgoingList = document.getElementById('outgoingRequestsList');
+                                const remainingRequests = outgoingList.querySelectorAll('.request-card');
+                                if (remainingRequests.length === 0) {
+                                    loadOutgoingRequests();
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        throw new Error(data.message || 'Failed to cancel request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error cancelling request:', error);
+                    showToast('Error cancelling request', 'error');
+
+                    // Reset button if error
+                    if (buttonElement) {
+                        buttonElement.innerHTML = '<i class="fas fa-times me-1"></i> Cancel';
+                        buttonElement.disabled = false;
+                    }
+                });
+        }
+
+        // ✅ MARK REQUEST AS COMPLETED
+        function markAsCompleted(requestId, buttonElement) {
+            if (!confirm('Mark this request as completed?')) return;
+
+            if (buttonElement) {
+                const originalText = buttonElement.innerHTML;
+                buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
+                buttonElement.disabled = true;
+            }
+
+            const requestData = {
+                request_id: parseInt(requestId),
+                status: 'Completed',
+                user_id: parseInt(userData.user_id)
+            };
+
+            fetch('http://localhost/project/backend/api/requests/update.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Request marked as completed!', 'success');
+
+                        // Update the status in UI
+                        const requestElement = document.getElementById(`request-${requestId}`);
+                        if (requestElement) {
+                            const statusBadge = requestElement.querySelector('.badge');
+                            if (statusBadge) {
+                                statusBadge.className = 'badge bg-info';
+                                statusBadge.textContent = 'Completed';
+                            }
+
+                            // Remove the action button
+                            if (buttonElement) {
+                                buttonElement.remove();
+                            }
+                        }
+                    } else {
+                        throw new Error(data.message || 'Failed to update request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating request:', error);
+                    showToast('Error updating request', 'error');
+
+                    if (buttonElement) {
+                        buttonElement.innerHTML = '<i class="fas fa-check me-1"></i> Mark Complete';
+                        buttonElement.disabled = false;
+                    }
+                });
+        }
+
+        // ✅ UPDATE OUTGOING REQUESTS COUNT
+        function updateOutgoingRequestsCount() {
+            const outgoingList = document.getElementById('outgoingRequestsList');
+            if (outgoingList) {
+                const remainingRequests = outgoingList.querySelectorAll('.request-card');
+                const outgoingCountElement = document.getElementById('outgoingCount');
+                if (outgoingCountElement) {
+                    outgoingCountElement.textContent = remainingRequests.length;
+                }
+            }
+        }
+
+        // ✅ REFRESH REQUESTS
+        function refreshRequests() {
+            console.log('Refreshing requests...');
+            loadRequests();
+            showToast('Requests refreshed!', 'success');
+        }
+
+        // ✅ MESSAGES FUNCTIONS
+        let currentConversation = null;
+
+        // Show messages interface
+        function showMessages() {
+            console.log('Opening messages interface...');
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
             document.getElementById('messagesInterface').style.display = 'block';
             setActiveNavLink('messages');
             loadConversations();
+            updateUnreadMessagesCount();
+        }
+
+        // Load conversations
+        // ✅ LOAD CONVERSATIONS WITH DEBUGGING
+// ✅ LOAD CONVERSATIONS WITH ENHANCED DEBUGGING
+function loadConversations() {
+    if (!userData || !userData.user_id) {
+        console.log('User not logged in');
+        return;
+    }
+
+    console.log('🚀 Loading conversations for user:', userData.user_id);
+    
+    fetch(`http://localhost/project/backend/api/messages/conversations.php?user_id=${userData.user_id}`)
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(errorText => {
+                    console.error('❌ Server response not OK. Status:', response.status);
+                    console.error('❌ Error response:', errorText);
+                    throw new Error(`Server error: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(conversations => {
+            console.log('✅ RAW Conversations API Response:', conversations);
+            
+            // ✅ DEEP DEBUGGING
+            if (!conversations) {
+                console.log('❌ Conversations is null or undefined');
+                conversations = [];
+            }
+            
+            if (!Array.isArray(conversations)) {
+                console.log('❌ Conversations is not an array. Type:', typeof conversations);
+                console.log('❌ Actual value:', conversations);
+                conversations = [];
+            }
+            
+            console.log('📊 Total conversations:', conversations.length);
+            
+            // ✅ INDIVIDUAL CONVERSATION DEBUGGING
+            conversations.forEach((conv, index) => {
+                console.log(`🔍 Conversation ${index}:`, conv);
+                if (conv) {
+                    console.log(`   - user1_id:`, conv.user1_id);
+                    console.log(`   - user2_id:`, conv.user2_id);
+                    console.log(`   - user1_name:`, conv.user1_name);
+                    console.log(`   - user2_name:`, conv.user2_name);
+                    console.log(`   - sender_id:`, conv.sender_id);
+                    console.log(`   - sender_name:`, conv.sender_name);
+                }
+            });
+            
+            displayConversations(conversations);
+        })
+        .catch(error => {
+            console.error('💥 Error loading conversations:', error);
+            document.getElementById('conversationsList').innerHTML = `
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Unable to load conversations
+                    <br>
+                    <small class="text-muted">${error.message}</small>
+                </div>
+            `;
+        });
+}
+
+
+        // Display conversations
+        // ✅ DISPLAY CONVERSATIONS - COMPLETELY FIXED VERSION
+function displayConversations(conversations) {
+    const conversationsList = document.getElementById('conversationsList');
+    
+    // ✅ NULL CHECK for conversations array
+    if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
+        conversationsList.innerHTML = `
+            <div class="text-center text-muted p-3">
+                <i class="fas fa-comments fa-2x mb-2"></i>
+                <p>No conversations yet</p>
+                <small>When someone messages you, it will appear here</small>
+            </div>
+        `;
+        return;
+    }
+
+    console.log('Processing conversations:', conversations);
+
+    conversationsList.innerHTML = conversations.map((conv, index) => {
+        try {
+            // ✅ COMPREHENSIVE NULL CHECK for each conversation
+            if (!conv || typeof conv !== 'object') {
+                console.warn('Invalid conversation object at index', index, ':', conv);
+                return '';
+            }
+
+            // ✅ SAFE USER IDENTIFICATION
+            let otherUserId, otherUserName;
+            
+            // Check if user1_id and user2_id exist
+            if (conv.user1_id !== undefined && conv.user2_id !== undefined) {
+                if (conv.user1_id == userData.user_id) {
+                    otherUserId = conv.user2_id;
+                    otherUserName = conv.user2_name;
+                } else {
+                    otherUserId = conv.user1_id;
+                    otherUserName = conv.user1_name;
+                }
+            } 
+            // Check if it's a direct message format
+            else if (conv.sender_id !== undefined) {
+                otherUserId = conv.sender_id == userData.user_id ? conv.receiver_id : conv.sender_id;
+                otherUserName = conv.sender_name;
+            }
+            // Fallback if no user IDs found
+            else {
+                console.warn('No valid user IDs found in conversation:', conv);
+                otherUserId = 0;
+                otherUserName = 'Unknown User';
+            }
+
+            // ✅ COMPREHENSIVE NULL SAFETY for user data
+            const safeUserId = otherUserId || 0;
+            const safeUserName = otherUserName ? String(otherUserName) : 'Unknown User';
+            
+            // ✅ SAFE STRING REPLACE - Pehle check karen, phir replace karen
+            const escapedUserName = safeUserName.replace(/'/g, "\\'");
+
+            // ✅ SAFE DATA EXTRACTION with fallbacks
+            const lastMessage = conv.last_message || conv.message_text || 'No messages yet';
+            const lastMessageTime = conv.last_message_at || conv.created_at || new Date();
+            const unreadCount = conv.unread_count || 0;
+            const unreadBadge = unreadCount > 0 ? `<span class="badge bg-danger ms-1">${unreadCount}</span>` : '';
+
+            const isActive = currentConversation && currentConversation.other_user_id === safeUserId;
+
+            return `
+                <div class="conversation-item border-bottom p-3 ${isActive ? 'active' : ''}"
+                     style="cursor: pointer; ${isActive ? 'background-color: #e3f2fd;' : ''}"
+                     onclick="selectConversation(${safeUserId}, '${escapedUserName}')">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${safeUserName}</h6>
+                            <small class="text-truncate d-block" style="max-width: 200px;">
+                                ${lastMessage}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">${formatTime(lastMessageTime)}</small>
+                            ${unreadBadge}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('❌ Error processing conversation at index', index, ':', conv, error);
+            return ''; // Skip this conversation completely
+        }
+    }).filter(html => html !== '').join(''); // Remove any empty strings
+
+    // ✅ FINAL CHECK - Agar koi valid conversation nahi bacha
+    if (conversationsList.innerHTML.trim() === '') {
+        conversationsList.innerHTML = `
+            <div class="text-center text-muted p-3">
+                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                <p>No valid conversations to display</p>
+                <small>There might be an issue with the conversation data format</small>
+            </div>
+        `;
+    }
+}
+        // Select a conversation
+        function selectConversation(otherUserId, otherUserName) {
+            console.log('Selecting conversation with:', otherUserName, otherUserId);
+
+            currentConversation = {
+                other_user_id: otherUserId,
+                other_user_name: otherUserName
+            };
+
+            // Update UI
+            document.getElementById('conversationWith').textContent = `Chat with ${otherUserName}`;
+            document.getElementById('selectedConversation').style.display = 'block';
+            document.getElementById('noConversationSelected').style.display = 'none';
+
+            // Highlight selected conversation
+            document.querySelectorAll('.conversation-item').forEach(item => {
+                item.classList.remove('active');
+                item.style.backgroundColor = '';
+            });
+            event.currentTarget.classList.add('active');
+            event.currentTarget.style.backgroundColor = '#e3f2fd';
+
+            // Load messages
+            loadMessages(otherUserId);
+        }
+
+        // Load messages between current user and selected user
+        function loadMessages(otherUserId) {
+            if (!userData || !userData.user_id) return;
+
+            console.log('Loading messages with user:', otherUserId);
+
+            fetch(`http://localhost/project/backend/api/messages/get.php?user1_id=${userData.user_id}&user2_id=${otherUserId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(messages => {
+                    console.log('Messages loaded:', messages);
+                    displayMessages(messages);
+                    // Mark messages as read
+                    markMessagesAsRead(otherUserId);
+                })
+                .catch(error => {
+                    console.error('Error loading messages:', error);
+                    document.getElementById('messagesContainer').innerHTML = `
+                    <div class="text-center text-muted p-3">
+                        Error loading messages
+                    </div>
+                `;
+                });
+        }
+
+        // Display messages in the chat area
+        function displayMessages(messages) {
+            const messagesContainer = document.getElementById('messagesContainer');
+
+            if (!messages || messages.length === 0) {
+                messagesContainer.innerHTML = `
+                <div class="text-center text-muted p-3">
+                    <i class="fas fa-comments me-2"></i>
+                    No messages yet. Start the conversation!
+                </div>
+            `;
+                return;
+            }
+
+            messagesContainer.innerHTML = messages.map(msg => {
+                const isSender = msg.sender_id == userData.user_id;
+                const messageTime = new Date(msg.created_at).toLocaleTimeString([], {
+                    hour: '2-digit', minute: '2-digit'
+                });
+
+                return `
+                <div class="d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'} mb-3">
+                    <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}"
+                         style="max-width: 70%; padding: 10px 15px; border-radius: 18px; word-wrap: break-word;">
+                        ${!isSender ? `<small class="opacity-75">${msg.sender_name}</small><br>` : ''}
+                        <div class="message-content">${msg.message_text}</div>
+                        <div class="message-time small mt-1 ${isSender ? 'text-light' : 'text-muted'}"
+                             style="text-align: right; font-size: 0.75rem;">
+                            ${messageTime}
+                        </div>
+                    </div>
+                </div>
+            `;
+            }).join('');
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Send new message from dashboard
+        function sendNewMessage() {
+            if (!currentConversation || !userData || !userData.user_id) {
+                alert('Please select a conversation first');
+                return;
+            }
+
+            const messageText = document.getElementById('newMessage').value.trim();
+            if (!messageText) {
+                alert('Please enter a message');
+                return;
+            }
+
+            const messageData = {
+                sender_id: userData.user_id,
+                receiver_id: currentConversation.other_user_id,
+                message_text: messageText
+            };
+
+            console.log('Sending message:', messageData);
+
+            const sendBtn = document.querySelector('#selectedConversation .btn-primary');
+            const originalText = sendBtn.innerHTML;
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            sendBtn.disabled = true;
+
+            fetch('http://localhost/project/backend/api/messages/send.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('newMessage').value = '';
+                        // Reload messages and conversations
+                        loadMessages(currentConversation.other_user_id);
+                        loadConversations();
+                        updateUnreadMessagesCount();
+                    } else {
+                        throw new Error(data.message || 'Failed to send message');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                    alert('Error sending message: ' + error.message);
+                })
+                .finally(() => {
+                    sendBtn.innerHTML = originalText;
+                    sendBtn.disabled = false;
+                });
+        }
+
+        // Mark messages as read
+        function markMessagesAsRead(senderId) {
+            if (!userData || !userData.user_id) return;
+
+            fetch('http://localhost/project/backend/api/messages/mark_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sender_id: senderId,
+                    receiver_id: userData.user_id
+                })
+            })
+                .then(() => {
+                    updateUnreadMessagesCount();
+                    loadConversations();
+                })
+                .catch(error => console.error('Error marking messages as read:', error));
+        }
+
+        // Update unread messages count
+        function updateUnreadMessagesCount() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/messages/unread_count.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const unreadCount = data.count || 0;
+                    document.getElementById('unreadMessagesCount').textContent = unreadCount;
+                    document.getElementById('messagesCount').textContent = unreadCount;
+
+                    // Update sidebar badge
+                    const messagesBadge = document.querySelector('#unreadMessagesBadge');
+                    if (messagesBadge) {
+                        messagesBadge.textContent = unreadCount;
+                        messagesBadge.style.display = unreadCount > 0 ? 'inline' : 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating unread count:', error);
+                });
+        }
+
+        // Refresh messages
+        function refreshMessages() {
+            if (currentConversation) {
+                loadMessages(currentConversation.other_user_id);
+            }
+            loadConversations();
+            updateUnreadMessagesCount();
+            showToast('Messages refreshed!', 'success');
+        }
+
+        // ✅ DASHBOARD STATS FUNCTIONS
+        function loadDashboardStats() {
+            updateMessagesCount();
+        }
+
+        function updateMessagesCount() {
+            // This will be updated by updateUnreadMessagesCount()
+            document.getElementById('messagesCount').textContent = "0";
+            document.getElementById('unreadMessagesBadge').textContent = "0";
+        }
+
+        // ✅ REFRESH DASHBOARD
+        function refreshDashboard() {
+            console.log("Refreshing dashboard...");
+            const refreshBtn = event.target;
+            const originalHtml = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
+            refreshBtn.disabled = true;
+
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+            updateUnreadMessagesCount();
+
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalHtml;
+                refreshBtn.disabled = false;
+                showToast('Dashboard refreshed successfully!', 'success');
+            }, 2000);
+        }
+
+        // ✅ UTILITY FUNCTIONS
+        function updateSidebarInfo() {
+            document.getElementById('sidebarUserName').textContent = userData.name || 'User Name';
+            document.getElementById('sidebarUserEmail').textContent = userData.email || 'user@email.com';
+            const initial = (userData.name || 'U').charAt(0).toUpperCase();
+            document.getElementById('sidebarAvatarText').textContent = initial;
         }
 
         function setActiveNavLink(activeItem) {
@@ -694,555 +1715,34 @@
                 case 'mybooks': navLinks[2].classList.add('active'); break;
                 case 'transactions': navLinks[3].classList.add('active'); break;
                 case 'messages': navLinks[4].classList.add('active'); break;
+                case 'requests': navLinks[7].classList.add('active'); break;
             }
         }
 
-        // ✅ PROFILE FUNCTIONS
-        // ✅ PROFILE FUNCTIONS - IMPROVED
-        function loadProfileData() {
-            const storedProfile = localStorage.getItem('userProfile');
-
-            // Profile preview setup
-            const userName = userData.name || 'User';
-            const initial = userName.charAt(0).toUpperCase();
-            document.getElementById('profilePreviewText').textContent = initial;
-
-            if (storedProfile) {
-                const profile = JSON.parse(storedProfile);
-                document.getElementById('profileName').value = profile.name || userData.name || '';
-                document.getElementById('profileEmail').value = profile.email || userData.email || '';
-                document.getElementById('profileCity').value = profile.city || '';
-                document.getElementById('profileAddress').value = profile.address || '';
-                document.getElementById('profileBio').value = profile.bio || '';
-
-                // ✅ PROFILE PICTURE DISPLAY KAREN
-                if (profile.profile_picture && profile.profile_picture.startsWith('data:')) {
-                    document.getElementById('profilePreview').innerHTML =
-                        `<img src="${profile.profile_picture}" alt="Profile Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-                }
-            } else {
-                document.getElementById('profileName').value = userData.name || '';
-                document.getElementById('profileEmail').value = userData.email || '';
-            }
+        function showDashboard() {
+            document.querySelector('.dashboard-header').style.display = 'block';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
+            document.getElementById('messagesInterface').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            setActiveNavLink('dashboard');
         }
 
-        function previewProfileImage(input) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // ✅ IMAGE KO BASE64 FORMAT MEIN STORE KAREN
-                    const base64Image = e.target.result;
-
-                    // Profile preview mein dikhayen
-                    document.getElementById('profilePreview').innerHTML =
-                        `<img src="${base64Image}" alt="Profile Preview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-
-                    // Automatically save to profile
-                    autoSaveProfilePicture(base64Image);
-                };
-                reader.readAsDataURL(file);
-            }
+        function showProfile() {
+            setActiveNavLink('profile');
         }
 
-        // ✅ AUTO-SAVE PROFILE PICTURE
-        function autoSaveProfilePicture(profilePicture) {
-            const profileData = {
-                name: document.getElementById('profileName').value || userData.name,
-                email: document.getElementById('profileEmail').value || userData.email,
-                city: document.getElementById('profileCity').value || '',
-                address: document.getElementById('profileAddress').value || '',
-                bio: document.getElementById('profileBio').value || '',
-                profile_picture: profilePicture
-            };
-
-            localStorage.setItem('userProfile', JSON.stringify(profileData));
-
-            // Sidebar mein bhi update karen
-            updateSidebarInfo();
-
-            showToast('Profile picture updated!', 'success');
-        }
-        function updateProfile() {
-            const currentProfilePicture = document.getElementById('profilePreview').querySelector('img')?.src ||
-                document.getElementById('profilePreviewText').textContent;
-
-            const profileData = {
-                name: document.getElementById('profileName').value,
-                email: document.getElementById('profileEmail').value,
-                city: document.getElementById('profileCity').value,
-                address: document.getElementById('profileAddress').value,
-                bio: document.getElementById('profileBio').value,
-                profile_picture: typeof currentProfilePicture === 'string' && currentProfilePicture.startsWith('data:') ?
-                    currentProfilePicture : null
-            };
-
-            localStorage.setItem('userProfile', JSON.stringify(profileData));
-            userData.name = profileData.name;
-            userData.email = profileData.email;
-            localStorage.setItem('user', JSON.stringify(userData));
-
-            updateSidebarInfo();
-            document.getElementById('userWelcome').textContent = `Welcome, ${profileData.name}!`;
-            showToast('Profile updated successfully!', 'success');
-
-            const profileModal = bootstrap.Modal.getInstance(document.getElementById('profileModal'));
-            profileModal.hide();
+        function showMyBooks() {
+            window.location.href = "my-books.html";
         }
 
-
-        // ✅ AUTO-SAVE PROFILE
-        document.getElementById('profileForm').addEventListener('input', function () {
-            clearTimeout(window.profileSaveTimeout);
-            window.profileSaveTimeout = setTimeout(() => {
-                const name = document.getElementById('profileName').value;
-                const email = document.getElementById('profileEmail').value;
-                if (name && email) {
-                    updateProfile();
-                }
-            }, 2000);
-        });
-
-        // ✅ TOAST NOTIFICATION FUNCTION
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
-            toast.style.zIndex = '1000';
-            toast.innerHTML = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function showTransactions() {
+            window.location.href = "user-transactions.html";
         }
 
-        // ✅ BOOK MANAGEMENT FUNCTIONS
-       // ✅ BOOK MANAGEMENT FUNCTIONS - UPDATED
-function loadUserBooks() {
-    const booksCountElement = document.getElementById('booksCount');
-    const recentBooksDiv = document.getElementById('recentBooks');
-
-    booksCountElement.textContent = 'Loading...';
-    recentBooksDiv.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div> Loading your books...</div>';
-
-    if (!userData || !userData.user_id) {
-        booksCountElement.textContent = '0';
-        recentBooksDiv.innerHTML = '<p class="text-muted">Please login to view your books</p>';
-        return;
-    }
-
-    // ✅ SPECIFIC USER KI BOOKS HI LOAD KAREN
-    fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.json();
-        })
-        .then(data => {
-            console.log('User books data:', data);
-            
-            if (data.books && data.books.length > 0) {
-                booksCountElement.textContent = data.books.length;
-                booksCountElement.classList.add('text-success');
-                setTimeout(() => booksCountElement.classList.remove('text-success'), 2000);
-
-                recentBooksDiv.innerHTML = '';
-                data.books.slice(0, 3).forEach(book => {
-                    recentBooksDiv.innerHTML += `
-                    <div class="border-bottom pb-2 mb-2">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${book.title}</h6>
-                                <p class="mb-1 text-muted">by ${book.author}</p>
-                                <small class="text-muted">
-                                    Condition: ${book.condition} • 
-                                    Status: <span class="badge ${book.status === 'Available' ? 'bg-success' : 'bg-warning'}">${book.status}</span> •
-                                    Added: ${new Date(book.created_at).toLocaleDateString()}
-                                </small>
-                            </div>
-                            <div class="btn-group ms-2">
-                                <button class="btn btn-sm btn-outline-primary" onclick="editBook(${book.id})">Edit</button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteBook(${book.id})">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                });
-
-                if (data.books.length > 3) {
-                    recentBooksDiv.innerHTML += `
-                    <div class="text-center mt-2">
-                        <a href="my-books.html" class="btn btn-sm btn-outline-primary">View All ${data.books.length} Books</a>
-                    </div>
-                `;
-                }
-            } else {
-                recentBooksDiv.innerHTML = `
-                <div class="text-center text-muted">
-                    <p>You haven't added any books yet.</p>
-                    <button class="btn btn-primary btn-sm" onclick="addBook()">Add Your First Book</button>
-                </div>
-            `;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading user books:', error);
-            booksCountElement.textContent = '0';
-            recentBooksDiv.innerHTML = '<p class="text-danger">Error loading your books. Please try refreshing.</p>';
-        });
-}
-
-        function editBook(bookId) {
-            window.location.href = `edit-book.html?id=${bookId}`;
-        }
-
-        function deleteBook(bookId) {
-            if (confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
-                if (!userData || !userData.user_id) {
-                    alert("Please login again");
-                    window.location.href = "index.html";
-                    return;
-                }
-
-                const deleteBtn = event.target;
-                const originalText = deleteBtn.innerHTML;
-                deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-                deleteBtn.disabled = true;
-
-                fetch('http://localhost/project/backend/api/books/delete.php', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: bookId, user_id: userData.user_id })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message && data.message.includes("deleted")) {
-                            showToast('Book deleted successfully!', 'success');
-                            setTimeout(() => loadUserBooks(), 1000);
-                        } else {
-                            alert("Error: " + (data.message || "Failed to delete book"));
-                            deleteBtn.innerHTML = originalText;
-                            deleteBtn.disabled = false;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("An error occurred while deleting the book.");
-                        deleteBtn.innerHTML = originalText;
-                        deleteBtn.disabled = false;
-                    });
-            }
-        }
-
-        // ✅ DASHBOARD STATS FUNCTIONS
-        function loadDashboardStats() {
-            if (userData && userData.user_id) {
-                fetch(`http://localhost/project/backend/api/requests/count.php?user_id=${userData.user_id}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error('API not found');
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.count !== undefined) {
-                            document.getElementById('requestsCount').textContent = data.count;
-                            if (data.count > 0) loadRecentRequests();
-                        }
-                    })
-                    .catch(error => {
-                        console.log('Requests count API not available, using mock data');
-                        document.getElementById('requestsCount').textContent = "2";
-                        loadMockRequests();
-                    });
-            }
-            updateMessagesCount();
-        }
-
-        function loadRecentRequests() {
-            if (!userData || !userData.user_id) return;
-
-            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}&type=incoming`)
-                .then(response => {
-                    if (!response.ok) throw new Error('API not available');
-                    return response.json();
-                })
-                .then(requests => {
-                    const recentRequestsDiv = document.getElementById('recentRequests');
-                    if (requests.length === 0) {
-                        recentRequestsDiv.innerHTML = '<p class="text-muted">No recent requests.</p>';
-                        return;
-                    }
-
-                    recentRequestsDiv.innerHTML = requests.slice(0, 3).map(request => `
-                    <div class="border-bottom pb-2 mb-2">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1">${request.book_title}</h6>
-                                <p class="mb-1 text-muted">Requested by: ${request.requester_name}</p>
-                                <small class="text-muted">
-                                    Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span> •
-                                    ${new Date(request.created_at).toLocaleDateString()}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-
-                    if (requests.length > 3) {
-                        recentRequestsDiv.innerHTML += `
-                        <div class="text-center mt-2">
-                            <button class="btn btn-sm btn-outline-primary" onclick="viewAllRequests()">View All ${requests.length} Requests</button>
-                        </div>
-                    `;
-                    }
-                })
-                .catch(error => {
-                    console.log('Using mock requests data');
-                    loadMockRequests();
-                });
-        }
-
-        function loadMockRequests() {
-            const recentRequestsDiv = document.getElementById('recentRequests');
-            recentRequestsDiv.innerHTML = `
-            <div class="border-bottom pb-2 mb-2">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1">To Kill a Mockingbird</h6>
-                        <p class="mb-1 text-muted">Requested by: John Doe</p>
-                        <small class="text-muted">
-                            Status: <span class="badge bg-warning">pending</span> •
-                            ${new Date().toLocaleDateString()}
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="border-bottom pb-2 mb-2">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1">1984</h6>
-                        <p class="mb-1 text-muted">Requested by: Jane Smith</p>
-                        <small class="text-muted">
-                            Status: <span class="badge bg-warning">pending</span> •
-                            ${new Date().toLocaleDateString()}
-                        </small>
-                    </div>
-                </div>
-            </div>
-        `;
-        }
-
-        function getStatusBadgeClass(status) {
-            switch (status) {
-                case 'pending': return 'bg-warning';
-                case 'approved': return 'bg-success';
-                case 'rejected': return 'bg-danger';
-                case 'cancelled': return 'bg-secondary';
-                default: return 'bg-secondary';
-            }
-        }
-
-        function updateMessagesCount() {
-            document.getElementById('messagesCount').textContent = "3";
-            document.getElementById('unreadMessagesBadge').textContent = "3";
-        }
-
-        // ✅ MESSAGING FUNCTIONS
-        let currentChatUser = null;
-
-        function loadConversations() {
-            console.log('Loading conversations...');
-            const conversationsList = document.getElementById('conversationsList');
-            conversationsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading conversations...</div>';
-
-            setTimeout(() => {
-                conversationsList.innerHTML = `
-                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(2, 'John Doe')">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle me-3 bg-primary text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                            <span class="fw-bold">J</span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">John Doe</h6>
-                                <span class="badge bg-danger">2</span>
-                            </div>
-                            <p class="mb-0 text-muted small text-truncate">Hi, is your book available?</p>
-                            <small class="text-muted">2 min ago</small>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(3, 'Jane Smith')">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle me-3 bg-success text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                            <span class="fw-bold">J</span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">Jane Smith</h6>
-                                <span class="badge bg-danger">1</span>
-                            </div>
-                            <p class="mb-0 text-muted small text-truncate">When can I pick up the book?</p>
-                            <small class="text-muted">1 hour ago</small>
-                        </div>
-                    </div>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action conversation-item" onclick="openChat(4, 'Mike Johnson')">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle me-3 bg-warning text-white d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
-                            <span class="fw-bold">M</span>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h6 class="mb-0">Mike Johnson</h6>
-                                <span class="badge bg-secondary">0</span>
-                            </div>
-                            <p class="mb-0 text-muted small text-truncate">I have a book you might like!</p>
-                            <small class="text-muted">5 hours ago</small>
-                        </div>
-                    </div>
-                </a>
-            `;
-            }, 1000);
-        }
-
-        function openChat(otherUserId, otherUserName) {
-            console.log('Opening chat with:', otherUserName);
-            currentChatUser = { id: otherUserId, name: otherUserName };
-
-            const initial = otherUserName.charAt(0).toUpperCase();
-            document.getElementById('chatHeader').innerHTML = `
-            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
-                <span class="fw-bold">${initial}</span>
-            </div>
-            <div class="flex-grow-1">
-                <h6 class="mb-0">${otherUserName}</h6>
-                <small class="text-muted">Online</small>
-            </div>
-            <button class="btn btn-sm btn-outline-secondary" onclick="closeChat()">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-
-            document.getElementById('messageInputContainer').style.display = 'block';
-            loadMockMessages(otherUserId, otherUserName);
-        }
-
-        function loadMockMessages(otherUserId, otherUserName) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            const mockMessages = [
-                {
-                    id: 1, sender_id: otherUserId, receiver_id: 1,
-                    message_text: `Hi! I'm interested in your book. Is it still available?`,
-                    is_read: 0, created_at: new Date(Date.now() - 300000).toISOString(),
-                    sender_name: otherUserName
-                },
-                {
-                    id: 2, sender_id: 1, receiver_id: otherUserId,
-                    message_text: `Yes, it's available! When would you like to pick it up?`,
-                    is_read: 1, created_at: new Date(Date.now() - 180000).toISOString(),
-                    sender_name: 'You'
-                },
-                {
-                    id: 3, sender_id: otherUserId, receiver_id: 1,
-                    message_text: `Great! Can I come tomorrow afternoon?`,
-                    is_read: 0, created_at: new Date(Date.now() - 60000).toISOString(),
-                    sender_name: otherUserName
-                }
-            ];
-
-            messagesContainer.innerHTML = mockMessages.map(msg => `
-            <div class="d-flex mb-3 ${msg.sender_id === 1 ? 'justify-content-end' : 'justify-content-start'}">
-                <div class="message-bubble ${msg.sender_id === 1 ? 'bg-primary text-white' : 'bg-light'}">
-                    ${msg.sender_id !== 1 ? `<small class="text-muted">${msg.sender_name}</small><br>` : ''}
-                    ${msg.message_text}
-                    <div class="message-time">${formatTime(msg.created_at)}</div>
-                </div>
-            </div>
-        `).join('');
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function sendMessage() {
-            if (!currentChatUser) {
-                alert('Please select a conversation first');
-                return;
-            }
-
-            const messageInput = document.getElementById('messageInput');
-            const messageText = messageInput.value.trim();
-            if (!messageText) return;
-
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML += `
-            <div class="d-flex mb-3 justify-content-end">
-                <div class="message-bubble bg-primary text-white">
-                    ${messageText}
-                    <div class="message-time">${formatTime(new Date().toISOString())}</div>
-                </div>
-            </div>
-        `;
-
-            messageInput.value = '';
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            setTimeout(() => {
-                messagesContainer.innerHTML += `
-                <div class="d-flex mb-3 justify-content-start">
-                    <div class="message-bubble bg-light">
-                        <small class="text-muted">${currentChatUser.name}</small><br>
-                        Thanks for your message! I'll get back to you soon.
-                        <div class="message-time">${formatTime(new Date().toISOString())}</div>
-                    </div>
-                </div>
-            `;
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 1000);
-        }
-
-        function closeChat() {
-            currentChatUser = null;
-            document.getElementById('messageInputContainer').style.display = 'none';
-            document.getElementById('messagesContainer').innerHTML = `
-            <div class="text-center text-muted mt-5">
-                <i class="fas fa-comments fa-3x mb-3"></i>
-                <p>Select a conversation to view messages</p>
-            </div>
-        `;
-            document.getElementById('chatHeader').innerHTML = `
-            <div class="flex-grow-1">
-                <h6 class="mb-0">Select a conversation to start messaging</h6>
-            </div>
-        `;
-        }
-
-        function refreshMessages() {
-            console.log('Refreshing messages...');
-            if (currentChatUser) {
-                loadMockMessages(currentChatUser.id, currentChatUser.name);
-            }
-            loadConversations();
-        }
-
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-
-        // ✅ UTILITY FUNCTIONS
         function logout() {
-            fetch('http://localhost/project/backend/api/auth/logout.php', { method: 'POST' })
-                .then(() => {
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('userProfile');
-                    window.location.href = "index.html";
-                })
-                .catch(error => {
-                    console.error('Logout error:', error);
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('userProfile');
-                    window.location.href = "index.html";
-                });
+            localStorage.removeItem('user');
+            localStorage.removeItem('userProfile');
+            window.location.href = "index.html";
         }
 
         function addBook() {
@@ -1254,48 +1754,73 @@ function loadUserBooks() {
         }
 
         function viewRequests() {
-            alert("View requests functionality will be implemented soon");
+            showRequests();
         }
 
-        function viewAllRequests() {
-            window.location.href = 'my-requests.html';
-        }
-
-        function refreshDashboard() {
-            console.log("Manual refresh requested");
-            const refreshBtn = event.target;
-            const originalHtml = refreshBtn.innerHTML;
-            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
-            refreshBtn.disabled = true;
-
-            loadUserBooks();
-            loadDashboardStats();
-
-            setTimeout(() => {
-                refreshBtn.innerHTML = originalHtml;
-                refreshBtn.disabled = false;
-                showToast('Dashboard refreshed successfully!', 'success');
-            }, 2000);
-        }
-
-        // Enter key to send message
-        document.addEventListener('DOMContentLoaded', function () {
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') sendMessage();
-                });
+        // ✅ STATUS BADGE CLASS HELPER
+        function getStatusBadgeClass(status) {
+            switch (status?.toLowerCase()) {
+                case 'pending': return 'bg-warning';
+                case 'approved': return 'bg-success';
+                case 'rejected': return 'bg-danger';
+                case 'completed': return 'bg-info';
+                case 'cancelled': return 'bg-secondary';
+                default: return 'bg-secondary';
             }
-            loadUserBooks();
-            loadDashboardStats();
-        });
+        }
 
-        // Auto-refresh every 30 seconds
+        // ✅ REQUEST STATUS BADGE FUNCTION
+        function getRequestStatusBadge(status) {
+            switch (status) {
+                case 'Pending': return 'bg-warning';
+                case 'Approved': return 'bg-success';
+                case 'Rejected': return 'bg-danger';
+                case 'Completed': return 'bg-info';
+                case 'Cancelled': return 'bg-secondary';
+                default: return 'bg-secondary';
+            }
+        }
+
+        // ✅ TOAST NOTIFICATION FUNCTION
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
+            toast.style.zIndex = '1000';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Utility function for time formatting
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 24 * 60 * 60 * 1000) {
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        // ✅ AUTO-REFRESH EVERY 30 SECONDS
         setInterval(() => {
-            console.log("Auto-refreshing dashboard data...");
-            loadUserBooks();
-            loadDashboardStats();
+            if (userData && userData.user_id) {
+                updateRequestsCount();
+                loadRecentRequests();
+                updateUnreadMessagesCount();
+            }
         }, 30000);
+
+        // ✅ INITIALIZE ON DASHBOARD LOAD
+        document.addEventListener('DOMContentLoaded', function () {
+            if (userData && userData.user_id) {
+                updateRequestsCount();
+                loadRecentRequests();
+                updateUnreadMessagesCount();
+            }
+        });
     </script>
 
     <!-- Bootstrap JS -->

@@ -22,8 +22,8 @@ if($user_id) {
 
     $requests_arr = array();
     
-    if($result->num_rows > 0){
-        while($row = $result->fetch_assoc()){
+    if($result) {
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
             $request_item = array(
                 "id" => $row['id'],
                 "book_id" => $row['book_id'],
