@@ -356,6 +356,46 @@
             margin-bottom: 1rem;
             opacity: 0.5;
         }
+
+        /* styling user chat avatars */
+        /* ✅ AVATAR STYLES FOR INBOX */
+.avatar-placeholder {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    flex-shrink: 0;
+}
+
+.avatar-primary { background-color: #007bff; }
+.avatar-success { background-color: #28a745; }
+.avatar-warning { background-color: #ffc107; color: #000; }
+.avatar-danger { background-color: #dc3545; }
+.avatar-info { background-color: #17a2b8; }
+
+/* Conversation item hover effects */
+.conversation-item {
+    transition: all 0.2s ease;
+    border: none !important;
+}
+
+.conversation-item:hover {
+    background-color: #f8f9fa !important;
+}
+
+.conversation-item.active {
+    background-color: #e3f2fd !important;
+    border-left: 3px solid #007bff !important;
+}
+
+/* Ensure text doesn't overflow */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
     </style>
 </head>
 
@@ -1292,61 +1332,61 @@
 
         // Load conversations
         // ✅ LOAD CONVERSATIONS WITH DEBUGGING
-// ✅ LOAD CONVERSATIONS WITH ENHANCED DEBUGGING
-function loadConversations() {
-    if (!userData || !userData.user_id) {
-        console.log('User not logged in');
-        return;
-    }
+        // ✅ LOAD CONVERSATIONS WITH ENHANCED DEBUGGING
+        function loadConversations() {
+            if (!userData || !userData.user_id) {
+                console.log('User not logged in');
+                return;
+            }
 
-    console.log('🚀 Loading conversations for user:', userData.user_id);
-    
-    fetch(`http://localhost/project/backend/api/messages/conversations.php?user_id=${userData.user_id}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(errorText => {
-                    console.error('❌ Server response not OK. Status:', response.status);
-                    console.error('❌ Error response:', errorText);
-                    throw new Error(`Server error: ${response.status}`);
-                });
-            }
-            return response.json();
-        })
-        .then(conversations => {
-            console.log('✅ RAW Conversations API Response:', conversations);
-            
-            // ✅ DEEP DEBUGGING
-            if (!conversations) {
-                console.log('❌ Conversations is null or undefined');
-                conversations = [];
-            }
-            
-            if (!Array.isArray(conversations)) {
-                console.log('❌ Conversations is not an array. Type:', typeof conversations);
-                console.log('❌ Actual value:', conversations);
-                conversations = [];
-            }
-            
-            console.log('📊 Total conversations:', conversations.length);
-            
-            // ✅ INDIVIDUAL CONVERSATION DEBUGGING
-            conversations.forEach((conv, index) => {
-                console.log(`🔍 Conversation ${index}:`, conv);
-                if (conv) {
-                    console.log(`   - user1_id:`, conv.user1_id);
-                    console.log(`   - user2_id:`, conv.user2_id);
-                    console.log(`   - user1_name:`, conv.user1_name);
-                    console.log(`   - user2_name:`, conv.user2_name);
-                    console.log(`   - sender_id:`, conv.sender_id);
-                    console.log(`   - sender_name:`, conv.sender_name);
-                }
-            });
-            
-            displayConversations(conversations);
-        })
-        .catch(error => {
-            console.error('💥 Error loading conversations:', error);
-            document.getElementById('conversationsList').innerHTML = `
+            console.log('🚀 Loading conversations for user:', userData.user_id);
+
+            fetch(`http://localhost/project/backend/api/messages/conversations.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(errorText => {
+                            console.error('❌ Server response not OK. Status:', response.status);
+                            console.error('❌ Error response:', errorText);
+                            throw new Error(`Server error: ${response.status}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(conversations => {
+                    console.log('✅ RAW Conversations API Response:', conversations);
+
+                    // ✅ DEEP DEBUGGING
+                    if (!conversations) {
+                        console.log('❌ Conversations is null or undefined');
+                        conversations = [];
+                    }
+
+                    if (!Array.isArray(conversations)) {
+                        console.log('❌ Conversations is not an array. Type:', typeof conversations);
+                        console.log('❌ Actual value:', conversations);
+                        conversations = [];
+                    }
+
+                    console.log('📊 Total conversations:', conversations.length);
+
+                    // ✅ INDIVIDUAL CONVERSATION DEBUGGING
+                    conversations.forEach((conv, index) => {
+                        console.log(`🔍 Conversation ${index}:`, conv);
+                        if (conv) {
+                            console.log(`   - user1_id:`, conv.user1_id);
+                            console.log(`   - user2_id:`, conv.user2_id);
+                            console.log(`   - user1_name:`, conv.user1_name);
+                            console.log(`   - user2_name:`, conv.user2_name);
+                            console.log(`   - sender_id:`, conv.sender_id);
+                            console.log(`   - sender_name:`, conv.sender_name);
+                        }
+                    });
+
+                    displayConversations(conversations);
+                })
+                .catch(error => {
+                    console.error('💥 Error loading conversations:', error);
+                    document.getElementById('conversationsList').innerHTML = `
                 <div class="alert alert-warning text-center">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     Unable to load conversations
@@ -1354,16 +1394,15 @@ function loadConversations() {
                     <small class="text-muted">${error.message}</small>
                 </div>
             `;
-        });
-}
+                });
+        }
 
 
         // Display conversations
-        // ✅ DISPLAY CONVERSATIONS - COMPLETELY FIXED VERSION
+  // ✅ DISPLAY CONVERSATIONS WITH AVATARS
 function displayConversations(conversations) {
     const conversationsList = document.getElementById('conversationsList');
     
-    // ✅ NULL CHECK for conversations array
     if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
         conversationsList.innerHTML = `
             <div class="text-center text-muted p-3">
@@ -1375,49 +1414,42 @@ function displayConversations(conversations) {
         return;
     }
 
-    console.log('Processing conversations:', conversations);
+    console.log('Processing conversations with avatars:', conversations);
 
     conversationsList.innerHTML = conversations.map((conv, index) => {
         try {
-            // ✅ COMPREHENSIVE NULL CHECK for each conversation
             if (!conv || typeof conv !== 'object') {
-                console.warn('Invalid conversation object at index', index, ':', conv);
                 return '';
             }
 
-            // ✅ SAFE USER IDENTIFICATION
+            // ✅ USER IDENTIFICATION WITH AVATAR SUPPORT
             let otherUserId, otherUserName;
             
-            // Check if user1_id and user2_id exist
             if (conv.user1_id !== undefined && conv.user2_id !== undefined) {
                 if (conv.user1_id == userData.user_id) {
                     otherUserId = conv.user2_id;
-                    otherUserName = conv.user2_name;
+                    otherUserName = conv.user2_name || `User ${conv.user2_id}`;
                 } else {
                     otherUserId = conv.user1_id;
-                    otherUserName = conv.user1_name;
+                    otherUserName = conv.user1_name || `User ${conv.user1_id}`;
                 }
-            } 
-            // Check if it's a direct message format
-            else if (conv.sender_id !== undefined) {
+            } else if (conv.sender_id !== undefined) {
                 otherUserId = conv.sender_id == userData.user_id ? conv.receiver_id : conv.sender_id;
-                otherUserName = conv.sender_name;
-            }
-            // Fallback if no user IDs found
-            else {
-                console.warn('No valid user IDs found in conversation:', conv);
-                otherUserId = 0;
+                otherUserName = conv.sender_name || `User ${otherUserId}`;
+            } else {
+                otherUserId = index + 1;
                 otherUserName = 'Unknown User';
             }
 
-            // ✅ COMPREHENSIVE NULL SAFETY for user data
-            const safeUserId = otherUserId || 0;
-            const safeUserName = otherUserName ? String(otherUserName) : 'Unknown User';
-            
-            // ✅ SAFE STRING REPLACE - Pehle check karen, phir replace karen
-            const escapedUserName = safeUserName.replace(/'/g, "\\'");
+            // ✅ AVATAR GENERATION
+            const userInitial = otherUserName.charAt(0).toUpperCase();
+            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+            const colorIndex = otherUserId % avatarColors.length;
+            const avatarClass = avatarColors[colorIndex];
 
-            // ✅ SAFE DATA EXTRACTION with fallbacks
+            // ✅ SAFE DATA HANDLING
+            const safeUserId = otherUserId || 0;
+            const safeUserName = String(otherUserName).replace(/'/g, "\\'");
             const lastMessage = conv.last_message || conv.message_text || 'No messages yet';
             const lastMessageTime = conv.last_message_at || conv.created_at || new Date();
             const unreadCount = conv.unread_count || 0;
@@ -1428,63 +1460,92 @@ function displayConversations(conversations) {
             return `
                 <div class="conversation-item border-bottom p-3 ${isActive ? 'active' : ''}"
                      style="cursor: pointer; ${isActive ? 'background-color: #e3f2fd;' : ''}"
-                     onclick="selectConversation(${safeUserId}, '${escapedUserName}')">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${safeUserName}</h6>
-                            <small class="text-truncate d-block" style="max-width: 200px;">
+                     onclick="selectConversation(${safeUserId}, '${safeUserName}')">
+                    <div class="d-flex align-items-start">
+                        <!-- ✅ USER AVATAR -->
+                        <div class="avatar-placeholder ${avatarClass} me-3" 
+                             style="width: 45px; height: 45px; font-size: 1rem; flex-shrink: 0;">
+                            ${userInitial}
+                        </div>
+                        
+                        <!-- ✅ CONVERSATION DETAILS -->
+                        <div class="flex-grow-1" style="min-width: 0;">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h6 class="mb-0 text-truncate" style="max-width: 150px;">${otherUserName}</h6>
+                                <div class="d-flex align-items-center">
+                                    <small class="text-muted me-2">${formatTime(lastMessageTime)}</small>
+                                    ${unreadBadge}
+                                </div>
+                            </div>
+                            <small class="text-truncate d-block text-muted" style="max-width: 200px;">
                                 ${lastMessage}
                             </small>
-                        </div>
-                        <div class="text-end">
-                            <small class="text-muted">${formatTime(lastMessageTime)}</small>
-                            ${unreadBadge}
                         </div>
                     </div>
                 </div>
             `;
         } catch (error) {
-            console.error('❌ Error processing conversation at index', index, ':', conv, error);
-            return ''; // Skip this conversation completely
+            console.error('Error processing conversation:', error);
+            return '';
         }
-    }).filter(html => html !== '').join(''); // Remove any empty strings
+    }).filter(html => html !== '').join('');
 
-    // ✅ FINAL CHECK - Agar koi valid conversation nahi bacha
     if (conversationsList.innerHTML.trim() === '') {
         conversationsList.innerHTML = `
             <div class="text-center text-muted p-3">
                 <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
                 <p>No valid conversations to display</p>
-                <small>There might be an issue with the conversation data format</small>
             </div>
         `;
     }
 }
+
+
         // Select a conversation
-        function selectConversation(otherUserId, otherUserName) {
-            console.log('Selecting conversation with:', otherUserName, otherUserId);
+       // ✅ SELECT CONVERSATION WITH AVATAR IN HEADER
+function selectConversation(otherUserId, otherUserName) {
+    console.log('Selecting conversation with:', otherUserName, otherUserId);
+    
+    currentConversation = {
+        other_user_id: otherUserId,
+        other_user_name: otherUserName
+    };
 
-            currentConversation = {
-                other_user_id: otherUserId,
-                other_user_name: otherUserName
-            };
+    // ✅ AVATAR FOR CONVERSATION HEADER
+    const userInitial = otherUserName.charAt(0).toUpperCase();
+    const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+    const colorIndex = otherUserId % avatarColors.length;
+    const avatarClass = avatarColors[colorIndex];
 
-            // Update UI
-            document.getElementById('conversationWith').textContent = `Chat with ${otherUserName}`;
-            document.getElementById('selectedConversation').style.display = 'block';
-            document.getElementById('noConversationSelected').style.display = 'none';
+    // Update UI with avatar
+    document.getElementById('conversationWith').innerHTML = `
+        <div class="d-flex align-items-center">
+            <div class="avatar-placeholder ${avatarClass} me-2" 
+                 style="width: 40px; height: 40px; font-size: 1rem;">
+                ${userInitial}
+            </div>
+            <div>
+                <strong>${otherUserName}</strong>
+                <br>
+                <small class="text-muted">Online</small>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('selectedConversation').style.display = 'block';
+    document.getElementById('noConversationSelected').style.display = 'none';
 
-            // Highlight selected conversation
-            document.querySelectorAll('.conversation-item').forEach(item => {
-                item.classList.remove('active');
-                item.style.backgroundColor = '';
-            });
-            event.currentTarget.classList.add('active');
-            event.currentTarget.style.backgroundColor = '#e3f2fd';
+    // Highlight selected conversation
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        item.classList.remove('active');
+        item.style.backgroundColor = '';
+    });
+    event.currentTarget.classList.add('active');
+    event.currentTarget.style.backgroundColor = '#e3f2fd';
 
-            // Load messages
-            loadMessages(otherUserId);
-        }
+    // Load messages
+    loadMessages(otherUserId);
+}
 
         // Load messages between current user and selected user
         function loadMessages(otherUserId) {
@@ -1516,43 +1577,73 @@ function displayConversations(conversations) {
         }
 
         // Display messages in the chat area
-        function displayMessages(messages) {
-            const messagesContainer = document.getElementById('messagesContainer');
+// ✅ DISPLAY MESSAGES WITH AVATARS
+function displayMessages(messages) {
+    const messagesContainer = document.getElementById('messagesContainer');
+    
+    if (!messages || messages.length === 0) {
+        messagesContainer.innerHTML = `
+            <div class="text-center text-muted p-3">
+                <i class="fas fa-comments me-2"></i>
+                No messages yet. Start the conversation!
+            </div>
+        `;
+        return;
+    }
 
-            if (!messages || messages.length === 0) {
-                messagesContainer.innerHTML = `
-                <div class="text-center text-muted p-3">
-                    <i class="fas fa-comments me-2"></i>
-                    No messages yet. Start the conversation!
-                </div>
-            `;
-                return;
-            }
+    messagesContainer.innerHTML = messages.map(msg => {
+        const isSender = msg.sender_id == userData.user_id;
+        const messageTime = new Date(msg.created_at).toLocaleTimeString([], { 
+            hour: '2-digit', minute: '2-digit' 
+        });
 
-            messagesContainer.innerHTML = messages.map(msg => {
-                const isSender = msg.sender_id == userData.user_id;
-                const messageTime = new Date(msg.created_at).toLocaleTimeString([], {
-                    hour: '2-digit', minute: '2-digit'
-                });
+        // ✅ AVATAR FOR EACH MESSAGE
+        const senderInitial = (msg.sender_name || 'U').charAt(0).toUpperCase();
+        const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
+        const colorIndex = (msg.sender_id || 0) % avatarColors.length;
+        const avatarClass = avatarColors[colorIndex];
 
-                return `
-                <div class="d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'} mb-3">
-                    <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}"
-                         style="max-width: 70%; padding: 10px 15px; border-radius: 18px; word-wrap: break-word;">
-                        ${!isSender ? `<small class="opacity-75">${msg.sender_name}</small><br>` : ''}
-                        <div class="message-content">${msg.message_text}</div>
-                        <div class="message-time small mt-1 ${isSender ? 'text-light' : 'text-muted'}"
-                             style="text-align: right; font-size: 0.75rem;">
-                            ${messageTime}
-                        </div>
+        return `
+            <div class="d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'} mb-3">
+                ${!isSender ? `
+                    <!-- ✅ RECEIVER AVATAR -->
+                    <div class="avatar-placeholder ${avatarClass} me-2" 
+                         style="width: 35px; height: 35px; font-size: 0.8rem;">
+                        ${senderInitial}
+                    </div>
+                ` : ''}
+                
+                <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}" 
+                     style="max-width: 70%; padding: 10px 15px; border-radius: 18px; word-wrap: break-word;">
+                    
+                    ${!isSender ? `
+                        <small class="opacity-75 fw-bold">${msg.sender_name}</small>
+                        <br>
+                    ` : ''}
+                    
+                    <div class="message-content">${msg.message_text}</div>
+                    
+                    <div class="message-time small mt-1 ${isSender ? 'text-light' : 'text-muted'}" 
+                         style="text-align: right; font-size: 0.75rem;">
+                        ${messageTime}
                     </div>
                 </div>
-            `;
-            }).join('');
 
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
+                ${isSender ? `
+                    <!-- ✅ SENDER AVATAR -->
+                    <div class="avatar-placeholder avatar-primary ms-2" 
+                         style="width: 35px; height: 35px; font-size: 0.8rem;">
+                        ${(userData.name || 'U').charAt(0).toUpperCase()}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+         
 
         // Send new message from dashboard
         function sendNewMessage() {
