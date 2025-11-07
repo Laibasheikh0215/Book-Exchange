@@ -148,125 +148,6 @@
             background-color: #17a2b8;
         }
 
-        /* Message avatars */
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-
-        /* ✅ PROFILE MODAL STYLES */
-        .profile-pic-preview {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid #f8ca30;
-            margin: 0 auto 15px;
-            display: block;
-        }
-
-        .upload-btn-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .upload-btn-wrapper input[type=file] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        /* ✅ MESSAGING STYLES */
-        #messagesInterface {
-            display: none;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 10px 15px;
-            border-radius: 18px;
-            word-wrap: break-word;
-            margin-bottom: 10px;
-        }
-
-        .message-time {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            margin-top: 5px;
-            text-align: right;
-        }
-
-        .conversation-item {
-            border: none;
-            border-bottom: 1px solid #eee;
-            padding: 12px 15px;
-        }
-
-        .conversation-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .conversation-item.active {
-            background-color: #e3f2fd;
-        }
-
-        #messagesContainer {
-            height: 400px;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #f8f9fa;
-        }
-
-        /* Scrollbar styling */
-        #messagesContainer::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #messagesContainer::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        #messagesContainer::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
-        }
-
-        /* Avatar Colors */
-        .bg-primary {
-            background-color: #007bff !important;
-        }
-
-        .bg-success {
-            background-color: #28a745 !important;
-        }
-
-        .bg-warning {
-            background-color: #ffc107 !important;
-            color: #000 !important;
-        }
-
-        .bg-danger {
-            background-color: #dc3545 !important;
-        }
-
-        .bg-info {
-            background-color: #17a2b8 !important;
-        }
-
         /* ✅ REQUESTS STYLING */
         .request-card {
             border-left: 4px solid #007bff;
@@ -357,61 +238,6 @@
             opacity: 0.5;
         }
 
-        /* styling user chat avatars */
-        /* ✅ AVATAR STYLES FOR INBOX */
-        .avatar-placeholder {
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            flex-shrink: 0;
-        }
-
-        .avatar-primary {
-            background-color: #007bff;
-        }
-
-        .avatar-success {
-            background-color: #28a745;
-        }
-
-        .avatar-warning {
-            background-color: #ffc107;
-            color: #000;
-        }
-
-        .avatar-danger {
-            background-color: #dc3545;
-        }
-
-        .avatar-info {
-            background-color: #17a2b8;
-        }
-
-        /* Conversation item hover effects */
-        .conversation-item {
-            transition: all 0.2s ease;
-            border: none !important;
-        }
-
-        .conversation-item:hover {
-            background-color: #f8f9fa !important;
-        }
-
-        .conversation-item.active {
-            background-color: #e3f2fd !important;
-            border-left: 3px solid #007bff !important;
-        }
-
-        /* Ensure text doesn't overflow */
-        .text-truncate {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
         /* ✅ NOTIFICATION STYLES */
         .notification-item {
             transition: all 0.2s ease;
@@ -491,10 +317,6 @@
                     <a class="nav-link" href="#" onclick="showTransactions()">
                         <i class="fas fa-exchange-alt me-2"></i>Transactions
                     </a>
-                    <a class="nav-link" href="#" onclick="showMessages()">
-                        <i class="fas fa-comments me-2"></i>Messages
-                        <span class="badge bg-danger ms-1" id="unreadMessagesBadge">0</span>
-                    </a>
                     <a class="nav-link" href="browse-book.html">
                         <i class="fas fa-search me-2"></i>Browse Books
                     </a>
@@ -540,14 +362,14 @@
                         </div>
                         <div class="col-md-3 mb-4">
                             <div class="card text-center p-3">
-                                <h3 id="messagesCount">0</h3>
-                                <p>Unread Messages</p>
+                                <h3 id="rating">4.5</h3>
+                                <p>Your Rating</p>
                             </div>
                         </div>
                         <div class="col-md-3 mb-4">
                             <div class="card text-center p-3">
-                                <h3 id="rating">4.5</h3>
-                                <p>Your Rating</p>
+                                <h3>0</h3>
+                                <p>Completed Exchanges</p>
                             </div>
                         </div>
                     </div>
@@ -663,71 +485,7 @@
         </div>
     </div>
 
-    <!-- ✅ MESSAGES INTERFACE -->
-    <div id="messagesInterface" class="container-fluid" style="display: none;">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-comments me-2"></i>Messages
-                            <span class="badge bg-danger ms-1" id="unreadMessagesCount">0</span>
-                        </h5>
-                        <div>
-                            <button class="btn btn-sm btn-light me-2" onclick="refreshMessages()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <!-- Conversations List -->
-                            <div class="col-md-4 border-end">
-                                <h6>Conversations</h6>
-                                <div id="conversationsList" style="max-height: 500px; overflow-y: auto;">
-                                    <div class="text-center p-3">
-                                        <div class="spinner-border spinner-border-sm"></div> Loading conversations...
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Messages Area -->
-                            <div class="col-md-8">
-                                <div id="selectedConversation" style="display: none;">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 id="conversationWith"></h6>
-                                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshMessages()">
-                                            <i class="fas fa-sync-alt"></i>
-                                        </button>
-                                    </div>
-                                    <div id="messagesContainer"
-                                        style="height: 400px; overflow-y: auto; padding: 15px; background-color: #f8f9fa; border-radius: 10px; border: 1px solid #dee2e6;">
-                                        <!-- Messages will appear here -->
-                                    </div>
-                                    <div class="mt-3">
-                                        <div class="input-group">
-                                            <textarea class="form-control" id="newMessage" rows="2"
-                                                placeholder="Type your message..."></textarea>
-                                            <button class="btn btn-primary" onclick="sendNewMessage()">
-                                                <i class="fas fa-paper-plane"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="noConversationSelected" class="text-center p-5">
-                                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
-                                    <p>Select a conversation to start messaging</p>
-                                    <small class="text-muted">Your messages with other users will appear here</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ NOTIFICATIONS INTERFACE - SEPARATE -->
+    <!-- ✅ NOTIFICATIONS INTERFACE -->
     <div id="notificationsInterface" class="container-fluid" style="display: none;">
         <div class="row">
             <div class="col-12">
@@ -747,6 +505,28 @@
                         </div>
                     </div>
                     <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary active"
+                                        onclick="filterNotifications('all')">
+                                        All Notifications
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterNotifications('unread')">
+                                        Unread Only
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterNotifications('Request')">
+                                        Requests
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterNotifications('Reminder')">
+                                        Reminders
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                         <div id="notificationsList">
                             <div class="text-center p-3">
                                 <div class="spinner-border spinner-border-sm"></div> Loading notifications...
@@ -828,7 +608,7 @@
 
         // ✅ COMPLETE INITIALIZE DASHBOARD
         function initializeDashboard() {
-            console.log('🚀 Initializing dashboard with user data...');
+            console.log('🚀 Initializing dashboard...');
 
             // Basic user info
             document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
@@ -839,7 +619,16 @@
             loadDashboardStats();
             updateRequestsCount();
             loadRecentRequests();
-            updateUnreadMessagesCount(); // Add this line
+
+            // Initialize notifications
+            setTimeout(() => {
+                updateUnreadNotificationsCount();
+            }, 2000);
+
+            initializeModals();
+
+            // Setup auto-checkers
+            setupAutoCheckers();
 
             console.log('✅ Dashboard fully initialized');
         }
@@ -914,83 +703,20 @@
             }
         }
 
-        // ✅ INITIALIZE MODALS ON DASHBOARD LOAD
-function initializeModals() {
-    console.log('Initializing modals...');
-    
-    // Request type change handler
-    document.querySelectorAll('input[name="requestType"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            const isSwap = this.value === 'Swap';
-            const swapSection = document.getElementById('swapBookSection');
-            const borrowSection = document.getElementById('borrowOptions');
-            
-            if (swapSection) swapSection.style.display = isSwap ? 'block' : 'none';
-            if (borrowSection) borrowSection.style.display = isSwap ? 'none' : 'block';
-            
-            if (isSwap) {
-                loadUserBooksForSwap();
-            }
-        });
-    });
-    
-    // Set minimum date for return (tomorrow)
-    const returnDateInput = document.getElementById('returnDate');
-    if (returnDateInput) {
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        returnDateInput.min = tomorrow.toISOString().split('T')[0];
-    }
-    
-    console.log('Modals initialized successfully');
-}
+        // ✅ INITIALIZE MODALS
+        function initializeModals() {
+            console.log('Initializing modals...');
+        }
 
-// ✅ IMPROVED REQUEST BORROW FUNCTION
-function requestBorrow() {
-    console.log('Request borrow clicked');
-    
-    if (!userData || !userData.user_id) {
-        alert('Please login to request this book');
-        window.location.href = 'login.html';
-        return;
-    }
-
-    // Show modal immediately
-    const requestModalElement = document.getElementById('requestModal');
-    if (!requestModalElement) {
-        console.error('Request modal element not found');
-        return;
-    }
-    
-    const requestModal = new bootstrap.Modal(requestModalElement);
-    requestModal.show();
-    
-    // Initialize modal content
-    initializeModals();
-}
-
-// ✅ IMPROVED SHOW REQUESTS FUNCTION
-function showRequests() {
-    console.log('Showing requests interface');
-    
-    // Hide other sections
-    document.querySelector('.dashboard-header').style.display = 'none';
-    document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
-    document.getElementById('messagesInterface').style.display = 'none';
-    document.getElementById('notificationsInterface').style.display = 'none';
-    
-    // Show requests interface
-    const requestsInterface = document.getElementById('requestsInterface');
-    if (requestsInterface) {
-        requestsInterface.style.display = 'block';
-    } else {
-        console.error('Requests interface not found');
-    }
-    
-    setActiveNavLink('requests');
-    loadRequests();
-    initializeModals(); // ✅ ADD THIS LINE
-}
+        // ✅ SHOW REQUESTS FUNCTION
+        function showRequests() {
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'block';
+            setActiveNavLink('requests');
+            loadRequests();
+        }
 
         // ✅ UPDATE REQUESTS COUNT
         function updateRequestsCount() {
@@ -1048,62 +774,51 @@ function showRequests() {
 
             if (!requests || requests.length === 0) {
                 recentRequestsDiv.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-handshake"></i>
-                    <p>No recent requests</p>
-                    <small>When someone requests your book, it will appear here</small>
-                </div>
-            `;
+            <div class="empty-state">
+                <i class="fas fa-handshake"></i>
+                <p>No recent requests</p>
+                <small>When someone requests your book, it will appear here</small>
+            </div>
+        `;
                 return;
             }
 
             recentRequestsDiv.innerHTML = requests.slice(0, 3).map(request => `
-            <div class="border-bottom pb-2 mb-2">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div class="flex-grow-1">
-                        <div class="d-flex align-items-center mb-1">
-                            <h6 class="mb-0 me-2">${request.book_title}</h6>
-                            <span class="badge bg-primary badge-sm">Incoming</span>
-                        </div>
-                        <p class="mb-1 text-muted small">From: <strong>${request.requester_name}</strong></p>
-                        <p class="mb-1 text-muted small">
-                            Type: <span class="badge ${request.request_type === 'Borrow' ? 'bg-warning' : 'bg-success'}">${request.request_type}</span>
-                            • Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span>
-                        </p>
-                        <small class="text-muted">${new Date(request.created_at).toLocaleDateString()}</small>
+        <div class="border-bottom pb-2 mb-2 recent-request-${request.id}">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center mb-1">
+                        <h6 class="mb-0 me-2">${request.book_title}</h6>
+                        <span class="badge bg-primary badge-sm">Incoming</span>
                     </div>
-                    ${request.status === 'Pending' ? `
-                        <div class="btn-group-vertical btn-group-sm">
-                            <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    ` : ''}
+                    <p class="mb-1 text-muted small">From: <strong>${request.requester_name}</strong></p>
+                    <p class="mb-1 text-muted small">
+                        Type: <span class="badge ${request.request_type === 'Borrow' ? 'bg-warning' : 'bg-success'}">${request.request_type}</span>
+                        • Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span>
+                    </p>
+                    <small class="text-muted">${new Date(request.created_at).toLocaleDateString()}</small>
                 </div>
+                ${request.status === 'Pending' ? `
+                    <div class="btn-group-vertical btn-group-sm recent-actions-${request.id}">
+                        <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
+                            <i class="fas fa-check me-1"></i> Approve
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
+                            <i class="fas fa-times me-1"></i> Reject
+                        </button>
+                    </div>
+                ` : ''}
             </div>
-        `).join('');
+        </div>
+    `).join('');
 
             recentRequestsDiv.innerHTML += `
-            <div class="text-center mt-3">
-                <button class="btn btn-sm btn-outline-primary" onclick="showRequests()">
-                    <i class="fas fa-list me-1"></i> View All Requests
-                </button>
-            </div>
-        `;
-        }
-
-        // ✅ SHOW REQUESTS FUNCTION UPDATE KAREN
-        function showRequests() {
-            document.querySelector('.dashboard-header').style.display = 'none';
-            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
-            document.getElementById('messagesInterface').style.display = 'none';
-            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
-            document.getElementById('requestsInterface').style.display = 'block';
-            setActiveNavLink('requests');
-            loadRequests();
+        <div class="text-center mt-3">
+            <button class="btn btn-sm btn-outline-primary" onclick="showRequests()">
+                <i class="fas fa-list me-1"></i> View All Requests
+            </button>
+        </div>
+    `;
         }
 
         // ✅ LOAD REQUESTS FUNCTION
@@ -1169,18 +884,155 @@ function showRequests() {
                 });
         }
 
-        // ✅ DISPLAY INCOMING REQUESTS
+        // ✅ COMPLETELY FIXED REQUEST STATUS UPDATE FUNCTION
+        window.updateRequestStatus = function (requestId, newStatus) {
+            console.log('🎯 START: updateRequestStatus called', { requestId, newStatus });
+
+            if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) {
+                console.log('❌ User cancelled');
+                return;
+            }
+
+            // ✅ 1. FIRST UPDATE THE DATABASE
+            const requestData = {
+                request_id: parseInt(requestId),
+                status: newStatus,
+                user_id: parseInt(userData.user_id)
+            };
+
+            console.log('📡 Sending API request:', requestData);
+
+            fetch('http://localhost/project/backend/api/requests/update.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Database update successful');
+
+                        // ✅ 2. UPDATE UI IMMEDIATELY WITHOUT REFRESHING DATA
+                        updateRequestStatusInUI(requestId, newStatus);
+
+                        // ✅ 3. SHOW SUCCESS MESSAGE
+                        showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
+
+                        // ✅ 4. UPDATE COUNTS ONLY (NO DATA RELOAD)
+                        updateRequestsCount();
+
+                    } else {
+                        throw new Error(data.message || 'Failed to update request');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error updating request:', error);
+                    showToast('Error updating request: ' + error.message, 'error');
+                });
+        };
+
+        // ✅ IMPROVED UI UPDATE FUNCTION - COMPLETELY REMOVE BUTTONS
+        window.updateRequestStatusInUI = function (requestId, newStatus) {
+            console.log('🔄 UI UPDATE: Looking for request', requestId);
+
+            // ✅ UPDATE IN INCOMING REQUESTS
+            const incomingCards = document.querySelectorAll('#incomingRequestsList .request-card');
+            incomingCards.forEach(card => {
+                if (card.getAttribute('data-request-id') == requestId) {
+                    updateCardStatus(card, newStatus);
+                }
+            });
+
+            // ✅ UPDATE IN RECENT REQUESTS (DASHBOARD)
+            const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
+            recentItems.forEach(item => {
+                const buttons = item.querySelectorAll(`[onclick*="updateRequestStatus(${requestId}"]`);
+                if (buttons.length > 0) {
+                    updateRecentItemStatus(item, newStatus);
+                }
+            });
+
+            // ✅ UPDATE IN OUTGOING REQUESTS
+            const outgoingCards = document.querySelectorAll('#outgoingRequestsList .request-card');
+            outgoingCards.forEach(card => {
+                if (card.id === `request-${requestId}`) {
+                    updateCardStatus(card, newStatus);
+                }
+            });
+        };
+
+        // ✅ UPDATED CARD STATUS FUNCTION - COMPLETELY REMOVE ACTION BUTTONS
+        function updateCardStatus(card, newStatus) {
+            console.log('🔄 Updating card status to:', newStatus);
+
+            // Update status badge
+            const badges = card.querySelectorAll('.badge');
+            badges.forEach(badge => {
+                const currentText = badge.textContent.trim();
+                if (['Pending', 'Approved', 'Rejected', 'Completed'].includes(currentText)) {
+                    console.log(`🔄 Updating badge: ${currentText} → ${newStatus}`);
+                    badge.textContent = newStatus;
+                    badge.className = 'badge ' + getRequestStatusBadge(newStatus);
+                }
+            });
+
+            // ✅ COMPLETELY REMOVE ACTION BUTTONS FOR NON-PENDING STATUS
+            if (newStatus !== 'Pending') {
+                const buttonGroups = card.querySelectorAll('.btn-group-vertical, .btn-group-sm');
+                buttonGroups.forEach(group => {
+                    console.log('🗑️ Removing action buttons permanently');
+                    group.style.display = 'none'; // Hide immediately
+                    group.remove(); // Remove from DOM completely
+                });
+
+                // ✅ ALSO REMOVE INDIVIDUAL BUTTONS
+                const actionButtons = card.querySelectorAll('button[onclick*="updateRequestStatus"]');
+                actionButtons.forEach(button => {
+                    console.log('🗑️ Removing individual action button');
+                    button.style.display = 'none';
+                    button.remove();
+                });
+            }
+        }
+
+        // ✅ UPDATED RECENT ITEM FUNCTION
+        function updateRecentItemStatus(item, newStatus) {
+            console.log('🔄 Updating recent item status to:', newStatus);
+
+            const badges = item.querySelectorAll('.badge');
+            badges.forEach(badge => {
+                const currentText = badge.textContent.trim();
+                if (['Pending', 'Approved', 'Rejected', 'Completed'].includes(currentText)) {
+                    badge.textContent = newStatus;
+                    badge.className = 'badge ' + getStatusBadgeClass(newStatus);
+                }
+            });
+
+            // ✅ COMPLETELY REMOVE BUTTONS FOR NON-PENDING STATUS
+            if (newStatus !== 'Pending') {
+                const buttonGroups = item.querySelectorAll('.btn-group-vertical');
+                buttonGroups.forEach(group => {
+                    console.log('🗑️ Removing recent item action buttons');
+                    group.style.display = 'none';
+                    group.remove();
+                });
+            }
+        }
+
+        // ✅ FIXED DISPLAY FUNCTION - BETTER BUTTON REMOVAL
         function displayIncomingRequests(requests) {
             const incomingList = document.getElementById('incomingRequestsList');
 
             if (!requests || requests.length === 0) {
                 incomingList.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-inbox"></i>
-                    <p>No incoming requests</p>
-                    <small>Requests for your books will appear here</small>
-                </div>
-            `;
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <p>No incoming requests</p>
+                <small>Requests for your books will appear here</small>
+            </div>
+        `;
                 document.getElementById('incomingCount').textContent = '0';
                 return;
             }
@@ -1188,54 +1040,56 @@ function showRequests() {
             document.getElementById('incomingCount').textContent = requests.length;
 
             incomingList.innerHTML = requests.map(request => `
-            <div class="card mb-3 request-card" data-status="${request.status}">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
+        <div class="card mb-3 request-card" data-status="${request.status}" data-request-id="${request.id}">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
+                        <p class="card-text mb-1">
+                            <strong>Requested by:</strong> ${request.requester_name || 'Unknown User'}
+                        </p>
+                        <p class="card-text mb-1">
+                            <strong>Type:</strong> 
+                            <span class="badge ${request.request_type === 'Borrow' ? 'bg-info' : 'bg-warning'}">
+                                ${request.request_type}
+                            </span>
+                        </p>
+                        ${request.request_type === 'Borrow' && request.proposed_return_date ? `
                             <p class="card-text mb-1">
-                                <strong>Requested by:</strong> ${request.requester_name || 'Unknown User'}
+                                <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
                             </p>
-                            <p class="card-text mb-1">
-                                <strong>Type:</strong> 
-                                <span class="badge ${request.request_type === 'Borrow' ? 'bg-info' : 'bg-warning'}">
-                                    ${request.request_type}
-                                </span>
-                            </p>
-                            ${request.request_type === 'Borrow' && request.proposed_return_date ? `
-                                <p class="card-text mb-1">
-                                    <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
-                                </p>
-                            ` : ''}
-                            <p class="card-text mb-2">
-                                <strong>Message:</strong> "${request.message || 'No message'}"
-                            </p>
-                            <small class="text-muted">
-                                Requested on: ${new Date(request.created_at).toLocaleDateString()}
-                            </small>
+                        ` : ''}
+                        <p class="card-text mb-2">
+                            <strong>Message:</strong> "${request.message || 'No message'}"
+                        </p>
+                        <small class="text-muted">
+                            Requested on: ${new Date(request.created_at).toLocaleDateString()}
+                        </small>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <div class="mb-2">
+                            <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
                         </div>
-                        <div class="col-md-4 text-end">
-                            <div class="mb-2">
-                                <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
+                        ${request.status === 'Pending' ? `
+                            <div class="btn-group-vertical action-buttons-${request.id}">
+                                <button class="btn btn-sm btn-success mb-1" 
+                                        onclick="updateRequestStatus(${request.id}, 'Approved')">
+                                    <i class="fas fa-check me-1"></i> Approve
+                                </button>
+                                <button class="btn btn-sm btn-danger" 
+                                        onclick="updateRequestStatus(${request.id}, 'Rejected')">
+                                    <i class="fas fa-times me-1"></i> Reject
+                                </button>
                             </div>
-                            ${request.status === 'Pending' ? `
-                                <div class="btn-group-vertical">
-                                    <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
-                                        <i class="fas fa-check me-1"></i> Approve
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
-                                        <i class="fas fa-times me-1"></i> Reject
-                                    </button>
-                                </div>
-                            ` : ''}
-                        </div>
+                        ` : '<small class="text-muted">No actions available</small>'}
                     </div>
                 </div>
             </div>
-        `).join('');
+        </div>
+    `).join('');
         }
 
-        // ✅ DISPLAY OUTGOING REQUESTS - UPDATED VERSION
+        // ✅ DISPLAY OUTGOING REQUESTS
         function displayOutgoingRequests(requests) {
             const outgoingList = document.getElementById('outgoingRequestsList');
 
@@ -1301,57 +1155,10 @@ function showRequests() {
         `).join('');
         }
 
-        // ✅ UPDATE REQUEST STATUS
-        // ✅ UPDATE REQUEST STATUS - IMPROVED ERROR HANDLING
-function updateRequestStatus(requestId, newStatus) {
-    if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) return;
-
-    const requestData = {
-        request_id: parseInt(requestId),
-        status: newStatus,
-        user_id: parseInt(userData.user_id)
-    };
-
-    console.log('Sending update request:', requestData);
-
-    fetch('http://localhost/project/backend/api/requests/update.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => {
-        // ✅ FIRST CHECK IF RESPONSE IS OK
-        if (!response.ok) {
-            return response.text().then(errorText => {
-                console.error('Server Error Response:', errorText);
-                throw new Error(`Server error: ${response.status}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
-            loadRequests();
-            updateRequestsCount();
-            loadRecentRequests();
-        } else {
-            throw new Error(data.message || 'Failed to update request');
-        }
-    })
-    .catch(error => {
-        console.error('Error updating request:', error);
-        showToast('Error updating request: ' + error.message, 'error');
-    });
-}
-
-        // ✅ CANCEL REQUEST WITH UI UPDATE
+        // ✅ CANCEL REQUEST FUNCTION
         function cancelRequest(requestId, buttonElement) {
             if (!confirm('Are you sure you want to cancel this request?')) return;
 
-            // Show loading state on the button
             if (buttonElement) {
                 const originalText = buttonElement.innerHTML;
                 buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Cancelling...';
@@ -1375,26 +1182,15 @@ function updateRequestStatus(requestId, newStatus) {
                     if (data.success) {
                         showToast('Request cancelled successfully!', 'success');
 
-                        // ✅ IMMEDIATELY REMOVE FROM UI
+                        // Remove from UI
                         const requestElement = document.getElementById(`request-${requestId}`);
                         if (requestElement) {
-                            requestElement.style.opacity = '0';
-                            requestElement.style.transition = 'opacity 0.3s ease';
-                            setTimeout(() => {
-                                requestElement.remove();
-
-                                // ✅ UPDATE REQUEST COUNTS
-                                updateOutgoingRequestsCount();
-                                updateRequestsCount();
-
-                                // ✅ RELOAD IF NO REQUESTS LEFT
-                                const outgoingList = document.getElementById('outgoingRequestsList');
-                                const remainingRequests = outgoingList.querySelectorAll('.request-card');
-                                if (remainingRequests.length === 0) {
-                                    loadOutgoingRequests();
-                                }
-                            }, 300);
+                            requestElement.remove();
                         }
+
+                        // Update counts
+                        updateOutgoingRequestsCount();
+                        updateRequestsCount();
                     } else {
                         throw new Error(data.message || 'Failed to cancel request');
                     }
@@ -1402,8 +1198,6 @@ function updateRequestStatus(requestId, newStatus) {
                 .catch(error => {
                     console.error('Error cancelling request:', error);
                     showToast('Error cancelling request', 'error');
-
-                    // Reset button if error
                     if (buttonElement) {
                         buttonElement.innerHTML = '<i class="fas fa-times me-1"></i> Cancel';
                         buttonElement.disabled = false;
@@ -1411,7 +1205,7 @@ function updateRequestStatus(requestId, newStatus) {
                 });
         }
 
-        // ✅ MARK REQUEST AS COMPLETED
+        // ✅ MARK AS COMPLETED FUNCTION
         function markAsCompleted(requestId, buttonElement) {
             if (!confirm('Mark this request as completed?')) return;
 
@@ -1421,51 +1215,7 @@ function updateRequestStatus(requestId, newStatus) {
                 buttonElement.disabled = true;
             }
 
-            const requestData = {
-                request_id: parseInt(requestId),
-                status: 'Completed',
-                user_id: parseInt(userData.user_id)
-            };
-
-            fetch('http://localhost/project/backend/api/requests/update.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('Request marked as completed!', 'success');
-
-                        // Update the status in UI
-                        const requestElement = document.getElementById(`request-${requestId}`);
-                        if (requestElement) {
-                            const statusBadge = requestElement.querySelector('.badge');
-                            if (statusBadge) {
-                                statusBadge.className = 'badge bg-info';
-                                statusBadge.textContent = 'Completed';
-                            }
-
-                            // Remove the action button
-                            if (buttonElement) {
-                                buttonElement.remove();
-                            }
-                        }
-                    } else {
-                        throw new Error(data.message || 'Failed to update request');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating request:', error);
-                    showToast('Error updating request', 'error');
-
-                    if (buttonElement) {
-                        buttonElement.innerHTML = '<i class="fas fa-check me-1"></i> Mark Complete';
-                        buttonElement.disabled = false;
-                    }
-                });
+            updateRequestStatus(requestId, 'Completed');
         }
 
         // ✅ UPDATE OUTGOING REQUESTS COUNT
@@ -1487,681 +1237,451 @@ function updateRequestStatus(requestId, newStatus) {
             showToast('Requests refreshed!', 'success');
         }
 
-        // ✅ MESSAGES FUNCTIONS
-        let currentConversation = null;
-
-        // Show messages interface
-        function showMessages() {
-            document.querySelector('.dashboard-header').style.display = 'none';
-            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
-            document.getElementById('requestsInterface').style.display = 'none';
-            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
-            document.getElementById('messagesInterface').style.display = 'block';
-            setActiveNavLink('messages');
-            loadConversations();
-            updateUnreadMessagesCount();
-        }
-
-        // ✅ LOAD CONVERSATIONS WITH DEBUGGING
-        // ✅ LOAD CONVERSATIONS WITH ENHANCED DEBUGGING
-        function loadConversations() {
-            if (!userData || !userData.user_id) {
-                console.log('User not logged in');
-                return;
-            }
-
-            console.log('🚀 Loading conversations for user:', userData.user_id);
-
-            fetch(`http://localhost/project/backend/api/messages/conversations.php?user_id=${userData.user_id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(errorText => {
-                            console.error('❌ Server response not OK. Status:', response.status);
-                            console.error('❌ Error response:', errorText);
-                            throw new Error(`Server error: ${response.status}`);
-                        });
-                    }
-                    return response.json();
-                })
-                .then(conversations => {
-                    console.log('✅ RAW Conversations API Response:', conversations);
-
-                    // ✅ DEEP DEBUGGING
-                    if (!conversations) {
-                        console.log('❌ Conversations is null or undefined');
-                        conversations = [];
-                    }
-
-                    if (!Array.isArray(conversations)) {
-                        console.log('❌ Conversations is not an array. Type:', typeof conversations);
-                        console.log('❌ Actual value:', conversations);
-                        conversations = [];
-                    }
-
-                    console.log('📊 Total conversations:', conversations.length);
-
-                    // ✅ INDIVIDUAL CONVERSATION DEBUGGING
-                    conversations.forEach((conv, index) => {
-                        console.log(`🔍 Conversation ${index}:`, conv);
-                        if (conv) {
-                            console.log(`   - user1_id:`, conv.user1_id);
-                            console.log(`   - user2_id:`, conv.user2_id);
-                            console.log(`   - user1_name:`, conv.user1_name);
-                            console.log(`   - user2_name:`, conv.user2_name);
-                            console.log(`   - sender_id:`, conv.sender_id);
-                            console.log(`   - sender_name:`, conv.sender_name);
-                        }
-                    });
-
-                    displayConversations(conversations);
-                })
-                .catch(error => {
-                    console.error('💥 Error loading conversations:', error);
-                    document.getElementById('conversationsList').innerHTML = `
-                <div class="alert alert-warning text-center">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    Unable to load conversations
-                    <br>
-                    <small class="text-muted">${error.message}</small>
-                </div>
-            `;
-                });
-        }
-
-
-        // Display conversations
-        // ✅ DISPLAY CONVERSATIONS WITH AVATARS
-        function displayConversations(conversations) {
-            const conversationsList = document.getElementById('conversationsList');
-
-            if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
-                conversationsList.innerHTML = `
-            <div class="text-center text-muted p-3">
-                <i class="fas fa-comments fa-2x mb-2"></i>
-                <p>No conversations yet</p>
-                <small>When someone messages you, it will appear here</small>
-            </div>
-        `;
-                return;
-            }
-
-            console.log('Processing conversations with avatars:', conversations);
-
-            conversationsList.innerHTML = conversations.map((conv, index) => {
-                try {
-                    if (!conv || typeof conv !== 'object') {
-                        return '';
-                    }
-
-                    // ✅ USER IDENTIFICATION WITH AVATAR SUPPORT
-                    let otherUserId, otherUserName;
-
-                    if (conv.user1_id !== undefined && conv.user2_id !== undefined) {
-                        if (conv.user1_id == userData.user_id) {
-                            otherUserId = conv.user2_id;
-                            otherUserName = conv.user2_name || `User ${conv.user2_id}`;
-                        } else {
-                            otherUserId = conv.user1_id;
-                            otherUserName = conv.user1_name || `User ${conv.user1_id}`;
-                        }
-                    } else if (conv.sender_id !== undefined) {
-                        otherUserId = conv.sender_id == userData.user_id ? conv.receiver_id : conv.sender_id;
-                        otherUserName = conv.sender_name || `User ${otherUserId}`;
-                    } else {
-                        otherUserId = index + 1;
-                        otherUserName = 'Unknown User';
-                    }
-
-                    // ✅ AVATAR GENERATION
-                    const userInitial = otherUserName.charAt(0).toUpperCase();
-                    const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-                    const colorIndex = otherUserId % avatarColors.length;
-                    const avatarClass = avatarColors[colorIndex];
-
-                    // ✅ SAFE DATA HANDLING
-                    const safeUserId = otherUserId || 0;
-                    const safeUserName = String(otherUserName).replace(/'/g, "\\'");
-                    const lastMessage = conv.last_message || conv.message_text || 'No messages yet';
-                    const lastMessageTime = conv.last_message_at || conv.created_at || new Date();
-                    const unreadCount = conv.unread_count || 0;
-                    const unreadBadge = unreadCount > 0 ? `<span class="badge bg-danger ms-1">${unreadCount}</span>` : '';
-
-                    const isActive = currentConversation && currentConversation.other_user_id === safeUserId;
-
-                    return `
-                <div class="conversation-item border-bottom p-3 ${isActive ? 'active' : ''}"
-                     style="cursor: pointer; ${isActive ? 'background-color: #e3f2fd;' : ''}"
-                     onclick="selectConversation(${safeUserId}, '${safeUserName}')">
-                    <div class="d-flex align-items-start">
-                        <!-- ✅ USER AVATAR -->
-                        <div class="avatar-placeholder ${avatarClass} me-3" 
-                             style="width: 45px; height: 45px; font-size: 1rem; flex-shrink: 0;">
-                            ${userInitial}
-                        </div>
-                        
-                        <!-- ✅ CONVERSATION DETAILS -->
-                        <div class="flex-grow-1" style="min-width: 0;">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <h6 class="mb-0 text-truncate" style="max-width: 150px;">${otherUserName}</h6>
-                                <div class="d-flex align-items-center">
-                                    <small class="text-muted me-2">${formatTime(lastMessageTime)}</small>
-                                    ${unreadBadge}
-                                </div>
-                            </div>
-                            <small class="text-truncate d-block text-muted" style="max-width: 200px;">
-                                ${lastMessage}
-                            </small>
-                        </div>
-                    </div>
-                </div>
-            `;
-                } catch (error) {
-                    console.error('Error processing conversation:', error);
-                    return '';
-                }
-            }).filter(html => html !== '').join('');
-
-            if (conversationsList.innerHTML.trim() === '') {
-                conversationsList.innerHTML = `
-            <div class="text-center text-muted p-3">
-                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
-                <p>No valid conversations to display</p>
-            </div>
-        `;
-            }
-        }
-
-
-        // Select a conversation
-        // ✅ SELECT CONVERSATION WITH AVATAR IN HEADER
-        function selectConversation(otherUserId, otherUserName) {
-            console.log('Selecting conversation with:', otherUserName, otherUserId);
-
-            currentConversation = {
-                other_user_id: otherUserId,
-                other_user_name: otherUserName
-            };
-
-            // ✅ AVATAR FOR CONVERSATION HEADER
-            const userInitial = otherUserName.charAt(0).toUpperCase();
-            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-            const colorIndex = otherUserId % avatarColors.length;
-            const avatarClass = avatarColors[colorIndex];
-
-            // Update UI with avatar
-            document.getElementById('conversationWith').innerHTML = `
-        <div class="d-flex align-items-center">
-            <div class="avatar-placeholder ${avatarClass} me-2" 
-                 style="width: 40px; height: 40px; font-size: 1rem;">
-                ${userInitial}
-            </div>
-            <div>
-                <strong>${otherUserName}</strong>
-                <br>
-                <small class="text-muted">Online</small>
-            </div>
-        </div>
-    `;
-
-            document.getElementById('selectedConversation').style.display = 'block';
-            document.getElementById('noConversationSelected').style.display = 'none';
-
-            // Highlight selected conversation
-            document.querySelectorAll('.conversation-item').forEach(item => {
-                item.classList.remove('active');
-                item.style.backgroundColor = '';
-            });
-            event.currentTarget.classList.add('active');
-            event.currentTarget.style.backgroundColor = '#e3f2fd';
-
-            // Load messages
-            loadMessages(otherUserId);
-        }
-
-        // Load messages between current user and selected user
-        function loadMessages(otherUserId) {
-            if (!userData || !userData.user_id) return;
-
-            console.log('Loading messages with user:', otherUserId);
-
-            fetch(`http://localhost/project/backend/api/messages/get.php?user1_id=${userData.user_id}&user2_id=${otherUserId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(messages => {
-                    console.log('Messages loaded:', messages);
-                    displayMessages(messages);
-                    // Mark messages as read
-                    markMessagesAsRead(otherUserId);
-                })
-                .catch(error => {
-                    console.error('Error loading messages:', error);
-                    document.getElementById('messagesContainer').innerHTML = `
-                    <div class="text-center text-muted p-3">
-                        Error loading messages
-                    </div>
-                `;
-                });
-        }
-
-        // Display messages in the chat area
-        // ✅ DISPLAY MESSAGES WITH AVATARS
-        function displayMessages(messages) {
-            const messagesContainer = document.getElementById('messagesContainer');
-
-            if (!messages || messages.length === 0) {
-                messagesContainer.innerHTML = `
-            <div class="text-center text-muted p-3">
-                <i class="fas fa-comments me-2"></i>
-                No messages yet. Start the conversation!
-            </div>
-        `;
-                return;
-            }
-
-            messagesContainer.innerHTML = messages.map(msg => {
-                const isSender = msg.sender_id == userData.user_id;
-                const messageTime = new Date(msg.created_at).toLocaleTimeString([], {
-                    hour: '2-digit', minute: '2-digit'
-                });
-
-                // ✅ AVATAR FOR EACH MESSAGE
-                const senderInitial = (msg.sender_name || 'U').charAt(0).toUpperCase();
-                const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger', 'avatar-info'];
-                const colorIndex = (msg.sender_id || 0) % avatarColors.length;
-                const avatarClass = avatarColors[colorIndex];
-
-                return `
-            <div class="d-flex ${isSender ? 'justify-content-end' : 'justify-content-start'} mb-3">
-                ${!isSender ? `
-                    <!-- ✅ RECEIVER AVATAR -->
-                    <div class="avatar-placeholder ${avatarClass} me-2" 
-                         style="width: 35px; height: 35px; font-size: 0.8rem;">
-                        ${senderInitial}
-                    </div>
-                ` : ''}
-                
-                <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}" 
-                     style="max-width: 70%; padding: 10px 15px; border-radius: 18px; word-wrap: break-word;">
-                    
-                    ${!isSender ? `
-                        <small class="opacity-75 fw-bold">${msg.sender_name}</small>
-                        <br>
-                    ` : ''}
-                    
-                    <div class="message-content">${msg.message_text}</div>
-                    
-                    <div class="message-time small mt-1 ${isSender ? 'text-light' : 'text-muted'}" 
-                         style="text-align: right; font-size: 0.75rem;">
-                        ${messageTime}
-                    </div>
-                </div>
-
-                ${isSender ? `
-                    <!-- ✅ SENDER AVATAR -->
-                    <div class="avatar-placeholder avatar-primary ms-2" 
-                         style="width: 35px; height: 35px; font-size: 0.8rem;">
-                        ${(userData.name || 'U').charAt(0).toUpperCase()}
-                    </div>
-                ` : ''}
-            </div>
-        `;
-            }).join('');
-
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-
-        // Send new message from dashboard
-        function sendNewMessage() {
-            if (!currentConversation || !userData || !userData.user_id) {
-                alert('Please select a conversation first');
-                return;
-            }
-
-            const messageText = document.getElementById('newMessage').value.trim();
-            if (!messageText) {
-                alert('Please enter a message');
-                return;
-            }
-
-            const messageData = {
-                sender_id: userData.user_id,
-                receiver_id: currentConversation.other_user_id,
-                message_text: messageText
-            };
-
-            console.log('Sending message:', messageData);
-
-            const sendBtn = document.querySelector('#selectedConversation .btn-primary');
-            const originalText = sendBtn.innerHTML;
-            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            sendBtn.disabled = true;
-
-            fetch('http://localhost/project/backend/api/messages/send.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messageData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('newMessage').value = '';
-                        // Reload messages and conversations
-                        loadMessages(currentConversation.other_user_id);
-                        loadConversations();
-                        updateUnreadMessagesCount();
-                    } else {
-                        throw new Error(data.message || 'Failed to send message');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                    alert('Error sending message: ' + error.message);
-                })
-                .finally(() => {
-                    sendBtn.innerHTML = originalText;
-                    sendBtn.disabled = false;
-                });
-        }
-
-        // Mark messages as read
-        function markMessagesAsRead(senderId) {
-            if (!userData || !userData.user_id) return;
-
-            fetch('http://localhost/project/backend/api/messages/mark_read.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    sender_id: senderId,
-                    receiver_id: userData.user_id
-                })
-            })
-                .then(() => {
-                    updateUnreadMessagesCount();
-                    loadConversations();
-                })
-                .catch(error => console.error('Error marking messages as read:', error));
-        }
-
-        // Update unread messages count
-        function updateUnreadMessagesCount() {
-            if (!userData || !userData.user_id) return;
-
-            fetch(`http://localhost/project/backend/api/messages/unread_count.php?user_id=${userData.user_id}`)
-                .then(response => response.json())
-                .then(data => {
-                    const unreadCount = data.count || 0;
-                    document.getElementById('unreadMessagesCount').textContent = unreadCount;
-                    document.getElementById('messagesCount').textContent = unreadCount;
-
-                    // Update sidebar badge
-                    const messagesBadge = document.querySelector('#unreadMessagesBadge');
-                    if (messagesBadge) {
-                        messagesBadge.textContent = unreadCount;
-                        messagesBadge.style.display = unreadCount > 0 ? 'inline' : 'none';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating unread count:', error);
-                });
-        }
-
-        // Refresh messages
-        function refreshMessages() {
-            if (currentConversation) {
-                loadMessages(currentConversation.other_user_id);
-            }
-            loadConversations();
-            updateUnreadMessagesCount();
-            showToast('Messages refreshed!', 'success');
-        }
-
-        // ✅ DASHBOARD STATS FUNCTIONS
-        function loadDashboardStats() {
-            updateMessagesCount();
-        }
-
-        function updateMessagesCount() {
-            // This will be updated by updateUnreadMessagesCount()
-            document.getElementById('messagesCount').textContent = "0";
-            document.getElementById('unreadMessagesBadge').textContent = "0";
-        }
-
-        // ✅ NOTIFICATIONS FUNCTIONS - SEPARATE
-        // InititializeDAshboard Function   
-        function initializeDashboard() {
-            console.log('🚀 Initializing dashboard with user data...');
-
-            // Basic user info
-            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-            updateSidebarInfo();
-
-            // Load all data
-            loadUserBooks();
-            loadDashboardStats();
-            updateRequestsCount();
-            loadRecentRequests();
-            updateUnreadMessagesCount();
-            updateUnreadNotificationsCount(); // Add this line
-initializeModals();
-
-            console.log('✅ Dashboard fully initialized');
-        }
-
-        // ✅ SHOW NOTIFICATIONS FUNCTION
+        // ✅ NOTIFICATIONS FUNCTIONS
         function showNotifications() {
+            console.log('📢 Showing notifications interface');
+
+            // Hide other sections
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
-            document.getElementById('messagesInterface').style.display = 'none';
             document.getElementById('requestsInterface').style.display = 'none';
+
+            // Show notifications interface
             document.getElementById('notificationsInterface').style.display = 'block';
             setActiveNavLink('notifications');
+
+            // Load notifications
             loadNotifications();
             updateUnreadNotificationsCount();
         }
 
-        // Load notifications
-        function loadNotifications() {
-            if (!userData || !userData.user_id) return;
+        // Load notification function
+        function loadNotifications(filter = 'all') {
+            if (!userData || !userData.user_id) {
+                console.error('❌ No user data');
+                return;
+            }
 
-            fetch(`http://localhost/project/backend/api/notifications/get.php?user_id=${userData.user_id}&limit=20`)
-                .then(response => response.json())
-                .then(notifications => {
-                    displayNotifications(notifications);
+            const notificationsList = document.getElementById('notificationsList');
+            if (!notificationsList) {
+                console.error('❌ notificationsList element not found');
+                return;
+            }
+
+            // Show loading
+            notificationsList.innerHTML = `
+        <div class="text-center p-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Loading your notifications...</p>
+        </div>
+    `;
+
+            console.log('🔍 Loading notifications for user:', userData.user_id);
+
+            // Use simple API
+            fetch(`http://localhost/project/backend/api/notifications/simple_get.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    console.log('📡 API Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('✅ Notifications data received:', data);
+
+                    if (data.success && data.notifications && data.notifications.length > 0) {
+                        console.log(`🎉 Found ${data.notifications.length} notifications`);
+                        displayNotifications(data.notifications, filter);
+                    } else {
+                        console.log('ℹ️ No notifications found');
+                        displayNotifications([], filter);
+                    }
                 })
                 .catch(error => {
-                    console.error('Error loading notifications:', error);
-                    document.getElementById('notificationsList').innerHTML = `
-                <div class="text-center text-muted p-3">
-                    Error loading notifications
+                    console.error('❌ Error loading notifications:', error);
+                    notificationsList.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Error loading notifications</strong><br>
+                    <small>${error.message}</small>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-warning" onclick="loadNotifications()">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
                 </div>
             `;
                 });
         }
 
-        // Display notifications
-        function displayNotifications(notifications) {
+        // Display notifications with filtering
+        function displayNotifications(notifications, filter = 'all') {
             const notificationsList = document.getElementById('notificationsList');
 
-            if (!notifications || notifications.length === 0) {
-                notificationsList.innerHTML = `
-            <div class="text-center text-muted p-3">
-                <i class="fas fa-bell-slash fa-2x mb-2"></i>
-                <p>No notifications yet</p>
-                <small>You're all caught up!</small>
-            </div>
-        `;
+            if (!notificationsList) {
+                console.error('❌ notificationsList element missing');
                 return;
             }
 
-            notificationsList.innerHTML = notifications.map(notif => {
-                const icon = getNotificationIcon(notif.type);
-                const timeAgo = formatTimeAgo(notif.created_at);
-                const isUnread = !notif.is_read;
+            console.log('🖥️ Displaying notifications:', notifications);
 
-                return `
-            <div class="notification-item border-bottom p-3 ${isUnread ? 'bg-light' : ''}" 
-                 onclick="markNotificationAsRead(${notif.id})">
-                <div class="d-flex align-items-start">
-                    <div class="me-3 ${getNotificationIconColor(notif.type)}">
-                        <i class="${icon} fa-lg"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-1">${notif.title}</h6>
-                        <p class="mb-1">${notif.message}</p>
-                        <small class="text-muted">${timeAgo}</small>
-                    </div>
-                    ${isUnread ? `<span class="badge bg-primary">New</span>` : ''}
+            // Ensure notifications is an array
+            if (!Array.isArray(notifications)) {
+                notifications = [];
+            }
+
+            // Apply filter
+            let filteredNotifications = notifications;
+            if (filter === 'unread') {
+                filteredNotifications = notifications.filter(notif => !notif.is_read);
+            } else if (filter !== 'all') {
+                filteredNotifications = notifications.filter(notif => notif.type === filter);
+            }
+
+            console.log(`🔍 After filtering: ${filteredNotifications.length} notifications`);
+
+            if (filteredNotifications.length === 0) {
+                let message = '';
+                if (notifications.length === 0) {
+                    message = `
+                <div class="text-center text-muted p-5">
+                    <i class="fas fa-bell-slash fa-4x mb-3"></i>
+                    <h4>No notifications yet</h4>
+                    <p class="text-muted">When you receive notifications, they will appear here.</p>
                 </div>
+            `;
+                } else {
+                    message = `
+                <div class="text-center text-muted p-4">
+                    <i class="fas fa-filter fa-3x mb-3"></i>
+                    <h5>No ${filter === 'unread' ? 'unread' : filter} notifications</h5>
+                    <p>Try changing the filter to see all notifications.</p>
+                </div>
+            `;
+                }
+
+                notificationsList.innerHTML = message;
+                return;
+            }
+
+            // Display notifications
+            try {
+                notificationsList.innerHTML = filteredNotifications.map(notif => {
+                    // Safely handle notification data
+                    const notifId = notif.id || 0;
+                    const title = notif.title || 'Notification';
+                    const message = notif.message || 'No message content';
+                    const type = notif.type || 'System';
+                    const isRead = Boolean(notif.is_read);
+                    const createdAt = notif.created_at || new Date().toISOString();
+
+                    const icon = getNotificationIcon(type);
+                    const iconColor = getNotificationIconColor(type);
+                    const timeAgo = formatTimeAgo(createdAt);
+
+                    return `
+                <div class="notification-item border-bottom p-3 ${!isRead ? 'bg-light' : ''}" 
+                     onclick="markNotificationAsRead(${notifId})"
+                     style="cursor: pointer; transition: all 0.3s ease; border-left: 4px solid ${getNotificationBorderColor(type)}">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3 ${iconColor}">
+                            <i class="${icon} fa-2x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0 ${!isRead ? 'text-dark fw-bold' : 'text-muted'}">
+                                    ${title}
+                                </h6>
+                                <small class="text-muted">${timeAgo}</small>
+                            </div>
+                            <p class="mb-2 text-dark">${message}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge ${getNotificationBadgeClass(type)}">
+                                    <i class="fas ${getNotificationIcon(type)} me-1"></i>${type}
+                                </span>
+                                ${!isRead ? `
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-circle me-1"></i>New
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+                }).join('');
+
+                console.log('✅ Notifications displayed successfully');
+
+            } catch (error) {
+                console.error('❌ Error in displayNotifications:', error);
+                notificationsList.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error displaying notifications
+                <br><small>${error.message}</small>
             </div>
         `;
-            }).join('');
+            }
         }
 
-        // Get notification icon
+        // Filter notifications
+        function filterNotifications(filter) {
+            console.log('🔍 Filtering notifications:', filter);
+
+            // Update active filter button
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active', 'btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+            event.target.classList.remove('btn-outline-primary');
+            event.target.classList.add('active', 'btn-primary');
+
+            loadNotifications(filter);
+        }
+
+        // ✅ NOTIFICATION STYLING HELPER FUNCTIONS
         function getNotificationIcon(type) {
-            switch (type) {
-                case 'Request': return 'fas fa-handshake';
-                case 'Message': return 'fas fa-comment';
-                case 'Reminder': return 'fas fa-clock';
-                default: return 'fas fa-info-circle';
-            }
+            const icons = {
+                'Request': 'fa-handshake',
+                'Reminder': 'fa-clock',
+                'Message': 'fa-comment',
+                'System': 'fa-info-circle'
+            };
+            return icons[type] || 'fa-bell';
         }
 
         // Get notification icon color
         function getNotificationIconColor(type) {
-            switch (type) {
-                case 'Request': return 'text-primary';
-                case 'Message': return 'text-success';
-                case 'Reminder': return 'text-warning';
-                default: return 'text-info';
-            }
+            const colors = {
+                'Request': 'text-primary',
+                'Reminder': 'text-warning',
+                'Message': 'text-success',
+                'System': 'text-info'
+            };
+            return colors[type] || 'text-secondary';
+        }
+
+        // Get notification badge class
+        function getNotificationBadgeClass(type) {
+            const classes = {
+                'Request': 'bg-primary',
+                'Reminder': 'bg-warning text-dark',
+                'Message': 'bg-success',
+                'System': 'bg-info'
+            };
+            return classes[type] || 'bg-secondary';
+        }
+
+        function getNotificationBorderColor(type) {
+            const colors = {
+                'Request': '#007bff',
+                'Reminder': '#ffc107',
+                'Message': '#28a745',
+                'System': '#17a2b8'
+            };
+            return colors[type] || '#6c757d';
         }
 
         // Mark notification as read
         function markNotificationAsRead(notificationId) {
             if (!userData || !userData.user_id) return;
 
+            console.log('📝 Marking notification as read:', notificationId);
+
+            const requestData = {
+                user_id: parseInt(userData.user_id),
+                notification_id: parseInt(notificationId)
+            };
+
             fetch('http://localhost/project/backend/api/notifications/mark_read.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    user_id: userData.user_id,
-                    notification_id: notificationId
-                })
+                body: JSON.stringify(requestData)
             })
-                .then(() => {
-                    loadNotifications();
-                    updateUnreadNotificationsCount();
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Notification marked as read');
+
+                        // Update UI immediately
+                        const notificationItem = document.querySelector(`[onclick="markNotificationAsRead(${notificationId})"]`);
+                        if (notificationItem) {
+                            notificationItem.classList.remove('bg-light');
+                            const title = notificationItem.querySelector('h6');
+                            if (title) {
+                                title.classList.remove('text-dark', 'fw-bold');
+                                title.classList.add('text-muted');
+                            }
+
+                            // Remove "New" badge
+                            const newBadge = notificationItem.querySelector('.badge.bg-danger');
+                            if (newBadge) {
+                                newBadge.remove();
+                            }
+                        }
+
+                        updateUnreadNotificationsCount();
+                        showToast('Notification marked as read', 'success');
+                    }
                 })
-                .catch(error => console.error('Error marking notification as read:', error));
+                .catch(error => {
+                    console.error('❌ Error marking notification as read:', error);
+                    showToast('Error updating notification', 'error');
+                });
         }
 
-        // Mark all notifications as read
+        // ✅ MARK ALL NOTIFICATIONS AS READ
         function markAllNotificationsAsRead() {
             if (!userData || !userData.user_id) return;
 
+            const requestData = {
+                user_id: parseInt(userData.user_id)
+            };
+
             fetch('http://localhost/project/backend/api/notifications/mark_read.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    user_id: userData.user_id
-                })
+                body: JSON.stringify(requestData)
             })
-                .then(() => {
-                    loadNotifications();
-                    updateUnreadNotificationsCount();
-                    showToast('All notifications marked as read!', 'success');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update all notifications UI
+                        document.querySelectorAll('.notification-item').forEach(item => {
+                            item.classList.remove('bg-light');
+                            const title = item.querySelector('h6');
+                            if (title) {
+                                title.classList.remove('text-dark', 'fw-bold');
+                                title.classList.add('text-muted');
+                            }
+
+                            // Remove "New" badges
+                            const newBadges = item.querySelectorAll('.badge.bg-danger');
+                            newBadges.forEach(badge => badge.remove());
+                        });
+
+                        updateUnreadNotificationsCount();
+                        showToast('All notifications marked as read!', 'success');
+                    }
                 })
-                .catch(error => console.error('Error marking all notifications as read:', error));
+                .catch(error => {
+                    console.error('Error marking all notifications as read:', error);
+                    showToast('Error marking notifications as read', 'error');
+                });
         }
 
-        // Update unread notifications count
+        // ✅ UPDATE UNREAD NOTIFICATIONS COUNT
         function updateUnreadNotificationsCount() {
             if (!userData || !userData.user_id) return;
 
             fetch(`http://localhost/project/backend/api/notifications/unread_count.php?user_id=${userData.user_id}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Unread count data:', data);
                     const unreadCount = data.count || 0;
-                    document.getElementById('unreadNotificationsCount').textContent = unreadCount;
-                    document.getElementById('sidebarNotificationsBadge').textContent = unreadCount;
+
+                    // Update all badge elements
+                    const badgeElements = [
+                        document.getElementById('unreadNotificationsCount'),
+                        document.getElementById('sidebarNotificationsBadge')
+                    ];
+
+                    badgeElements.forEach(badge => {
+                        if (badge) {
+                            badge.textContent = unreadCount;
+                            if (unreadCount > 0) {
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    });
+
+                    // Update browser tab title
+                    if (unreadCount > 0) {
+                        document.title = `(${unreadCount}) Book Exchange Dashboard`;
+                    } else {
+                        document.title = 'Book Exchange Dashboard';
+                    }
                 })
                 .catch(error => {
                     console.error('Error updating unread count:', error);
+                    // Set badges to 0 on error
+                    const badgeElements = [
+                        document.getElementById('unreadNotificationsCount'),
+                        document.getElementById('sidebarNotificationsBadge')
+                    ];
+                    badgeElements.forEach(badge => {
+                        if (badge) badge.textContent = '0';
+                    });
                 });
         }
 
-        // Refresh notifications
+        // ✅ IMPROVED CREATE NOTIFICATION FUNCTION
+        function createNotification(userId, title, message, type = 'System', relatedId = null) {
+            const notificationData = {
+                user_id: parseInt(userId),
+                title: title,
+                message: message,
+                type: type,
+                related_id: relatedId
+            };
+
+            console.log('📨 Creating notification:', notificationData);
+
+            fetch('http://localhost/project/backend/api/notifications/create.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(notificationData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('✅ Notification created successfully');
+                        // Refresh notifications count
+                        updateUnreadNotificationsCount();
+                    } else {
+                        console.error('❌ Failed to create notification:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error creating notification:', error);
+                });
+        }
+
+        // ✅ REFRESH NOTIFICATIONS
         function refreshNotifications() {
+            console.log('🔄 Refreshing notifications...');
             loadNotifications();
             updateUnreadNotificationsCount();
             showToast('Notifications refreshed!', 'success');
         }
 
-        // Time ago formatter
-        function formatTimeAgo(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
+        // ✅ AUTO-CHECK SYSTEMS
+        function setupAutoCheckers() {
+            console.log('🔄 Setting up auto-check systems...');
 
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(diff / 3600000);
-            const days = Math.floor(diff / 86400000);
-
-            if (minutes < 1) return 'Just now';
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            if (days < 7) return `${days}d ago`;
-
-            return date.toLocaleDateString();
-        }
-
-        // ✅ AUTO-REFRESH EVERY 30 SECONDS
-        setInterval(() => {
-            if (userData && userData.user_id) {
-                updateRequestsCount();
-                loadRecentRequests();
-                updateUnreadMessagesCount();
-                updateUnreadNotificationsCount(); // Add this line
-            }
-        }, 30000);
-
-        // ✅ REFRESH DASHBOARD
-        function refreshDashboard() {
-            console.log("Refreshing dashboard...");
-            const refreshBtn = event.target;
-            const originalHtml = refreshBtn.innerHTML;
-            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
-            refreshBtn.disabled = true;
-
-            loadUserBooks();
-            loadDashboardStats();
-            updateRequestsCount();
-            loadRecentRequests();
-            updateUnreadMessagesCount();
-
-            setTimeout(() => {
-                refreshBtn.innerHTML = originalHtml;
-                refreshBtn.disabled = false;
-                showToast('Dashboard refreshed successfully!', 'success');
-            }, 2000);
+            // Update notification counts every 30 seconds
+            setInterval(() => {
+                if (userData && userData.user_id) {
+                    updateUnreadNotificationsCount();
+                }
+            }, 30000);
         }
 
         // ✅ UTILITY FUNCTIONS
+        function loadDashboardStats() {
+            // Simple stats loading
+        }
+
         function updateSidebarInfo() {
             document.getElementById('sidebarUserName').textContent = userData.name || 'User Name';
             document.getElementById('sidebarUserEmail').textContent = userData.email || 'user@email.com';
@@ -2169,7 +1689,6 @@ initializeModals();
             document.getElementById('sidebarAvatarText').textContent = initial;
         }
 
-        // ✅ SET ACTIVE NAV LINK FUNCTION
         function setActiveNavLink(activeItem) {
             document.querySelectorAll('.sidebar .nav-link').forEach(link => {
                 link.classList.remove('active');
@@ -2181,19 +1700,16 @@ initializeModals();
                 case 'profile': navLinks[1].classList.add('active'); break;
                 case 'mybooks': navLinks[2].classList.add('active'); break;
                 case 'transactions': navLinks[3].classList.add('active'); break;
-                case 'messages': navLinks[4].classList.add('active'); break;
-                case 'requests': navLinks[7].classList.add('active'); break;
-                case 'notifications': navLinks[8].classList.add('active'); break; // ✅ NEW
+                case 'requests': navLinks[6].classList.add('active'); break;
+                case 'notifications': navLinks[7].classList.add('active'); break;
             }
         }
 
-        // ✅ SHOW DASHBOARD FUNCTION 
         function showDashboard() {
             document.querySelector('.dashboard-header').style.display = 'block';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
-            document.getElementById('messagesInterface').style.display = 'none';
             document.getElementById('requestsInterface').style.display = 'none';
-            document.getElementById('notificationsInterface').style.display = 'none'; // ✅ ADD THIS
+            document.getElementById('notificationsInterface').style.display = 'none';
             setActiveNavLink('dashboard');
         }
 
@@ -2227,7 +1743,26 @@ initializeModals();
             showRequests();
         }
 
-        // ✅ STATUS BADGE CLASS HELPER
+        function refreshDashboard() {
+            console.log("Refreshing dashboard...");
+            const refreshBtn = event.target;
+            const originalHtml = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Refreshing...';
+            refreshBtn.disabled = true;
+
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalHtml;
+                refreshBtn.disabled = false;
+                showToast('Dashboard refreshed successfully!', 'success');
+            }, 2000);
+        }
+
+        // ✅ STATUS BADGE HELPER FUNCTIONS
         function getStatusBadgeClass(status) {
             switch (status?.toLowerCase()) {
                 case 'pending': return 'bg-warning';
@@ -2239,7 +1774,6 @@ initializeModals();
             }
         }
 
-        // ✅ REQUEST STATUS BADGE FUNCTION
         function getRequestStatusBadge(status) {
             switch (status) {
                 case 'Pending': return 'bg-warning';
@@ -2251,7 +1785,6 @@ initializeModals();
             }
         }
 
-        // ✅ TOAST NOTIFICATION FUNCTION
         function showToast(message, type) {
             const toast = document.createElement('div');
             toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
@@ -2261,7 +1794,6 @@ initializeModals();
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Utility function for time formatting
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -2274,12 +1806,30 @@ initializeModals();
             }
         }
 
+        // ✅ Time ago formatter
+        function formatTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+
+            return date.toLocaleDateString();
+        }
+
         // ✅ AUTO-REFRESH EVERY 30 SECONDS
         setInterval(() => {
             if (userData && userData.user_id) {
                 updateRequestsCount();
                 loadRecentRequests();
-                updateUnreadMessagesCount();
+                updateUnreadNotificationsCount();
             }
         }, 30000);
 
@@ -2288,7 +1838,6 @@ initializeModals();
             if (userData && userData.user_id) {
                 updateRequestsCount();
                 loadRecentRequests();
-                updateUnreadMessagesCount();
             }
         });
     </script>

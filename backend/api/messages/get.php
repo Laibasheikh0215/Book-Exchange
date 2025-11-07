@@ -1,48 +1,30 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Include files with error handling
-try {
-    include_once '../../config/database.php';
-    include_once '../../models/Message.php';
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["message" => "Server configuration error"]);
-    exit();
-}
+include_once '../../config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$user1_id = isset($_GET['user1_id']) ? $_GET['user1_id'] : null;
-$user2_id = isset($_GET['user2_id']) ? $_GET['user2_id'] : null;
-
-if (!$user1_id || !$user2_id) {
-    http_response_code(400);
-    echo json_encode(["message" => "Both user IDs are required"]);
-    exit();
-}
+$user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : die();
 
 try {
-    $message = new Message($db);
-    $stmt = $message->getMessages($user1_id, $user2_id);
-    $messages = [];
+    $query = "SELECT id, name, email, profile_picture FROM users WHERE id = ?";
+    $stmt = $db->prepare($query);
+    $stmt->bindParam(1, $user_id);
+    $stmt->execute();
 
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $messages[] = $row;
+    if ($stmt->rowCount() > 0) {
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        http_response_code(200);
+        echo json_encode($user);
+    } else {
+        http_response_code(404);
+        echo json_encode(array("message" => "User not found."));
     }
-
-    echo json_encode($messages);
-
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["message" => "Server error: " . $e->getMessage()]);
+    echo json_encode(array("message" => "Error retrieving user: " . $e->getMessage()));
 }
 ?>

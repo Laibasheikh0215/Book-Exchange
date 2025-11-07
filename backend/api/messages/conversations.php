@@ -1,72 +1,63 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Include files with error handling
-try {
-    include_once '../../config/database.php';
-    include_once '../../models/Message.php';
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["message" => "Server configuration error"]);
-    exit();
-}
+include_once '../../config/database.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
-$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
-
-if (!$user_id) {
-    http_response_code(400);
-    echo json_encode(["message" => "User ID is required"]);
-    exit();
-}
+$user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : die();
 
 try {
-    $message = new Message($db);
-    $conversations = [];
-
-    // Get unique conversations using PDO
-    $query = "SELECT DISTINCT 
-        LEAST(sender_id, receiver_id) as user1_id,
-        GREATEST(sender_id, receiver_id) as user2_id,
-        (SELECT name FROM users WHERE id = LEAST(sender_id, receiver_id)) as user1_name,
-        (SELECT name FROM users WHERE id = GREATEST(sender_id, receiver_id)) as user2_name,
-        (SELECT message_text FROM messages m2 
-         WHERE ((m2.sender_id = LEAST(m1.sender_id, m1.receiver_id) AND m2.receiver_id = GREATEST(m1.sender_id, m1.receiver_id))
-         OR (m2.sender_id = GREATEST(m1.sender_id, m1.receiver_id) AND m2.receiver_id = LEAST(m1.sender_id, m1.receiver_id)))
-         ORDER BY m2.created_at DESC LIMIT 1) as last_message,
-        (SELECT created_at FROM messages m2 
-         WHERE ((m2.sender_id = LEAST(m1.sender_id, m1.receiver_id) AND m2.receiver_id = GREATEST(m1.sender_id, m1.receiver_id))
-         OR (m2.sender_id = GREATEST(m1.sender_id, m1.receiver_id) AND m2.receiver_id = LEAST(m1.sender_id, m1.receiver_id)))
-         ORDER BY m2.created_at DESC LIMIT 1) as last_message_at,
-        (SELECT COUNT(*) FROM messages m2 
-         WHERE m2.sender_id = GREATEST(m1.sender_id, m1.receiver_id) 
-         AND m2.receiver_id = LEAST(m1.sender_id, m1.receiver_id)
-         AND m2.is_read = 0 AND m2.receiver_id = :user_id) as unread_count
-    FROM messages m1
-    WHERE m1.sender_id = :user_id OR m1.receiver_id = :user_id
-    ORDER BY last_message_at DESC";
-
+    $query = "SELECT c.*, 
+                     CASE 
+                         WHEN c.user1_id = :user_id THEN c.user2_id 
+                         ELSE c.user1_id 
+                     END as other_user_id,
+                     CASE 
+                         WHEN c.user1_id = :user_id THEN u2.name 
+                         ELSE u1.name 
+                     END as other_user_name,
+                     CASE 
+                         WHEN c.user1_id = :user_id THEN u2.id 
+                         ELSE u1.id 
+                     END as other_user_id,
+                     (SELECT COUNT(*) FROM messages m 
+                      WHERE ((m.sender_id = c.user1_id AND m.receiver_id = c.user2_id) 
+                             OR (m.sender_id = c.user2_id AND m.receiver_id = c.user1_id))
+                      AND m.receiver_id = :user_id AND m.is_read = 0) as unread_count
+              FROM conversations c
+              JOIN users u1 ON c.user1_id = u1.id
+              JOIN users u2 ON c.user2_id = u2.id
+              WHERE c.user1_id = :user_id OR c.user2_id = :user_id
+              ORDER BY c.last_message_at DESC";
+    
     $stmt = $db->prepare($query);
     $stmt->bindParam(":user_id", $user_id);
     $stmt->execute();
-
+    
+    $conversations = array();
+    
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $conversations[] = $row;
+        $conversation_item = array(
+            "id" => $row['id'],
+            "user1_id" => $row['user1_id'],
+            "user2_id" => $row['user2_id'],
+            "other_user_id" => $row['other_user_id'],
+            "other_user_name" => $row['other_user_name'] ? $row['other_user_name'] : 'Unknown User',
+            "last_message" => $row['last_message'],
+            "last_message_at" => $row['last_message_at'],
+            "unread_count" => $row['unread_count']
+        );
+        array_push($conversations, $conversation_item);
     }
-
+    
+    http_response_code(200);
     echo json_encode($conversations);
-
+    
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(["message" => "Server error: " . $e->getMessage()]);
+    echo json_encode(array("message" => "Error retrieving conversations: " . $e->getMessage()));
 }
 ?>
