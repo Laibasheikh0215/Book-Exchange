@@ -1,42 +1,22 @@
 <?php
-header("Access-Control-Allow-Origin: http://localhost");
+header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Handle preflight OPTIONS request
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit();
-}
-
-// Include files with error handling
-try {
-    include_once '../../config/database.php';
-    include_once '../../models/Message.php';
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["count" => 0, "message" => "Server configuration error"]);
-    exit();
-}
+include_once '../../config/database.php';
+include_once '../../objects/message.php';
 
 $database = new Database();
 $db = $database->getConnection();
+$message = new Message($db);
 
-$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : die();
 
-if (!$user_id) {
-    http_response_code(400);
-    echo json_encode(["count" => 0, "message" => "User ID is required"]);
-    exit();
-}
+$query = "SELECT COUNT(*) as count FROM messages WHERE receiver_id = ? AND is_read = 0";
+$stmt = $db->prepare($query);
+$stmt->bindParam(1, $user_id);
+$stmt->execute();
 
-try {
-    $message = new Message($db);
-    $count = $message->countUnreadMessages($user_id);
-    
-    echo json_encode(["count" => $count]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(["count" => 0, "message" => "Server error"]);
-}
+echo json_encode(array("count" => $row['count']));
 ?>

@@ -269,6 +269,27 @@
         .text-info {
             color: #17a2b8 !important;
         }
+
+        /* ✅ MESSAGE STYLING */
+        .message-bubble {
+            transition: all 0.3s ease;
+        }
+
+        .message-bubble:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Smooth scrolling for messages */
+        #messagesContainer {
+            scroll-behavior: smooth;
+        }
+
+        /* Message input focus */
+        #messageInput:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+        }
     </style>
 </head>
 
@@ -322,6 +343,10 @@
                     </a>
                     <a class="nav-link" href="#" onclick="addBook()">
                         <i class="fas fa-plus me-2"></i>Add Book
+                    </a>
+                    <a class="nav-link" href="#" onclick="showMessages()">
+                        <i class="fas fa-comments me-2"></i>Messages
+                        <span class="badge bg-danger ms-1" id="unreadMessagesCount">0</span>
                     </a>
                     <a class="nav-link" href="#" onclick="showRequests()">
                         <i class="fas fa-handshake me-2"></i>Requests
@@ -485,6 +510,90 @@
         </div>
     </div>
 
+    <!-- ✅ MESSAGES INTERFACE -->
+    <div id="messagesInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-comments me-2"></i>Messages
+                            <span class="badge bg-danger ms-1" id="messagesUnreadCount">0</span>
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light" onclick="refreshMessages()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Conversations List -->
+                            <div class="col-md-4 border-end">
+                                <div class="d-flex mb-3">
+                                    <input type="text" class="form-control" id="searchConversations"
+                                        placeholder="Search conversations...">
+                                </div>
+                                <div id="conversationsList" style="max-height: 500px; overflow-y: auto;">
+                                    <div class="text-center p-3">
+                                        <div class="spinner-border spinner-border-sm"></div> Loading conversations...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chat Area -->
+                            <div class="col-md-8">
+                                <div id="chatArea" class="d-flex flex-column" style="height: 500px;">
+                                    <!-- Selected Conversation Header -->
+                                    <div id="chatHeader" class="border-bottom pb-2 mb-2" style="display: none;">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-0" id="chatWithUser">Select a conversation</h6>
+                                                <small class="text-muted" id="chatUserStatus">Click refresh to check new
+                                                    messages</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-sm btn-outline-primary me-2"
+                                                    onclick="refreshCurrentMessages()" title="Refresh Messages">
+                                                    <i class="fas fa-sync-alt"></i> Refresh
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary"
+                                                    onclick="clearChatSelection()">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Messages Container -->
+                                    <div id="messagesContainer" class="flex-grow-1 p-3"
+                                        style="overflow-y: auto; max-height: 400px; background: #f8f9fa; border-radius: 10px;">
+                                        <div class="text-center text-muted p-4">
+                                            <i class="fas fa-comments fa-2x mb-3"></i>
+                                            <p>Select a conversation to start messaging</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Message Input -->
+                                    <div id="messageInputArea" class="mt-2" style="display: none;">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="messageInput"
+                                                placeholder="Type your message..."
+                                                onkeypress="handleMessageKeypress(event)">
+                                            <button class="btn btn-primary" onclick="sendMessageFromChat()">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ✅ NOTIFICATIONS INTERFACE -->
     <div id="notificationsInterface" class="container-fluid" style="display: none;">
         <div class="row">
@@ -596,6 +705,9 @@
     </div>
 
     <script>
+        // ✅ GLOBAL VARIABLES - ADD AT THE VERY TOP
+        let messageCheckInterval = null;
+        let currentConversation = null;
         // Check if user is logged in
         const userData = JSON.parse(localStorage.getItem('user')) || null;
 
@@ -710,6 +822,7 @@
 
         // ✅ SHOW REQUESTS FUNCTION
         function showRequests() {
+            stopAllPolling();
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
             document.getElementById('notificationsInterface').style.display = 'none';
@@ -1239,6 +1352,7 @@
 
         // ✅ NOTIFICATIONS FUNCTIONS
         function showNotifications() {
+            stopAllPolling();
             console.log('📢 Showing notifications interface');
 
             // Hide other sections
@@ -1677,6 +1791,785 @@
             }, 30000);
         }
 
+        // ✅ MESSAGES FUNCTIONS
+        function showMessages() {
+            console.log('💬 Showing messages interface');
+
+            // Hide other sections
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none';
+
+            // Show messages interface
+            document.getElementById('messagesInterface').style.display = 'block';
+            setActiveNavLink('messages');
+
+            // Load conversations
+            loadConversations();
+            updateUnreadMessagesCount();
+        }
+
+        // Load conversations
+        // ✅ FIXED: Load conversations with better error handling
+        function loadConversations() {
+            if (!userData || !userData.user_id) {
+                console.error('User not logged in');
+                return;
+            }
+
+            const conversationsList = document.getElementById('conversationsList');
+            conversationsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading conversations...</div>';
+
+            console.log('Loading conversations for user:', userData.user_id);
+
+            fetch(`http://localhost/project/backend/api/messages/get_conversations.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Raw conversations data:', data);
+
+                    // Handle different response formats
+                    let conversations = [];
+
+                    if (Array.isArray(data)) {
+                        conversations = data;
+                    } else if (data && Array.isArray(data.conversations)) {
+                        conversations = data.conversations;
+                    } else if (data && data.success && Array.isArray(data.data)) {
+                        conversations = data.data;
+                    } else if (data && data.message) {
+                        // No conversations found
+                        console.log('No conversations:', data.message);
+                    } else {
+                        console.error('Unexpected response format:', data);
+                    }
+
+                    console.log('Processed conversations:', conversations);
+                    displayConversations(conversations);
+                })
+                .catch(error => {
+                    console.error('Error loading conversations:', error);
+                    conversationsList.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Unable to load conversations</strong><br>
+                    <small>${error.message}</small>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-primary" onclick="loadConversations()">
+                            <i class="fas fa-redo me-1"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            `;
+                });
+        }
+
+        // Display conversations
+        function displayConversations(conversations) {
+            const conversationsList = document.getElementById('conversationsList');
+
+            console.log('Conversations data:', conversations);
+
+            // Check if conversations is an array
+            if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
+                conversationsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <p>No conversations yet</p>
+                <small>Start a conversation by messaging a book owner</small>
+            </div>
+        `;
+                return;
+            }
+
+            conversationsList.innerHTML = conversations.map(conv => {
+                // Safely handle conversation data
+                const otherUserId = conv.other_user_id || 0;
+                const otherUserName = conv.other_user_name || 'Unknown User';
+                const lastMessage = conv.last_message || 'No messages yet';
+                const lastMessageTime = conv.last_message_time || new Date().toISOString();
+                const unreadCount = conv.unread_count || 0;
+
+                return `
+        <div class="conversation-item border-bottom p-3 ${unreadCount > 0 ? 'bg-light' : ''}" 
+             onclick="selectConversation(${otherUserId}, '${otherUserName.replace(/'/g, "\\'")}')"
+             style="cursor: pointer; transition: all 0.3s ease;">
+            <div class="d-flex align-items-start">
+                <div class="avatar-placeholder avatar-primary me-3">
+                    ${otherUserName.charAt(0).toUpperCase()}
+                </div>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <h6 class="mb-0">${otherUserName}</h6>
+                        <small class="text-muted">${formatTimeAgo(lastMessageTime)}</small>
+                    </div>
+                    <p class="mb-1 text-muted small text-truncate">${lastMessage}</p>
+                    ${unreadCount > 0 ? `
+                        <span class="badge bg-danger badge-sm">${unreadCount} unread</span>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+            }).join('');
+        }
+
+       // ✅ FIXED: Select conversation WITHOUT calling undefined function
+function selectConversation(otherUserId, otherUserName) {
+    console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
+
+    // Stop any existing polling first (using the safe function that exists)
+    stopAllPolling();
+
+    // Update chat header
+    document.getElementById('chatWithUser').textContent = otherUserName;
+    document.getElementById('chatHeader').style.display = 'block';
+    document.getElementById('messageInputArea').style.display = 'block';
+
+    // Store current conversation
+    window.currentConversation = {
+        userId: otherUserId,
+        userName: otherUserName
+    };
+
+    console.log('🎯 Current conversation set:', window.currentConversation);
+
+    // Load messages (just once, no polling)
+    loadMessages(otherUserId);
+
+    // Mark messages as read (just once)
+    markMessagesAsRead(otherUserId);
+
+    console.log('✅ Conversation loaded without auto-polling');
+}
+        // ✅ MANUAL REFRESH: User clicks to refresh messages
+        function refreshCurrentMessages() {
+            if (!window.currentConversation) {
+                alert('Please select a conversation first');
+                return;
+            }
+
+            console.log('🔄 Manually refreshing messages');
+
+            const refreshBtn = event.target.closest('button') || event.target;
+            const originalHtml = refreshBtn.innerHTML;
+
+            // Show loading state
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            refreshBtn.disabled = true;
+
+            // Refresh messages
+            loadMessages(window.currentConversation.userId);
+
+            // Reset button after 1 second
+            setTimeout(() => {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                refreshBtn.disabled = false;
+            }, 1000);
+        }
+
+        // ✅ DEBUG: Check message status
+        function debugMessageStatus() {
+            console.log('=== MESSAGE DEBUG ===');
+            console.log('Current Conversation:', window.currentConversation || currentConversation);
+            console.log('Message Input:', document.getElementById('messageInput')?.value);
+            console.log('Messages Container:', document.getElementById('messagesContainer')?.children.length, 'messages');
+            console.log('Send Button:', document.querySelector('#messageInputArea button')?.disabled);
+
+            // Check if polling is active (safe check)
+            const pollingActive = window.messageCheckInterval || messageCheckInterval;
+            console.log('Polling Active:', pollingActive ? 'Yes' : 'No');
+        }
+
+        // 🚨 EMERGENCY FIX: Force reload messages after sending
+        function sendMessageFromChat() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (!messageText || !window.currentConversation) {
+                alert('Please select a conversation and type a message');
+                return;
+            }
+
+            console.log('💬 Sending message:', messageText);
+
+            // Get button and show loading
+            const sendBtn = document.querySelector('#messageInputArea button');
+            const originalHtml = sendBtn.innerHTML;
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            sendBtn.disabled = true;
+
+            // ✅ IMMEDIATE UI UPDATE
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Create temporary message (will be replaced after server response)
+            const tempMessageId = 'temp-' + Date.now();
+            const messageElement = document.createElement('div');
+            messageElement.id = tempMessageId;
+            messageElement.className = 'd-flex mb-3 justify-content-end';
+            messageElement.innerHTML = `
+        <div class="message-bubble bg-primary text-white" style="opacity: 0.8;" 
+             style="max-width: 70%; padding: 12px 15px; border-radius: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="message-text">${messageText}</div>
+            <div class="message-time small text-light" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">
+                ${messageTime} <span class="sending-status">🔄 Sending...</span>
+            </div>
+        </div>
+    `;
+
+            // Add to messages container
+            messagesContainer.appendChild(messageElement);
+
+            // Clear input
+            messageInput.value = '';
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // ✅ Send to server
+            const messageData = {
+                sender_id: userData.user_id,
+                receiver_id: window.currentConversation.userId,
+                message_text: messageText,
+                book_id: null
+            };
+
+            fetch('http://localhost/project/backend/api/messages/send.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Server response:', data);
+
+                    if (data.success) {
+                        // Update the temporary message to show sent status
+                        const tempElement = document.getElementById(tempMessageId);
+                        if (tempElement) {
+                            tempElement.querySelector('.sending-status').textContent = ' ✓ Sent';
+                            tempElement.querySelector('.message-bubble').style.opacity = '1';
+                        }
+
+                        console.log('✅ Message sent successfully');
+                    } else {
+                        throw new Error(data.message || 'Failed to send message');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error sending message:', error);
+                    // Show error status
+                    const tempElement = document.getElementById(tempMessageId);
+                    if (tempElement) {
+                        tempElement.querySelector('.sending-status').textContent = ' ❌ Failed';
+                        tempElement.querySelector('.sending-status').style.color = '#dc3545';
+                    }
+                })
+                .finally(() => {
+                    // Reset button
+                    sendBtn.innerHTML = originalHtml;
+                    sendBtn.disabled = false;
+
+                    // Remove temporary message after 2 seconds and reload actual messages
+                    setTimeout(() => {
+                        const tempElement = document.getElementById(tempMessageId);
+                        if (tempElement) {
+                            tempElement.remove();
+                        }
+                        // Load fresh messages from server
+                        if (window.currentConversation) {
+                            loadMessages(window.currentConversation.userId);
+                        }
+                    }, 2000);
+                });
+        }
+        // Load messages for conversation
+        function loadMessages(otherUserId) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading messages...</div>';
+
+            console.log('🔍 Loading messages for user:', userData.user_id, 'with:', otherUserId);
+
+            fetch(`http://localhost/project/backend/api/messages/get_messages.php?user_id=${userData.user_id}&other_user_id=${otherUserId}`)
+                .then(response => {
+                    console.log('📡 API Response status:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('✅ Messages data received:', data);
+
+                    let messages = [];
+
+                    // Handle different response formats
+                    if (Array.isArray(data)) {
+                        messages = data;
+                    } else if (data && Array.isArray(data.messages)) {
+                        messages = data.messages;
+                    } else if (data && data.success && Array.isArray(data.data)) {
+                        messages = data.data;
+                    } else if (data && data.message) {
+                        console.log('ℹ️ API Message:', data.message);
+                        messages = [];
+                    } else {
+                        console.warn('⚠️ Unexpected response structure:', data);
+                        messages = [];
+                    }
+
+                    console.log('🎯 Final messages array:', messages);
+                    displayMessages(messages);
+                })
+                .catch(error => {
+                    console.error('❌ Error loading messages:', error);
+                    messagesContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Error loading messages</strong><br>
+                    <small>${error.message}</small>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-warning" onclick="loadMessages(${otherUserId})">
+                            <i class="fas fa-redo me-1"></i> Retry
+                        </button>
+                    </div>
+                </div>
+            `;
+                });
+        }
+
+        // ✅ FIXED: Load conversations with better error handling
+        function loadConversations() {
+            if (!userData || !userData.user_id) {
+                console.error('User not logged in');
+                return;
+            }
+
+            const conversationsList = document.getElementById('conversationsList');
+            conversationsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading conversations...</div>';
+
+            console.log('Loading conversations for user:', userData.user_id);
+
+            fetch(`http://localhost/project/backend/api/messages/get_conversations.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Raw conversations data:', data);
+
+                    // Handle different response formats
+                    let conversations = [];
+
+                    if (Array.isArray(data)) {
+                        conversations = data;
+                    } else if (data && Array.isArray(data.conversations)) {
+                        conversations = data.conversations;
+                    } else if (data && data.success && Array.isArray(data.data)) {
+                        conversations = data.data;
+                    } else if (data && data.message) {
+                        // No conversations found - show empty state
+                        console.log('No conversations:', data.message);
+                        conversations = [];
+                    } else {
+                        console.error('Unexpected response format:', data);
+                        conversations = [];
+                    }
+
+                    console.log('Processed conversations:', conversations);
+                    displayConversations(conversations);
+                })
+                .catch(error => {
+                    console.error('Error loading conversations:', error);
+                    conversationsList.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Unable to load conversations</strong><br>
+                    <small>${error.message}</small>
+                    <div class="mt-2">
+                        <button class="btn btn-sm btn-primary" onclick="loadConversations()">
+                            <i class="fas fa-redo me-1"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            `;
+                });
+        }
+
+        // Display messages
+        // ✅ IMPROVED: Display messages with better styling
+        function displayMessages(messages) {
+            const messagesContainer = document.getElementById('messagesContainer');
+
+            console.log('🖥️ Displaying messages:', messages);
+
+            // ✅ SAFETY CHECK: Ensure messages is always an array
+            if (!messages || !Array.isArray(messages)) {
+                console.warn('⚠️ messages is not an array, converting to empty array');
+                messages = [];
+            }
+
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = `
+            <div class="text-center text-muted p-4">
+                <i class="fas fa-comment-slash fa-2x mb-3"></i>
+                <p>No messages yet</p>
+                <small>Start the conversation by sending a message!</small>
+            </div>
+        `;
+                return;
+            }
+
+            try {
+                messagesContainer.innerHTML = messages.map((msg, index) => {
+                    // ✅ SAFE data extraction with fallbacks
+                    const isSender = parseInt(msg.sender_id) === parseInt(userData.user_id);
+                    const messageText = msg.message_text || 'No message content';
+                    const messageTime = msg.created_at ?
+                        new Date(msg.created_at).toLocaleTimeString([], {
+                            hour: '2-digit', minute: '2-digit'
+                        }) : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                    const senderName = msg.sender_name || (isSender ? 'You' : 'User');
+
+                    return `
+                <div class="d-flex mb-3 ${isSender ? 'justify-content-end' : 'justify-content-start'}">
+                    <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}" 
+                         style="max-width: 70%; padding: 12px 15px; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                         
+                        ${!isSender ? `
+                            <div class="sender-name small text-muted mb-1" style="font-size: 0.75rem;">
+                                <strong>${senderName}</strong>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="message-text">${messageText}</div>
+                        
+                        <div class="message-time small ${isSender ? 'text-light' : 'text-muted'}" 
+                             style="font-size: 0.7rem; text-align: right; margin-top: 8px;">
+                            ${messageTime}
+                            ${isSender ? ' ✓' : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+                }).join('');
+
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                console.log('✅ Messages displayed successfully');
+
+            } catch (error) {
+                console.error('❌ Error in displayMessages:', error);
+                messagesContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error displaying messages: ${error.message}
+            </div>
+        `;
+            }
+        }
+
+        // Send message from chat
+        function sendMessageFromChat() {
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+
+            if (!messageText || !window.currentConversation) {
+                alert('Please select a conversation and type a message');
+                return;
+            }
+
+            console.log('💬 Sending message:', messageText);
+
+            // Get button and show loading
+            const sendBtn = document.querySelector('#messageInputArea button');
+            const originalHtml = sendBtn.innerHTML;
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            sendBtn.disabled = true;
+
+            // ✅ IMMEDIATE UI UPDATE - Add message to chat immediately
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Create new message element
+            const messageElement = document.createElement('div');
+            messageElement.className = 'd-flex mb-3 justify-content-end';
+            messageElement.innerHTML = `
+        <div class="message-bubble bg-primary text-white" 
+             style="max-width: 70%; padding: 10px 15px; border-radius: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <div class="message-text">${messageText}</div>
+            <div class="message-time small text-light" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">
+                ${messageTime}
+            </div>
+        </div>
+    `;
+
+            // Add to messages container
+            messagesContainer.appendChild(messageElement);
+
+            // Clear input
+            messageInput.value = '';
+
+            // Scroll to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // ✅ Send to server
+            const messageData = {
+                sender_id: userData.user_id,
+                receiver_id: window.currentConversation.userId,
+                message_text: messageText,
+                book_id: null
+            };
+
+            console.log('📡 Sending to server:', messageData);
+
+            fetch('http://localhost/project/backend/api/messages/send.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messageData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Server response:', data);
+
+                    if (data.success) {
+                        console.log('✅ Message sent successfully');
+                        // Reload messages to get the actual message from server
+                        setTimeout(() => {
+                            loadMessages(window.currentConversation.userId);
+                        }, 500);
+                    } else {
+                        throw new Error(data.message || 'Failed to send message');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error sending message:', error);
+                    alert('Error sending message: ' + error.message);
+                })
+                .finally(() => {
+                    // Reset button
+                    sendBtn.innerHTML = originalHtml;
+                    sendBtn.disabled = false;
+                });
+        }
+
+        // ✅ FIXED: Handle enter key
+        function handleMessageKeypress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault(); // Prevent new line
+                sendMessageFromChat();
+            }
+        }
+
+        // ✅ UPDATE selectConversation function to start polling:
+        function selectConversation(otherUserId, otherUserName) {
+            console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
+
+            // Stop previous polling
+            // stopMessagePolling();
+
+            // Update chat header
+            document.getElementById('chatWithUser').textContent = otherUserName;
+            document.getElementById('chatHeader').style.display = 'block';
+            document.getElementById('messageInputArea').style.display = 'block';
+
+            // Store current conversation
+            window.currentConversation = {
+                userId: otherUserId,
+                userName: otherUserName
+            };
+
+            console.log('🎯 Current conversation set:', window.currentConversation);
+
+            // Load messages
+            loadMessages(otherUserId);
+
+            // Start polling for new messages
+            startMessagePolling();
+
+            // Mark messages as read
+            markMessagesAsRead(otherUserId);
+        }
+
+        // ✅ ADD THIS FUNCTION if you want polling functionality
+function startMessagePolling() {
+    console.log('🔄 Starting message polling');
+    
+    // Clear any existing interval
+    if (window.messageCheckInterval) {
+        clearInterval(window.messageCheckInterval);
+    }
+    
+    // Check for new messages every 5 seconds
+    window.messageCheckInterval = setInterval(() => {
+        if (window.currentConversation) {
+            console.log('🔄 Polling for new messages...');
+            loadMessages(window.currentConversation.userId);
+        }
+    }, 5000);
+}
+
+        // ✅ UPDATE clearChatSelection to stop polling:
+        function clearChatSelection() {
+            stopAllPolling();
+            window.currentConversation = null;
+            document.getElementById('chatHeader').style.display = 'none';
+            document.getElementById('messageInputArea').style.display = 'none';
+            document.getElementById('messagesContainer').innerHTML = `
+        <div class="text-center text-muted p-4">
+            <i class="fas fa-comments fa-2x mb-3"></i>
+            <p>Select a conversation to start messaging</p>
+        </div>
+    `;
+        }
+
+        // ✅ STOP ALL POLLING IMMEDIATELY
+        // ✅ STOP ALL POLLING IMMEDIATELY (SAFE VERSION)
+        function stopAllPolling() {
+            try {
+                // Try window variable first
+                if (window.messageCheckInterval) {
+                    console.log('🛑 Stopping message polling (window)');
+                    clearInterval(window.messageCheckInterval);
+                    window.messageCheckInterval = null;
+                }
+                // Try local variable
+                if (messageCheckInterval) {
+                    console.log('🛑 Stopping message polling (local)');
+                    clearInterval(messageCheckInterval);
+                    messageCheckInterval = null;
+                }
+            } catch (error) {
+                console.log('No polling intervals to stop');
+            }
+        }
+
+        // ✅ UPDATED: Show messages with polling
+        function showMessages() {
+            console.log('💬 Showing messages interface');
+
+            // ✅ SAFE: Ensure the variable exists before using it
+            if (typeof messageCheckInterval === 'undefined') {
+                messageCheckInterval = null;
+            }
+
+            // Stop any existing polling first
+            stopAllPolling();
+
+            // Hide other sections
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none';
+
+            // Show messages interface
+            document.getElementById('messagesInterface').style.display = 'block';
+            setActiveNavLink('messages');
+
+            // Load conversations (without auto polling)
+            loadConversations();
+            updateUnreadMessagesCount();
+
+            console.log('✅ Messages loaded without auto-polling');
+        }
+
+        // Mark messages as read
+        function markMessagesAsRead(otherUserId) {
+            fetch('http://localhost/project/backend/api/messages/mark_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userData.user_id,
+                    other_user_id: otherUserId
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateUnreadMessagesCount();
+                        loadConversations(); // Refresh conversations list
+                    }
+                })
+                .catch(error => {
+                    console.error('Error marking messages as read:', error);
+                });
+        }
+
+        // Update unread messages count
+        function updateUnreadMessagesCount() {
+            // You'll need to create this API endpoint
+            fetch(`http://localhost/project/backend/api/messages/unread_count.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    const unreadCount = data.count || 0;
+
+                    // Update badges
+                    const badgeElements = [
+                        document.getElementById('unreadMessagesCount'),
+                        document.getElementById('messagesUnreadCount')
+                    ];
+
+                    badgeElements.forEach(badge => {
+                        if (badge) {
+                            badge.textContent = unreadCount;
+                            badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error updating unread messages count:', error);
+                });
+        }
+
+        // Clear chat selection
+        function clearChatSelection() {
+            window.currentConversation = null;
+            document.getElementById('chatHeader').style.display = 'none';
+            document.getElementById('messageInputArea').style.display = 'none';
+            document.getElementById('messagesContainer').innerHTML = `
+        <div class="text-center text-muted p-4">
+            <i class="fas fa-comments fa-2x mb-3"></i>
+            <p>Select a conversation to start messaging</p>
+        </div>
+    `;
+        }
+
+        // Refresh messages
+        function refreshMessages() {
+            if (window.currentConversation) {
+                loadMessages(window.currentConversation.userId);
+            }
+            loadConversations();
+            updateUnreadMessagesCount();
+            showToast('Messages refreshed!', 'success');
+        }
+
+        // Auto-refresh messages every 10 seconds
+        setInterval(() => {
+            if (document.getElementById('messagesInterface').style.display !== 'none') {
+                if (window.currentConversation) {
+                    loadMessages(window.currentConversation.userId);
+                }
+                updateUnreadMessagesCount();
+            }
+        }, 10000);
         // ✅ UTILITY FUNCTIONS
         function loadDashboardStats() {
             // Simple stats loading
@@ -1705,11 +2598,16 @@
             }
         }
 
+        // ✅ STOP POLLING when leaving messages page
         function showDashboard() {
+            // Stop all polling first
+            stopAllPolling();
+
             document.querySelector('.dashboard-header').style.display = 'block';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'block';
             document.getElementById('requestsInterface').style.display = 'none';
             document.getElementById('notificationsInterface').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'none';
             setActiveNavLink('dashboard');
         }
 
