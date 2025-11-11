@@ -1787,8 +1787,18 @@
             setInterval(() => {
                 if (userData && userData.user_id) {
                     updateUnreadNotificationsCount();
+                    updateUnreadMessagesCount(); // ✅ Yeh add karein
+                    updateRequestsCount(); // ✅ Requests count bhi update ho
                 }
-            }, 30000);
+            }, 30000); // 30 seconds
+
+            // Checks Messages daily  
+            setInterval(() => {
+                if (userData && userData.user_id && document.getElementById('messagesInterface').style.display !== 'none') {
+                    updateUnreadMessagesCount();
+                    loadConversations(); // ✅ Conversations list bhi refresh ho
+                }
+            }, 15000); // 15 seconds
         }
 
         // ✅ MESSAGES FUNCTIONS
@@ -1920,34 +1930,34 @@
             }).join('');
         }
 
-       // ✅ FIXED: Select conversation WITHOUT calling undefined function
-function selectConversation(otherUserId, otherUserName) {
-    console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
+        // ✅ FIXED: Select conversation WITHOUT calling undefined function
+        function selectConversation(otherUserId, otherUserName) {
+            console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
 
-    // Stop any existing polling first (using the safe function that exists)
-    stopAllPolling();
+            // Stop any existing polling first (using the safe function that exists)
+            stopAllPolling();
 
-    // Update chat header
-    document.getElementById('chatWithUser').textContent = otherUserName;
-    document.getElementById('chatHeader').style.display = 'block';
-    document.getElementById('messageInputArea').style.display = 'block';
+            // Update chat header
+            document.getElementById('chatWithUser').textContent = otherUserName;
+            document.getElementById('chatHeader').style.display = 'block';
+            document.getElementById('messageInputArea').style.display = 'block';
 
-    // Store current conversation
-    window.currentConversation = {
-        userId: otherUserId,
-        userName: otherUserName
-    };
+            // Store current conversation
+            window.currentConversation = {
+                userId: otherUserId,
+                userName: otherUserName
+            };
 
-    console.log('🎯 Current conversation set:', window.currentConversation);
+            console.log('🎯 Current conversation set:', window.currentConversation);
 
-    // Load messages (just once, no polling)
-    loadMessages(otherUserId);
+            // Load messages (just once, no polling)
+            loadMessages(otherUserId);
 
-    // Mark messages as read (just once)
-    markMessagesAsRead(otherUserId);
+            // Mark messages as read (just once)
+            markMessagesAsRead(otherUserId);
 
-    console.log('✅ Conversation loaded without auto-polling');
-}
+            console.log('✅ Conversation loaded without auto-polling');
+        }
         // ✅ MANUAL REFRESH: User clicks to refresh messages
         function refreshCurrentMessages() {
             if (!window.currentConversation) {
@@ -2050,17 +2060,15 @@ function selectConversation(otherUserId, otherUserName) {
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('✅ Server response:', data);
-
                     if (data.success) {
-                        // Update the temporary message to show sent status
-                        const tempElement = document.getElementById(tempMessageId);
-                        if (tempElement) {
-                            tempElement.querySelector('.sending-status').textContent = ' ✓ Sent';
-                            tempElement.querySelector('.message-bubble').style.opacity = '1';
-                        }
-
                         console.log('✅ Message sent successfully');
+
+                        // ✅ IMPORTANT: Unread count update karein
+                        setTimeout(() => {
+                            updateUnreadMessagesCount();
+                            loadConversations(); // Conversations list refresh
+                        }, 1000);
+
                     } else {
                         throw new Error(data.message || 'Failed to send message');
                     }
@@ -2091,6 +2099,8 @@ function selectConversation(otherUserId, otherUserName) {
                         }
                     }, 2000);
                 });
+
+
         }
         // Load messages for conversation
         function loadMessages(otherUserId) {
@@ -2406,23 +2416,61 @@ function selectConversation(otherUserId, otherUserName) {
             markMessagesAsRead(otherUserId);
         }
 
-        // ✅ ADD THIS FUNCTION if you want polling functionality
-function startMessagePolling() {
-    console.log('🔄 Starting message polling');
-    
-    // Clear any existing interval
-    if (window.messageCheckInterval) {
-        clearInterval(window.messageCheckInterval);
-    }
-    
-    // Check for new messages every 5 seconds
-    window.messageCheckInterval = setInterval(() => {
-        if (window.currentConversation) {
-            console.log('🔄 Polling for new messages...');
-            loadMessages(window.currentConversation.userId);
+        // ✅ ADD THIS FUNCTION FOR MESSAGE POLLING
+        function startMessagePolling() {
+            console.log('🔔 Starting message polling for badge updates');
+
+            // Clear any existing interval
+            if (window.messagePollingInterval) {
+                clearInterval(window.messagePollingInterval);
+            }
+
+            // Check for new messages every 10 seconds for badge updates
+            window.messagePollingInterval = setInterval(() => {
+                if (userData && userData.user_id) {
+                    console.log('🔄 Checking for new messages...');
+                    updateUnreadMessagesCount();
+
+                    // Agar messages interface open hai toh conversations bhi refresh karein
+                    if (document.getElementById('messagesInterface').style.display !== 'none') {
+                        loadConversations();
+                    }
+                }
+            }, 10000); // 10 seconds
         }
-    }, 5000);
-}
+
+        // ✅ INITIALIZE DASHBOARD MEIN ADD KAREIN
+        function initializeDashboard() {
+            console.log('🚀 Initializing dashboard...');
+
+            // Basic user info
+            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+            updateSidebarInfo();
+
+            // Load all data
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+
+            // ✅ IMPORTANT: Messages count bhi initialize karein
+            updateUnreadMessagesCount();
+
+            // Initialize notifications
+            setTimeout(() => {
+                updateUnreadNotificationsCount();
+            }, 2000);
+
+            initializeModals();
+
+            // Setup auto-checkers
+            setupAutoCheckers();
+
+            // ✅ START MESSAGE POLLING FOR BADGE UPDATES
+            startMessagePolling();
+
+            console.log('✅ Dashboard fully initialized');
+        }
 
         // ✅ UPDATE clearChatSelection to stop polling:
         function clearChatSelection() {
@@ -2438,35 +2486,30 @@ function startMessagePolling() {
     `;
         }
 
-        // ✅ STOP ALL POLLING IMMEDIATELY
-        // ✅ STOP ALL POLLING IMMEDIATELY (SAFE VERSION)
+        // ✅ IMPROVED: STOP ALL POLLING
         function stopAllPolling() {
             try {
-                // Try window variable first
+                // Stop message polling
+                if (window.messagePollingInterval) {
+                    console.log('🛑 Stopping message polling');
+                    clearInterval(window.messagePollingInterval);
+                    window.messagePollingInterval = null;
+                }
+
+                // Stop other intervals
                 if (window.messageCheckInterval) {
-                    console.log('🛑 Stopping message polling (window)');
                     clearInterval(window.messageCheckInterval);
                     window.messageCheckInterval = null;
-                }
-                // Try local variable
-                if (messageCheckInterval) {
-                    console.log('🛑 Stopping message polling (local)');
-                    clearInterval(messageCheckInterval);
-                    messageCheckInterval = null;
                 }
             } catch (error) {
                 console.log('No polling intervals to stop');
             }
         }
 
-        // ✅ UPDATED: Show messages with polling
+
+        // ✅ SIDEBAR MESSAGES LINK KO UPDATE KAREIN
         function showMessages() {
             console.log('💬 Showing messages interface');
-
-            // ✅ SAFE: Ensure the variable exists before using it
-            if (typeof messageCheckInterval === 'undefined') {
-                messageCheckInterval = null;
-            }
 
             // Stop any existing polling first
             stopAllPolling();
@@ -2481,11 +2524,14 @@ function startMessagePolling() {
             document.getElementById('messagesInterface').style.display = 'block';
             setActiveNavLink('messages');
 
-            // Load conversations (without auto polling)
+            // ✅ IMPORTANT: Refresh all message data
             loadConversations();
-            updateUnreadMessagesCount();
+            updateUnreadMessagesCount(); // Count update karein
 
-            console.log('✅ Messages loaded without auto-polling');
+            // ✅ Restart polling for badge updates
+            startMessagePolling();
+
+            console.log('✅ Messages interface loaded');
         }
 
         // Mark messages as read
@@ -2512,15 +2558,17 @@ function startMessagePolling() {
                 });
         }
 
-        // Update unread messages count
+        // ✅ FIXED: Update unread messages count
         function updateUnreadMessagesCount() {
-            // You'll need to create this API endpoint
+            if (!userData || !userData.user_id) return;
+
             fetch(`http://localhost/project/backend/api/messages/unread_count.php?user_id=${userData.user_id}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Unread messages count data:', data);
                     const unreadCount = data.count || 0;
 
-                    // Update badges
+                    // Update all badge elements
                     const badgeElements = [
                         document.getElementById('unreadMessagesCount'),
                         document.getElementById('messagesUnreadCount')
@@ -2529,14 +2577,34 @@ function startMessagePolling() {
                     badgeElements.forEach(badge => {
                         if (badge) {
                             badge.textContent = unreadCount;
-                            badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+                            if (unreadCount > 0) {
+                                badge.style.display = 'inline-block';
+                                badge.classList.add('bg-danger');
+                            } else {
+                                badge.style.display = 'none';
+                            }
                         }
                     });
+
+                    console.log(`📱 Unread messages count updated: ${unreadCount}`);
                 })
                 .catch(error => {
                     console.error('Error updating unread messages count:', error);
+                    // Set badges to 0 on error
+                    const badgeElements = [
+                        document.getElementById('unreadMessagesCount'),
+                        document.getElementById('messagesUnreadCount')
+                    ];
+                    badgeElements.forEach(badge => {
+                        if (badge) {
+                            badge.textContent = '0';
+                            badge.style.display = 'none';
+                        }
+                    });
                 });
         }
+
+
 
         // Clear chat selection
         function clearChatSelection() {
