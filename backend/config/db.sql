@@ -147,32 +147,7 @@ CREATE TABLE admin_logs (
 INSERT INTO admin_users (username, email, password, role) VALUES 
 ('admin', 'admin@bookexchange.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin');
 
--- Transaction Logs Table (For tracking all actions)
-CREATE TABLE IF NOT EXISTS transaction_logs(
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    transaction_id INT NOT NULL,
-    action VARCHAR(100) NOT NULL,
-    description TEXT,
-    performed_by INT NOT NULL, --user_id who performed action
-    user_type ENUM('user', 'admin') DEFAULT 'user'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES book_requests(id) ON DELETE CASCADE,
-    FOREIGN KEY (performed_by) REFERENCES users(id) on DELETE CASCADE
-)
 
--- Sample transactions for testing
-INSERT INTO book_requests (book_id, requester_id, owner_id, request_type, message, status) VALUES
-(1, 2, 1, 'Borrow', 'I would like to borrow this book for 2 weeks', 'Pending'),
-(2, 1, 2, 'Swap', 'I can swap with my Harry Potter book', 'Approved'),
-(3, 3, 1, 'Borrow', 'Need this book for my studies', 'Rejected');
-
--- Sample transaction logs
-INSERT INTO transaction_logs (transaction_id, action, description, performed_by, user_type) VALUES
-(1, 'request_created', 'New book request created', 2, 'user'),
-(2, 'request_created', 'New book request created', 1, 'user'),
-(2, 'request_approved', 'Book request approved by owner', 2, 'user'),
-(3, 'request_created', 'New book request created', 3, 'user'),
-(3, 'request_rejected', 'Book request rejected by owner', 1, 'user');
 
 -- Reviews table for books
 CREATE TABLE IF NOT EXISTS book_reviews (

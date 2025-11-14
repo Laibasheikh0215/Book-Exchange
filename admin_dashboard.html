@@ -375,47 +375,106 @@
                 </div>
             </div>
             
-            <!-- Add more sections for Books, Transactions, Disputes, Policies, Admins -->
-            <!-- Due to length, I'll show the structure for one more section -->
-
-            <!-- Disputes Section -->
-            <div id="disputes-section" class="content-section" style="display: none;">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h2>Manage Disputes</h2>
-                        <p class="text-muted">Resolve user disputes and issues</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Title</th>
-                                        <th>Complainant</th>
-                                        <th>Respondent</th>
-                                        <th>Priority</th>
-                                        <th>Status</th>
-                                        <th>Created</th>
-                                        <th>Assigned To</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="disputesTableBody">
-                                    <!-- Disputes will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+      <!-- Disputes Management Section -->
+<div id="disputes-section" class="content-section" style="display: none;">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-exclamation-triangle me-2"></i>Manage Disputes</h2>
+            <p class="text-muted">Resolve user disputes and issues</p>
         </div>
     </div>
 
+    <!-- Dispute Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="totalDisputes">0</h3>
+                    <p class="text-muted mb-0">Total</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="openDisputesCount">0</h3>
+                    <p class="text-muted mb-0">Open</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="underReviewDisputes">0</h3>
+                    <p class="text-muted mb-0">Under Review</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="resolvedDisputes">0</h3>
+                    <p class="text-muted mb-0">Resolved</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="urgentDisputes">0</h3>
+                    <p class="text-muted mb-0">Urgent</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Actions -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
+                <button type="button" class="btn btn-outline-warning" data-filter="open">Open</button>
+                <button type="button" class="btn btn-outline-info" data-filter="under_review">Under Review</button>
+                <button type="button" class="btn btn-outline-success" data-filter="resolved">Resolved</button>
+                <button type="button" class="btn btn-outline-danger" data-filter="urgent">Urgent</button>
+            </div>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary" onclick="adminDashboard.exportDisputes()">
+                <i class="fas fa-download me-1"></i>Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Disputes Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Disputes List</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Parties</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Assigned To</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="disputesTableBody">
+                        <!-- Disputes will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

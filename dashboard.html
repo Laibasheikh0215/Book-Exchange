@@ -290,6 +290,66 @@
             border-color: #007bff;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
         }
+
+        /* Dispute Styles */
+        .dispute-card {
+            border-left: 4px solid #ffc107;
+            transition: all 0.3s ease;
+        }
+
+        .dispute-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dispute-card[data-status="open"] {
+            border-left-color: #dc3545;
+        }
+
+        .dispute-card[data-status="under_review"] {
+            border-left-color: #fd7e14;
+        }
+
+        .dispute-card[data-status="resolved"] {
+            border-left-color: #198754;
+        }
+
+        /* Priority badges */
+        .priority-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .priority-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .priority-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .priority-urgent {
+            background: #dc3545;
+            color: white;
+        }
+
+        /* Status badges */
+        .status-open {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-under_review {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
     </style>
 </head>
 
@@ -355,6 +415,10 @@
                     <a class="nav-link" href="#" onclick="showNotifications()">
                         <i class="fas fa-bell me-2"></i>Notifications
                         <span class="badge bg-danger ms-1" id="sidebarNotificationsBadge">0</span>
+                    </a>
+                    <a class="nav-link" href="#" onclick="showDisputes()">
+                        <i class="fas fa-gavel me-2"></i>Disputes
+                        <span class="badge bg-danger ms-1" id="activeDisputesBadge">0</span>
                     </a>
                 </nav>
             </div>
@@ -699,6 +763,164 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ UPDATED FILE DISPUTE MODAL -->
+<div class="modal fade" id="fileDisputeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>File a Dispute
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="disputeForm">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Select a book from your listings to automatically fill dispute details.
+                    </div>
+
+                    <!-- ✅ BOOK SELECTION SECTION -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Select Your Book *</label>
+                        <div id="userBooksList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                            <div class="text-center p-3">
+                                <div class="spinner-border spinner-border-sm"></div> Loading your books...
+                            </div>
+                        </div>
+                        <div class="form-text">Select the book related to this dispute</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="disputeTitle" class="form-label">Dispute Title *</label>
+                            <input type="text" class="form-control" id="disputeTitle" required
+                                placeholder="Brief description of the issue">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="disputeCategory" class="form-label">Category *</label>
+                            <select class="form-select" id="disputeCategory" required>
+                                <option value="">Select category</option>
+                                <option value="Return Issue">Return Issue</option>
+                                <option value="Damage Issue">Damage Issue</option>
+                                <option value="Communication Issue">Communication Issue</option>
+                                <option value="Book Quality Issue">Book Quality Issue</option>
+                                <option value="User Behavior">User Behavior</option>
+                                <option value="Payment Issue">Payment Issue</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="disputePriority" class="form-label">Priority</label>
+                            <select class="form-select" id="disputePriority">
+                                <option value="low">Low - Minor issue</option>
+                                <option value="medium" selected>Medium - Standard issue</option>
+                                <option value="high">High - Urgent issue</option>
+                                <option value="urgent">Urgent - Critical issue</option>
+                            </select>
+                        </div>
+
+                        <!-- ✅ AUTO-FILLED USER DETAILS -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Dispute Against User</label>
+                            <div class="p-2 border rounded bg-light">
+                                <div id="selectedUserInfo" class="text-muted">
+                                    Select a book to see user details
+                                </div>
+                                <input type="hidden" id="respondentIdInput">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="disputeDescription" class="form-label">Detailed Description *</label>
+                        <textarea class="form-control" id="disputeDescription" rows="4" required 
+                            placeholder="Please provide detailed information about the issue..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="disputeEvidence" class="form-label">Evidence & Supporting Information</label>
+                        <textarea class="form-control" id="disputeEvidence" rows="3" 
+                            placeholder="Any evidence, links, screenshots, or additional information..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="desiredResolution" class="form-label">Desired Resolution</label>
+                        <textarea class="form-control" id="desiredResolution" rows="2"
+                            placeholder="What would you like to happen to resolve this issue?"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-warning" onclick="submitDispute()" id="submitDisputeBtn">
+                    <i class="fas fa-paper-plane me-1"></i>Submit Dispute
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- My Disputes Section -->
+    <div id="disputesInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-gavel me-2"></i>My Disputes
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-dark me-2" onclick="fileDispute()">
+                                <i class="fas fa-plus me-1"></i>File New Dispute
+                            </button>
+                            <button class="btn btn-sm btn-light" onclick="refreshDisputes()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary active"
+                                        onclick="filterDisputes('all')">
+                                        All Disputes
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterDisputes('open')">
+                                        Open
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterDisputes('under_review')">
+                                        Under Review
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterDisputes('resolved')">
+                                        Resolved
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="disputesList">
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-warning"></div>
+                                <p class="mt-2">Loading your disputes...</p>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -2806,6 +3028,965 @@
                 loadRecentRequests();
             }
         });
+
+        // ✅ SIMPLIFIED fileDispute function
+        function fileDispute(transactionId = null, respondentId = null, respondentName = null) {
+            console.log('📝 Opening dispute form');
+
+            const modalElement = document.getElementById('fileDisputeModal');
+            if (!modalElement) {
+                console.error('❌ Dispute modal not found');
+                showToast('Error: Dispute form not available', 'error');
+                return;
+            }
+
+            const modal = new bootstrap.Modal(modalElement);
+
+            // Reset form
+            const disputeForm = document.getElementById('disputeForm');
+            if (disputeForm) {
+                disputeForm.reset();
+            }
+
+            // Load transactions (optional)
+            setTimeout(() => {
+                loadTransactionsForDispute();
+            }, 100);
+
+            // Pre-fill respondent ID if provided
+            if (respondentId) {
+                setTimeout(() => {
+                    const respondentInput = document.getElementById('respondentIdInput');
+                    if (respondentInput) {
+                        respondentInput.value = respondentId;
+                        console.log(`✅ Pre-filled respondent ID: ${respondentId}`);
+                    }
+                }, 200);
+            }
+
+            // Pre-fill transaction if provided
+            if (transactionId) {
+                setTimeout(() => {
+                    const transactionSelect = document.getElementById('relatedTransaction');
+                    if (transactionSelect) {
+                        transactionSelect.value = transactionId;
+                    }
+                }, 200);
+            }
+
+            modal.show();
+
+            // Form ko focus dein
+            setTimeout(() => {
+                const titleInput = document.getElementById('disputeTitle');
+                if (titleInput) {
+                    titleInput.focus();
+                }
+            }, 600);
+        }
+
+        // ✅ DEBUG FUNCTION - Add karein aapke code mein
+        function debugDisputeForm() {
+            console.log('🔍 DEBUG Dispute Form Elements:');
+            const elements = {
+                'fileDisputeModal': document.getElementById('fileDisputeModal'),
+                'disputeForm': document.getElementById('disputeForm'),
+                'disputeTitle': document.getElementById('disputeTitle'),
+                'disputeDescription': document.getElementById('disputeDescription'),
+                'disputeCategory': document.getElementById('disputeCategory'),
+                'respondentIdInput': document.getElementById('respondentIdInput'),
+                'relatedTransaction': document.getElementById('relatedTransaction'),
+                'submitDisputeBtn': document.getElementById('submitDisputeBtn')
+            };
+
+            Object.entries(elements).forEach(([name, element]) => {
+                console.log(`${name}:`, element ? '✅ FOUND' : '❌ NOT FOUND');
+            });
+
+            return elements;
+        }
+
+        // Page load par debug run karein
+        setTimeout(() => {
+            console.log('🔄 Running dispute form debug...');
+            debugDisputeForm();
+        }, 2000);
+
+        // Load transactions for dispute form
+        function loadTransactionsForDispute() {
+            if (!userData || !userData.user_id) return;
+
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(transactions => {
+                    const select = document.getElementById('relatedTransaction');
+                    select.innerHTML = '<option value="">Select transaction</option>';
+
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(transaction => {
+                            const option = document.createElement('option');
+                            option.value = transaction.id;
+                            option.textContent = `#${transaction.id} - ${transaction.book_title} with ${transaction.other_user_name}`;
+                            select.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading transactions:', error);
+                });
+        }
+
+        // Load users for dispute form
+        function loadUsersForDispute() {
+            // This would typically come from your users API
+            // For now, we'll use a placeholder
+            const select = document.getElementById('respondentUser');
+            select.innerHTML = '<option value="">Select user</option>';
+
+            // In a real implementation, you'd fetch users from your API
+            // fetch('http://localhost/project/backend/api/users.php')
+            // .then(response => response.json())
+            // .then(users => { ... });
+        }
+
+        // Submit dispute
+        // ✅ FIXED submitDispute function - SIRF YEH COPY KARO
+        function submitDispute() {
+            console.log('🔄 Starting dispute submission...');
+
+            // Get form values
+            const title = document.getElementById('disputeTitle').value.trim();
+            const description = document.getElementById('disputeDescription').value.trim();
+            const category = document.getElementById('disputeCategory').value;
+            const respondentId = document.getElementById('respondentIdInput').value.trim();
+
+            console.log('🔍 Form Values:', { title, description, category, respondentId });
+
+            // Validate required fields
+            if (!title) {
+                showToast('Please enter a dispute title', 'error');
+                document.getElementById('disputeTitle').focus();
+                return;
+            }
+
+            if (!description) {
+                showToast('Please enter a detailed description', 'error');
+                document.getElementById('disputeDescription').focus();
+                return;
+            }
+
+            if (!category) {
+                showToast('Please select a category', 'error');
+                document.getElementById('disputeCategory').focus();
+                return;
+            }
+
+            if (!respondentId) {
+                showToast('Please enter the user ID you have dispute with', 'error');
+                document.getElementById('respondentIdInput').focus();
+                return;
+            }
+
+            // Prepare dispute data - YAHI IMPORTANT CHANGE HAI
+            const disputeData = {
+                title: title,
+                description: description,
+                category: category,
+                priority: document.getElementById('disputePriority').value,
+                complainant_id: parseInt(userData.user_id),
+                respondent_id: parseInt(respondentId), // ✅ YEH LINE FIX HAI - parseInt LAGAO
+                transaction_id: document.getElementById('relatedTransaction').value ?
+                    parseInt(document.getElementById('relatedTransaction').value) : null,
+                evidence: document.getElementById('disputeEvidence').value.trim() || '',
+                desired_resolution: document.getElementById('desiredResolution').value.trim() || ''
+            };
+
+            console.log('📤 Final Dispute Data:', disputeData);
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitDisputeBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+            submitBtn.disabled = true;
+
+            // Send request
+            fetch('http://localhost/project/backend/api/users/disputes.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(disputeData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Dispute submission response:', data);
+
+                    if (data.success) {
+                        showToast('✅ Dispute filed successfully! Our team will review it shortly.', 'success');
+
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
+                        modal.hide();
+
+                        // Reset form
+                        document.getElementById('disputeForm').reset();
+
+                        // Refresh disputes list
+                        if (document.getElementById('disputesInterface').style.display !== 'none') {
+                            loadUserDisputes();
+                        }
+
+                    } else {
+                        throw new Error(data.message || 'Failed to file dispute');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error filing dispute:', error);
+                    showToast('❌ Error filing dispute: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+        }
+        // Add dispute button to your UI where needed
+        function addDisputeButton() {
+            // You can add this to transaction cards or user profiles
+            return `<button class="btn btn-sm btn-outline-warning" onclick="fileDispute()">
+                <i class="fas fa-exclamation-triangle me-1"></i>File Dispute
+            </button>`;
+        }
+
+        // Dispute Management Functions
+        function showDisputes() {
+            stopAllPolling();
+            console.log('⚖️ Showing disputes interface');
+
+            // Hide other sections
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'none';
+
+            // Show disputes interface
+            document.getElementById('disputesInterface').style.display = 'block';
+            setActiveNavLink('disputes');
+
+            // Load disputes
+            loadUserDisputes();
+            updateDisputesBadge();
+        }
+
+        // ✅ UPDATED fileDispute function
+        function fileDispute(transactionId = null, respondentId = null, respondentName = null) {
+            console.log('📝 Opening dispute form');
+
+            const modal = new bootstrap.Modal(document.getElementById('fileDisputeModal'));
+
+            // Reset form
+            document.getElementById('disputeForm').reset();
+
+            // ✅ SIRF TRANSACTIONS LOAD KAREIN ✅
+            loadTransactionsForDispute();
+
+            // Pre-fill respondent ID if provided
+            if (respondentId) {
+                setTimeout(() => {
+                    document.getElementById('respondentIdInput').value = respondentId;
+                    console.log(`✅ Pre-filled respondent ID: ${respondentId}`);
+                }, 500);
+            }
+
+            // Pre-fill transaction if provided
+            if (transactionId) {
+                setTimeout(() => {
+                    document.getElementById('relatedTransaction').value = transactionId;
+                }, 500);
+            }
+
+            modal.show();
+
+            // Form ko focus dein
+            setTimeout(() => {
+                document.getElementById('disputeTitle').focus();
+            }, 600);
+        }
+
+        // ✅ FIXED loadTransactionsForDispute function
+        function loadTransactionsForDispute() {
+            if (!userData || !userData.user_id) return;
+
+            const select = document.getElementById('relatedTransaction');
+            if (!select) {
+                console.log('⚠️ Transaction select element not found');
+                return;
+            }
+
+            // Clear and set default
+            select.innerHTML = '<option value="">Select transaction (optional)</option>';
+
+            console.log('📋 Loading transactions for dispute form...');
+
+            // Simple API call with error handling
+            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(transactions => {
+                    console.log('📥 Transactions data:', transactions);
+
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(transaction => {
+                            // Only include relevant transactions
+                            if (transaction.status !== 'Cancelled' && transaction.status !== 'Rejected') {
+                                const otherUserName = transaction.requester_name || transaction.owner_name;
+                                const option = document.createElement('option');
+                                option.value = transaction.id;
+                                option.textContent = `#${transaction.id} - ${transaction.book_title} with ${otherUserName}`;
+                                select.appendChild(option);
+                            }
+                        });
+
+                        console.log(`✅ Loaded ${select.options.length - 1} transactions`);
+                    } else {
+                        const option = document.createElement('option');
+                        option.textContent = 'No transactions available';
+                        option.disabled = true;
+                        select.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error loading transactions:', error);
+                    const option = document.createElement('option');
+                    option.textContent = 'Error loading transactions';
+                    option.disabled = true;
+                    select.appendChild(option);
+                });
+        }
+
+
+
+        // ✅ FIXED submitDispute function
+        function submitDispute() {
+            console.log('🔄 Starting dispute submission...');
+
+            // Pehle check karein elements available hain ya nahi
+            const titleInput = document.getElementById('disputeTitle');
+            const descriptionInput = document.getElementById('disputeDescription');
+            const categoryInput = document.getElementById('disputeCategory');
+            const respondentInput = document.getElementById('respondentIdInput');
+
+            if (!titleInput || !descriptionInput || !categoryInput || !respondentInput) {
+                console.error('❌ Form elements not found:', {
+                    title: !!titleInput,
+                    description: !!descriptionInput,
+                    category: !!categoryInput,
+                    respondent: !!respondentInput
+                });
+                showToast('Error: Form not loaded properly. Please refresh the page.', 'error');
+                return;
+            }
+
+            // Manual validation karein
+            const title = titleInput.value.trim();
+            const description = descriptionInput.value.trim();
+            const category = categoryInput.value;
+            const respondentId = respondentInput.value.trim();
+
+            console.log('🔍 Form Values:', {
+                title,
+                description,
+                category,
+                respondentId
+            });
+
+            // Validate required fields
+            if (!title) {
+                showToast('Please enter a dispute title', 'error');
+                titleInput.focus();
+                return;
+            }
+
+            if (!description) {
+                showToast('Please enter a detailed description', 'error');
+                descriptionInput.focus();
+                return;
+            }
+
+            if (!category) {
+                showToast('Please select a category', 'error');
+                categoryInput.focus();
+                return;
+            }
+
+            if (!respondentId) {
+                showToast('Please enter the user ID you have dispute with', 'error');
+                respondentInput.focus();
+                return;
+            }
+
+            const disputeData = {
+                title: title,
+                description: description,
+                category: category,
+                priority: document.getElementById('disputePriority').value,
+                complainant_id: parseInt(userData.user_id),
+                respondent_id: parseInt(respondentId),
+                transaction_id: document.getElementById('relatedTransaction')?.value ?
+                    parseInt(document.getElementById('relatedTransaction').value) : null,
+                evidence: document.getElementById('disputeEvidence')?.value.trim() || '',
+                desired_resolution: document.getElementById('desiredResolution')?.value.trim() || ''
+            };
+
+            console.log('📤 Final Dispute Data:', disputeData);
+
+            // Show loading state
+            const submitBtn = document.getElementById('submitDisputeBtn');
+            if (!submitBtn) {
+                showToast('Error: Submit button not found', 'error');
+                return;
+            }
+
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+            submitBtn.disabled = true;
+
+            fetch('http://localhost/project/backend/api/users/disputes.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(disputeData)
+            })
+                .then(response => {
+                    console.log('📡 Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('✅ Dispute submission response:', data);
+
+                    if (data.success) {
+                        showToast('✅ Dispute filed successfully! Our team will review it shortly.', 'success');
+
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
+                        if (modal) modal.hide();
+
+                        // Reset form
+                        document.getElementById('disputeForm').reset();
+
+                        // Refresh disputes list if on disputes page
+                        if (document.getElementById('disputesInterface')?.style.display !== 'none') {
+                            loadUserDisputes();
+                        }
+
+                        // Update badge
+                        updateDisputesBadge();
+
+                    } else {
+                        throw new Error(data.message || 'Failed to file dispute');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error filing dispute:', error);
+                    showToast('❌ Error filing dispute: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+        }
+        // Load user's disputes
+        function loadUserDisputes(filter = 'all') {
+            if (!userData || !userData.user_id) return;
+
+            const disputesList = document.getElementById('disputesList');
+            disputesList.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-warning"></div><p class="mt-2">Loading your disputes...</p></div>';
+
+            const url = `http://localhost/project/backend/api/users/disputes.php?user_id=${userData.user_id}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('📋 User disputes data:', data);
+
+                    if (data.success && data.disputes && data.disputes.length > 0) {
+                        displayUserDisputes(data.disputes, filter);
+                    } else {
+                        displayNoDisputes();
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error loading disputes:', error);
+                    disputesList.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error loading disputes. Please try again.
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-warning" onclick="loadUserDisputes()">
+                        <i class="fas fa-redo me-1"></i> Retry
+                    </button>
+                </div>
+            </div>
+        `;
+                });
+        }
+
+        // Display user's disputes
+        function displayUserDisputes(disputes, filter = 'all') {
+            const disputesList = document.getElementById('disputesList');
+
+            // Apply filter
+            let filteredDisputes = disputes;
+            if (filter !== 'all') {
+                filteredDisputes = disputes.filter(dispute => dispute.status === filter);
+            }
+
+            if (filteredDisputes.length === 0) {
+                displayNoDisputes(filter);
+                return;
+            }
+
+            disputesList.innerHTML = filteredDisputes.map(dispute => {
+                const priorityClass = `priority-${dispute.priority}`;
+                const statusClass = `status-${dispute.status}`;
+                const isComplainant = parseInt(dispute.complainant_id) === parseInt(userData.user_id);
+                const otherUserName = isComplainant ? dispute.respondent_name : dispute.complainant_name;
+                const roleBadge = isComplainant ? '<span class="badge bg-primary me-2">You: Complainant</span>' : '<span class="badge bg-secondary me-2">You: Respondent</span>';
+
+                return `
+            <div class="card mb-3 dispute-card" data-status="${dispute.status}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <h6 class="mb-0 me-2">${dispute.title}</h6>
+                                ${roleBadge}
+                            </div>
+                            <p class="text-muted mb-2">${dispute.description.substring(0, 150)}...</p>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="badge ${priorityClass}">
+                                    <i class="fas ${getPriorityIcon(dispute.priority)} me-1"></i>
+                                    ${dispute.priority.charAt(0).toUpperCase() + dispute.priority.slice(1)}
+                                </span>
+                                <span class="badge bg-light text-dark">${dispute.category}</span>
+                                <span class="badge ${statusClass}">
+                                    ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </span>
+                            </div>
+                            <div class="small text-muted">
+                                <strong>With:</strong> ${otherUserName} | 
+                                <strong>Filed:</strong> ${new Date(dispute.created_at).toLocaleDateString()}
+                                ${dispute.assigned_admin_name ? `| <strong>Assigned to:</strong> ${dispute.assigned_admin_name}` : ''}
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group-vertical">
+                                <button class="btn btn-sm btn-outline-primary mb-1" onclick="viewDisputeDetails(${dispute.id})">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </button>
+                                ${dispute.status === 'open' ? `
+                                    <button class="btn btn-sm btn-outline-warning" onclick="addDisputeEvidence(${dispute.id})">
+                                        <i class="fas fa-plus me-1"></i>Add Evidence
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Display no disputes state
+        function displayNoDisputes(filter = 'all') {
+            const disputesList = document.getElementById('disputesList');
+
+            let message = '';
+            if (filter === 'all') {
+                message = `
+            <div class="text-center p-5">
+                <i class="fas fa-gavel fa-4x text-muted mb-3"></i>
+                <h4>No Disputes Filed</h4>
+                <p class="text-muted">You haven't filed any disputes yet.</p>
+                <button class="btn btn-warning mt-2" onclick="fileDispute()">
+                    <i class="fas fa-plus me-1"></i>File Your First Dispute
+                </button>
+            </div>
+        `;
+            } else {
+                message = `
+            <div class="text-center p-4">
+                <i class="fas fa-filter fa-3x text-muted mb-3"></i>
+                <h5>No ${filter.replace('_', ' ')} disputes</h5>
+                <p>You don't have any ${filter.replace('_', ' ')} disputes at the moment.</p>
+                <button class="btn btn-outline-primary" onclick="filterDisputes('all')">
+                    View All Disputes
+                </button>
+            </div>
+        `;
+            }
+
+            disputesList.innerHTML = message;
+        }
+
+        // Filter disputes
+        function filterDisputes(filter) {
+            console.log('🔍 Filtering disputes:', filter);
+
+            // Update active filter button
+            document.querySelectorAll('#disputesInterface .btn-group .btn').forEach(btn => {
+                btn.classList.remove('active', 'btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+            event.target.classList.remove('btn-outline-primary');
+            event.target.classList.add('active', 'btn-primary');
+
+            loadUserDisputes(filter);
+        }
+
+        // View dispute details
+        function viewDisputeDetails(disputeId) {
+            // This would open a modal with full dispute details
+            // For now, show a toast
+            showToast(`Viewing dispute #${disputeId} details - Feature coming soon`, 'info');
+        }
+
+        // Add dispute evidence
+        function addDisputeEvidence(disputeId) {
+            const evidence = prompt('Please provide additional evidence or information:');
+            if (evidence) {
+                // Here you would call an API to update the dispute with new evidence
+                showToast('Evidence added successfully!', 'success');
+            }
+        }
+        // Update disputes badge count
+        function updateDisputesBadge() {
+            if (!userData || !userData.user_id) return;
+            fetch(`http://localhost/project/backend/api/users/disputes.php?user_id=${userData.user_id}`)
+
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.disputes) {
+                        const activeDisputes = data.disputes.filter(d => d.status === 'open' || d.status === 'under_review').length;
+                        const badge = document.getElementById('activeDisputesBadge');
+                        if (badge) {
+                            badge.textContent = activeDisputes;
+                            if (activeDisputes > 0) {
+                                badge.style.display = 'inline-block';
+                            } else {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating disputes badge:', error);
+                });
+        }
+
+        // Utility function for priority icons
+        function getPriorityIcon(priority) {
+            const icons = {
+                'low': 'fa-arrow-down',
+                'medium': 'fa-minus',
+                'high': 'fa-arrow-up',
+                'urgent': 'fa-fire'
+            };
+            return icons[priority] || 'fa-circle';
+        }
+
+        // Add dispute filing to transaction cards
+        function addDisputeButtonToTransaction(transactionId, respondentId, respondentName) {
+            return `
+        <button class="btn btn-sm btn-outline-warning" 
+                onclick="fileDispute(${transactionId}, ${respondentId}, '${respondentName}')"
+                title="File dispute about this transaction">
+            <i class="fas fa-exclamation-triangle me-1"></i>File Dispute
+        </button>
+    `;
+        }
+
+        // Refresh disputes
+        function refreshDisputes() {
+            console.log('🔄 Refreshing disputes...');
+            loadUserDisputes();
+            updateDisputesBadge();
+            showToast('Disputes refreshed!', 'success');
+        }
+
+        // Update the setActiveNavLink function to include disputes
+        function setActiveNavLink(activeItem) {
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            switch (activeItem) {
+                case 'dashboard': navLinks[0].classList.add('active'); break;
+                case 'profile': navLinks[1].classList.add('active'); break;
+                case 'mybooks': navLinks[2].classList.add('active'); break;
+                case 'transactions': navLinks[3].classList.add('active'); break;
+                case 'requests': navLinks[6].classList.add('active'); break;
+                case 'disputes': navLinks[7].classList.add('active'); break; // New case
+                case 'notifications': navLinks[8].classList.add('active'); break; // Updated index
+            }
+        }
+
+        // ✅ LOAD USER'S BOOKS FOR DISPUTE
+function loadUserBooksForDispute() {
+    if (!userData || !userData.user_id) return;
+
+    const booksList = document.getElementById('userBooksList');
+    
+    fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('User books for dispute:', data);
+            
+            if (data.books && data.books.length > 0) {
+                displayUserBooksForDispute(data.books);
+            } else {
+                booksList.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        No books found. You need to add books first to file a dispute.
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading user books:', error);
+            booksList.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading your books. Please try again.
+                </div>
+            `;
+        });
+}
+
+// ✅ DISPLAY USER'S BOOKS FOR SELECTION
+function displayUserBooksForDispute(books) {
+    const booksList = document.getElementById('userBooksList');
+    
+    booksList.innerHTML = books.map(book => `
+        <div class="book-item border-bottom pb-2 mb-2" style="cursor: pointer;" 
+             onclick="selectBookForDispute(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}')">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h6 class="mb-1">${book.title}</h6>
+                    <p class="mb-1 text-muted small">by ${book.author}</p>
+                    <small class="text-muted">Condition: ${book.condition} • Status: ${book.status}</small>
+                </div>
+                <div class="text-end">
+                    <small class="text-muted">ID: ${book.id}</small>
+                    <div class="mt-1">
+                        <span class="badge bg-success">Select</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    // Add "No books" message if empty
+    if (books.length === 0) {
+        booksList.innerHTML = `
+            <div class="alert alert-warning">
+                <i class="fas fa-book me-2"></i>
+                No books found. Add books first to file disputes.
+            </div>
+        `;
+    }
+}
+
+// ✅ SELECT BOOK FOR DISPUTE - FIND OTHER USER AUTOMATICALLY
+function selectBookForDispute(bookId, bookTitle, bookAuthor) {
+    console.log('📚 Selected book for dispute:', { bookId, bookTitle, bookAuthor });
+    
+    // Remove previous selections
+    document.querySelectorAll('.book-item').forEach(item => {
+        item.style.backgroundColor = '';
+        item.style.borderColor = '';
+    });
+    
+    // Highlight selected book
+    event.currentTarget.style.backgroundColor = '#e3f2fd';
+    event.currentTarget.style.borderColor = '#2196f3';
+    
+    // Auto-fill dispute title
+    document.getElementById('disputeTitle').value = `Issue with ${bookTitle}`;
+    
+    // Show book info
+    document.getElementById('selectedUserInfo').innerHTML = `
+        <div class="text-success">
+            <i class="fas fa-check-circle me-1"></i>
+            <strong>Book Selected:</strong> ${bookTitle}
+        </div>
+        <small class="text-muted">by ${bookAuthor}</small>
+        <div class="mt-1">
+            <small><strong>Note:</strong> Our team will identify the other user involved</small>
+        </div>
+    `;
+    
+    // Store book ID for dispute submission
+    window.selectedBookId = bookId;
+    
+    // Focus on description
+    document.getElementById('disputeDescription').focus();
+}
+
+// ✅ UPDATED FILE DISPUTE FUNCTION
+function fileDispute() {
+    console.log('📝 Opening dispute form');
+    
+    const modal = new bootstrap.Modal(document.getElementById('fileDisputeModal'));
+    
+    // Reset form
+    document.getElementById('disputeForm').reset();
+    window.selectedBookId = null;
+    
+    // Load user's books
+    loadUserBooksForDispute();
+    
+    // Reset user info
+    document.getElementById('selectedUserInfo').innerHTML = 'Select a book to see user details';
+    
+    modal.show();
+}
+
+// ✅ UPDATED SUBMIT DISPUTE FUNCTION
+function submitDispute() {
+    console.log('🔄 Starting dispute submission...');
+    
+    // Get form values
+    const title = document.getElementById('disputeTitle').value.trim();
+    const description = document.getElementById('disputeDescription').value.trim();
+    const category = document.getElementById('disputeCategory').value;
+    
+    // Validate required fields
+    if (!title) {
+        showToast('Please enter a dispute title', 'error');
+        document.getElementById('disputeTitle').focus();
+        return;
+    }
+    
+    if (!description) {
+        showToast('Please enter a detailed description', 'error');
+        document.getElementById('disputeDescription').focus();
+        return;
+    }
+    
+    if (!category) {
+        showToast('Please select a category', 'error');
+        document.getElementById('disputeCategory').focus();
+        return;
+    }
+    
+    if (!window.selectedBookId) {
+        showToast('Please select a book related to this dispute', 'error');
+        return;
+    }
+
+    // ✅ IMPORTANT: Respondent ID ab automatically handle hoga backend mein
+    const disputeData = {
+        title: title,
+        description: description,
+        category: category,
+        priority: document.getElementById('disputePriority').value,
+        complainant_id: parseInt(userData.user_id),
+        respondent_id: 1, // ✅ Temporary - backend will find the actual user
+        book_id: window.selectedBookId, // ✅ Yeh naya field add karo
+        transaction_id: null,
+        evidence: document.getElementById('disputeEvidence').value.trim() || '',
+        desired_resolution: document.getElementById('desiredResolution').value.trim() || ''
+    };
+
+    console.log('📤 Final Dispute Data:', disputeData);
+
+    // Show loading state
+    const submitBtn = document.getElementById('submitDisputeBtn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
+    submitBtn.disabled = true;
+
+    // Send request
+    fetch('http://localhost/project/backend/api/users/disputes.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(disputeData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('✅ Dispute submission response:', data);
+        
+        if (data.success) {
+            showToast('✅ Dispute filed successfully! Admin will review it shortly.', 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
+            modal.hide();
+            
+            // Reset form
+            document.getElementById('disputeForm').reset();
+            window.selectedBookId = null;
+            
+            // Refresh disputes list
+            if (document.getElementById('disputesInterface').style.display !== 'none') {
+                loadUserDisputes();
+            }
+            
+        } else {
+            throw new Error(data.message || 'Failed to file dispute');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error filing dispute:', error);
+        showToast('❌ Error filing dispute: ' + error.message, 'error');
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+}
+        // Update initializeDashboard to include disputes badge
+        function initializeDashboard() {
+            console.log('🚀 Initializing dashboard...');
+
+            // Basic user info
+            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+            updateSidebarInfo();
+
+            // Load all data
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+
+            // Initialize disputes badge
+            updateDisputesBadge();
+
+            // Initialize notifications
+            setTimeout(() => {
+                updateUnreadNotificationsCount();
+            }, 2000);
+
+            initializeModals();
+
+            // Setup auto-checkers
+            setupAutoCheckers();
+
+            console.log('✅ Dashboard fully initialized');
+        }
     </script>
 
     <!-- Bootstrap JS -->
