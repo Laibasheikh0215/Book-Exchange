@@ -413,35 +413,122 @@
         });
 
         // Browse books page pe SARI AVAILABLE BOOKS load karen
+// ✅ FIXED: ALL BOOKS LOAD KARNE KA FUNCTION
 async function loadAllBooks() {
     try {
-        console.log("Fetching ALL books from API...");
+        console.log("🚀 Fetching ALL books...");
 
-        // ✅ BINA user_id KE CALL KAREN - SARI BOOKS KE LIYE
-        const response = await fetch('http://localhost/project/backend/api/books/read.php');
-        console.log("Response status:", response.status);
+        // ✅ PEHLE DIRECT API TRY KAREN
+        const response = await fetch('http://localhost/project/backend/api/books/get_all_books.php');
+        
+        console.log("📡 Response status:", response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const data = await response.json();
-        console.log("All books API Response:", data);
+        console.log("📚 API Response:", data);
 
-        if (data.books && Array.isArray(data.books)) {
+        if (data.success && data.books) {
+            console.log(`✅ Found ${data.books.length} books`);
             displayBooks(data.books);
         } else {
-            console.log("No books array found in response");
-            displayBooks([]);
+            // ✅ AGAR DIRECT API NA CHALE, TOH ORIGINAL API TRY KAREN
+            console.log("🔄 Trying original API...");
+            await loadFromOriginalAPI();
         }
 
     } catch (error) {
-        console.error('Error loading books:', error);
-        document.getElementById('booksGrid').innerHTML = `
+        console.error('❌ Error loading books:', error);
+        // ✅ FALLBACK: ORIGINAL API TRY KAREN
+        await loadFromOriginalAPI();
+    }
+}
+
+// ✅ ORIGINAL API SE LOAD KARNE KA FUNCTION
+async function loadFromOriginalAPI() {
+    try {
+        const response = await fetch('http://localhost/project/backend/api/books/read.php');
+        const data = await response.json();
+        
+        if (data.books && Array.isArray(data.books)) {
+            console.log(`📚 Original API: ${data.books.length} books`);
+            displayBooks(data.books);
+        } else {
+            throw new Error('No books found in original API');
+        }
+    } catch (error) {
+        console.error('❌ Both APIs failed:', error);
+        showErrorState();
+    }
+}
+
+// ✅ ERROR STATE
+function showErrorState() {
+    document.getElementById('booksGrid').innerHTML = `
         <div class="col-12 text-center">
-            <div class="alert alert-danger">
+            <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle me-2"></i>
-                Error loading books: ${error.message}
+                <strong>Unable to load books</strong>
+                <div class="mt-2">
+                    <button class="btn btn-sm btn-primary me-2" onclick="loadAllBooks()">
+                        <i class="fas fa-redo me-1"></i> Retry
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" onclick="addSampleBooks()">
+                        <i class="fas fa-plus me-1"></i> Add Sample Books
+                    </button>
+                </div>
             </div>
         </div>
     `;
-    }
+}
+
+// ✅ SAMPLE BOOKS ADD KARNE KA FUNCTION (TEMPORARY)
+async function addSampleBooks() {
+    const sampleBooks = [
+        {
+            title: "The Great Gatsby",
+            author: "F. Scott Fitzgerald",
+            genre: "Fiction",
+            condition: "Good",
+            description: "A classic American novel",
+            status: "Available"
+        },
+        {
+            title: "To Kill a Mockingbird", 
+            author: "Harper Lee",
+            genre: "Fiction",
+            condition: "Very Good",
+            description: "A powerful story of racial injustice",
+            status: "Available"
+        },
+        {
+            title: "1984",
+            author: "George Orwell",
+            genre: "Dystopian", 
+            condition: "Good",
+            description: "A dystopian social science fiction novel",
+            status: "Available"
+        },
+        {
+            title: "Pride and Prejudice",
+            author: "Jane Austen",
+            genre: "Romance",
+            condition: "Like New",
+            description: "A romantic novel of manners",
+            status: "Available"
+        }
+    ];
+
+    // Display sample books temporarily
+    displayBooks(sampleBooks.map((book, index) => ({
+        id: index + 100,
+        ...book,
+        image_path: "Assets/default-book.jpg"
+    })));
+    
+    alert("Sample books loaded temporarily. These are not saved in database.");
 }
         // Search books
         async function searchBooks() {

@@ -21,7 +21,7 @@ error_log("📥 Received request data: " . print_r($data, true));
 // ✅ FIXED VALIDATION: Check for ALL required fields
 if(
     !empty($data->book_id) &&
-    !empty($data->requester_id) &&
+    !empty($data->requester_id) && 
     !empty($data->owner_id) &&
     !empty($data->request_type)
 ) {
@@ -37,12 +37,16 @@ if(
 
     if($request->create()) {
         http_response_code(201);
+        
+        // ✅ FIX: ONLY ONE JSON RESPONSE - REMOVE DUPLICATE ECHO
         echo json_encode(array(
             "success" => true,
             "message" => "Book request created successfully.",
             "request_id" => $db->lastInsertId()
         ));
-        error_log("✅ Request created successfully");
+        
+        error_log("✅ Request created successfully - SINGLE RESPONSE SENT");
+        
     } else {
         http_response_code(503);
         echo json_encode(array(
@@ -64,10 +68,12 @@ if(
     echo json_encode(array(
         "success" => false,
         "message" => "Unable to create book request. Data is incomplete.",
-        "missing_fields" => $missing_fields,
-        "received_data" => $data
+        "missing_fields" => $missing_fields
     ));
     
     error_log("❌ Missing fields: " . implode(', ', $missing_fields));
 }
+
+// ✅ ADD THIS: EXIT AFTER SENDING RESPONSE TO PREVENT EXTRA OUTPUT
+exit();
 ?>

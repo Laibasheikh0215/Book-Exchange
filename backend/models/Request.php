@@ -20,7 +20,7 @@ class Request {
     }
 
     // In the create() method of Request model, make sure it matches:
-public function create() {
+  public function create() {
     $query = "INSERT INTO " . $this->table_name . "
             SET
                 book_id = :book_id,
@@ -50,11 +50,12 @@ public function create() {
     $stmt->bindParam(":message", $this->message);
     $stmt->bindParam(":proposed_return_date", $this->proposed_return_date);
 
+    // ✅ RETURN SIMPLE BOOLEAN - NO EXTRA OUTPUT
     if($stmt->execute()) {
         return true;
     }
     return false;
-}
+}  
 
     public function getIncomingRequests($user_id) {
         $query = "SELECT 

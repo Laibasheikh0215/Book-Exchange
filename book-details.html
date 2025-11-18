@@ -524,276 +524,276 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-   <script>
-    // ✅ GET BOOK ID FROM URL - YEH SABSE PEHLE
-    const urlParams = new URLSearchParams(window.location.search);
-    const bookId = urlParams.get('id');
+    <script>
+        // ✅ GET BOOK ID FROM URL - YEH SABSE PEHLE
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookId = urlParams.get('id');
 
-    // ✅ GLOBAL VARIABLES
-    let currentUserRating = 0;
-    let currentUserId = null;
-    let currentUser = null;
+        // ✅ GLOBAL VARIABLES
+        let currentUserRating = 0;
+        let currentUserId = null;
+        let currentUser = null;
 
-    console.log('Book ID from URL:', bookId);
+        console.log('Book ID from URL:', bookId);
 
-    // ✅ CHECK IF BOOK ID EXISTS ON PAGE LOAD
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log('Page loaded, checking book ID:', bookId);
+        // ✅ CHECK IF BOOK ID EXISTS ON PAGE LOAD
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Page loaded, checking book ID:', bookId);
 
-        if (!bookId) {
-            showError('No book ID specified in URL. Please select a book from browse page.');
-            return;
-        }
+            if (!bookId) {
+                showError('No book ID specified in URL. Please select a book from browse page.');
+                return;
+            }
 
-        // Get current user
-        getCurrentUser();
+            // Get current user
+            getCurrentUser();
 
-        // Load book data
-        loadBookDetails(bookId);
-        loadBookReviews(bookId);
-        initializeRatingSystem();
-        
-        // Initialize modal
-        initializeRequestModal();
-    });
+            // Load book data
+            loadBookDetails(bookId);
+            loadBookReviews(bookId);
+            initializeRatingSystem();
 
-    // ✅ GET CURRENT USER FUNCTION
-    function getCurrentUser() {
-        try {
-            const userData = JSON.parse(localStorage.getItem('user')) || null;
-            if (userData && userData.user_id) {
-                currentUserId = userData.user_id;
-                currentUser = userData;
+            // Initialize modal
+            initializeRequestModal();
+        });
 
-                console.log('User logged in:', currentUser);
+        // ✅ GET CURRENT USER FUNCTION
+        function getCurrentUser() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('user')) || null;
+                if (userData && userData.user_id) {
+                    currentUserId = userData.user_id;
+                    currentUser = userData;
 
-                // Create avatar with user initial
-                const userInitial = (userData.name || 'U').charAt(0).toUpperCase();
-                const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
-                const colorIndex = currentUserId % avatarColors.length;
+                    console.log('User logged in:', currentUser);
 
-                document.getElementById('userAvatar').outerHTML = `
+                    // Create avatar with user initial
+                    const userInitial = (userData.name || 'U').charAt(0).toUpperCase();
+                    const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
+                    const colorIndex = currentUserId % avatarColors.length;
+
+                    document.getElementById('userAvatar').outerHTML = `
                 <div class="avatar-placeholder ${avatarColors[colorIndex]}" id="userAvatar">
                     ${userInitial}
                 </div>
             `;
 
-                return true;
-            } else {
-                // User not logged in - hide review form
-                console.log('User not logged in, hiding review form');
+                    return true;
+                } else {
+                    // User not logged in - hide review form
+                    console.log('User not logged in, hiding review form');
+                    document.getElementById('reviewForm').style.display = 'none';
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error getting user data:', error);
                 document.getElementById('reviewForm').style.display = 'none';
                 return false;
             }
-        } catch (error) {
-            console.error('Error getting user data:', error);
-            document.getElementById('reviewForm').style.display = 'none';
-            return false;
         }
-    }
 
-    // ✅ LOAD BOOK DETAILS
-    async function loadBookDetails(bookId) {
-        try {
-            console.log('Loading book details for ID:', bookId);
+        // ✅ LOAD BOOK DETAILS
+        async function loadBookDetails(bookId) {
+            try {
+                console.log('Loading book details for ID:', bookId);
 
-            const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Book API Response:', data);
+
+                if (data.books && data.books.length > 0) {
+                    const book = data.books[0];
+                    console.log('Book data:', book);
+                    displayBookDetails(book);
+                } else {
+                    showError('Book not found in database');
+                }
+            } catch (error) {
+                console.error('Error loading book details:', error);
+                showError('Error loading book details: ' + error.message);
             }
-
-            const data = await response.json();
-            console.log('Book API Response:', data);
-
-            if (data.books && data.books.length > 0) {
-                const book = data.books[0];
-                console.log('Book data:', book);
-                displayBookDetails(book);
-            } else {
-                showError('Book not found in database');
-            }
-        } catch (error) {
-            console.error('Error loading book details:', error);
-            showError('Error loading book details: ' + error.message);
         }
-    }
 
-    // ✅ DISPLAY BOOK DETAILS
-    function displayBookDetails(book) {
-        console.log('Displaying book:', book);
+        // ✅ DISPLAY BOOK DETAILS
+        function displayBookDetails(book) {
+            console.log('Displaying book:', book);
 
-        // Main book info
-        document.getElementById('bookTitle').textContent = book.title || 'No Title';
-        document.getElementById('bookAuthor').textContent = book.author || 'Unknown Author';
-        document.getElementById('bookGenre').textContent = book.genre || 'Not specified';
-        document.getElementById('bookCondition').textContent = book.condition || 'Not specified';
-        document.getElementById('bookISBN').textContent = book.isbn || 'Not specified';
-        document.getElementById('bookDescription').textContent = book.description || 'No description available';
+            // Main book info
+            document.getElementById('bookTitle').textContent = book.title || 'No Title';
+            document.getElementById('bookAuthor').textContent = book.author || 'Unknown Author';
+            document.getElementById('bookGenre').textContent = book.genre || 'Not specified';
+            document.getElementById('bookCondition').textContent = book.condition || 'Not specified';
+            document.getElementById('bookISBN').textContent = book.isbn || 'Not specified';
+            document.getElementById('bookDescription').textContent = book.description || 'No description available';
 
-        // Owner info
-        const ownerName = book.owner_name || 'User ' + (book.user_id || 'Unknown');
-        const ownerLocation = book.location || 'Location not specified';
+            // Owner info
+            const ownerName = book.owner_name || 'User ' + (book.user_id || 'Unknown');
+            const ownerLocation = book.location || 'Location not specified';
 
-        document.getElementById('ownerName').textContent = ownerName;
-        document.getElementById('ownerLocation').textContent = ownerLocation;
+            document.getElementById('ownerName').textContent = ownerName;
+            document.getElementById('ownerLocation').textContent = ownerLocation;
 
-        // Create owner avatar
-        const ownerInitial = ownerName.charAt(0).toUpperCase();
-        const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
-        const colorIndex = (book.user_id || 0) % avatarColors.length;
+            // Create owner avatar
+            const ownerInitial = ownerName.charAt(0).toUpperCase();
+            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
+            const colorIndex = (book.user_id || 0) % avatarColors.length;
 
-        document.getElementById('ownerAvatar').outerHTML = `
+            document.getElementById('ownerAvatar').outerHTML = `
         <div class="avatar-placeholder ${avatarColors[colorIndex]}" id="ownerAvatar">
             ${ownerInitial}
         </div>
     `;
 
-        // Status
-        const statusElement = document.getElementById('bookStatus');
-        const bookStatus = book.status || 'Unknown';
-        statusElement.textContent = bookStatus;
-        statusElement.className = 'status-badge ' + getStatusClass(bookStatus);
+            // Status
+            const statusElement = document.getElementById('bookStatus');
+            const bookStatus = book.status || 'Unknown';
+            statusElement.textContent = bookStatus;
+            statusElement.className = 'status-badge ' + getStatusClass(bookStatus);
 
-        // Images
-        const images = [
-            book.image_path,
-            book.image_path2,
-            book.image_path3
-        ].filter(img => img && img.trim() !== '');
+            // Images
+            const images = [
+                book.image_path,
+                book.image_path2,
+                book.image_path3
+            ].filter(img => img && img.trim() !== '');
 
-        console.log('Available images:', images);
+            console.log('Available images:', images);
 
-        const mainImage = document.getElementById('mainBookImage');
-        if (images.length > 0) {
-            mainImage.src = images[0];
-            mainImage.alt = book.title || 'Book Image';
+            const mainImage = document.getElementById('mainBookImage');
+            if (images.length > 0) {
+                mainImage.src = images[0];
+                mainImage.alt = book.title || 'Book Image';
 
-            // Thumbnails
-            for (let i = 0; i < 3; i++) {
-                const thumb = document.getElementById(`thumb${i + 1}`);
-                if (images[i]) {
-                    thumb.src = images[i];
-                    thumb.style.display = 'block';
-                    thumb.alt = `Thumbnail ${i + 1}`;
-                    if (i === 0) thumb.classList.add('active');
+                // Thumbnails
+                for (let i = 0; i < 3; i++) {
+                    const thumb = document.getElementById(`thumb${i + 1}`);
+                    if (images[i]) {
+                        thumb.src = images[i];
+                        thumb.style.display = 'block';
+                        thumb.alt = `Thumbnail ${i + 1}`;
+                        if (i === 0) thumb.classList.add('active');
 
-                    // Add error handling for thumbnails
-                    thumb.onerror = function () {
-                        this.style.display = 'none';
-                    };
-                } else {
-                    thumb.style.display = 'none';
+                        // Add error handling for thumbnails
+                        thumb.onerror = function () {
+                            this.style.display = 'none';
+                        };
+                    } else {
+                        thumb.style.display = 'none';
+                    }
+                }
+            } else {
+                // No images available - show placeholder
+                mainImage.src = 'Assets/default-book.jpg';
+                mainImage.alt = 'No image available';
+
+                // Hide all thumbnails
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`thumb${i}`).style.display = 'none';
                 }
             }
-        } else {
-            // No images available - show placeholder
-            mainImage.src = 'Assets/default-book.jpg';
-            mainImage.alt = 'No image available';
 
-            // Hide all thumbnails
-            for (let i = 1; i <= 3; i++) {
-                document.getElementById(`thumb${i}`).style.display = 'none';
-            }
+            // Add error handling for main image
+            mainImage.onerror = function () {
+                this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="280" viewBox="0 0 200 280"><rect width="200" height="280" fill="%23f8f9fa"/><text x="100" y="140" text-anchor="middle" fill="%23666" font-family="Arial" font-size="16">No Image Available</text></svg>';
+                this.alt = 'Image not available';
+            };
         }
 
-        // Add error handling for main image
-        mainImage.onerror = function () {
-            this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="280" viewBox="0 0 200 280"><rect width="200" height="280" fill="%23f8f9fa"/><text x="100" y="140" text-anchor="middle" fill="%23666" font-family="Arial" font-size="16">No Image Available</text></svg>';
-            this.alt = 'Image not available';
-        };
-    }
-
-    // ✅ LOAD BOOK REVIEWS
-    async function loadBookReviews(bookId) {
-        try {
-            console.log('Loading reviews for book ID:', bookId);
-
-            let reviews = [];
-
-            // Try to load from API first
+        // ✅ LOAD BOOK REVIEWS
+        async function loadBookReviews(bookId) {
             try {
-                const response = await fetch(`http://localhost/project/backend/api/reviews/get_reviews.php?book_id=${bookId}`);
+                console.log('Loading reviews for book ID:', bookId);
 
-                if (response.ok) {
-                    const apiReviews = await response.json();
-                    console.log('Reviews API Response:', apiReviews);
-                    reviews = apiReviews;
-                } else {
-                    throw new Error('API not available');
+                let reviews = [];
+
+                // Try to load from API first
+                try {
+                    const response = await fetch(`http://localhost/project/backend/api/reviews/get_reviews.php?book_id=${bookId}`);
+
+                    if (response.ok) {
+                        const apiReviews = await response.json();
+                        console.log('Reviews API Response:', apiReviews);
+                        reviews = apiReviews;
+                    } else {
+                        throw new Error('API not available');
+                    }
+                } catch (apiError) {
+                    console.error('Error loading reviews from API:', apiError);
+                    // Fallback to localStorage reviews
+                    reviews = loadReviewsFromLocalStorage(bookId);
                 }
-            } catch (apiError) {
-                console.error('Error loading reviews from API:', apiError);
-                // Fallback to localStorage reviews
-                reviews = loadReviewsFromLocalStorage(bookId);
+
+                displayReviews(reviews);
+
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                // Final fallback to mock data
+                const mockReviews = getMockReviews(bookId);
+                displayReviews(mockReviews);
             }
-
-            displayReviews(reviews);
-
-        } catch (error) {
-            console.error('Error loading reviews:', error);
-            // Final fallback to mock data
-            const mockReviews = getMockReviews(bookId);
-            displayReviews(mockReviews);
         }
-    }
 
-    // ✅ LOAD REVIEWS FROM LOCALSTORAGE
-    function loadReviewsFromLocalStorage(bookId) {
-        try {
-            const localReviews = JSON.parse(localStorage.getItem('local_reviews') || '[]');
-            const bookReviews = localReviews.filter(review => review.book_id == bookId);
+        // ✅ LOAD REVIEWS FROM LOCALSTORAGE
+        function loadReviewsFromLocalStorage(bookId) {
+            try {
+                const localReviews = JSON.parse(localStorage.getItem('local_reviews') || '[]');
+                const bookReviews = localReviews.filter(review => review.book_id == bookId);
 
-            console.log('Loaded reviews from localStorage:', bookReviews);
-            return bookReviews;
-        } catch (error) {
-            console.error('Error loading reviews from localStorage:', error);
-            return [];
-        }
-    }
-
-    // ✅ GET MOCK REVIEWS AS FINAL FALLBACK
-    function getMockReviews(bookId) {
-        const mockReviews = [
-            {
-                id: 1,
-                user_name: "Laila Adam",
-                rating: 4.5,
-                comment: "This book touched my soul in ways I didn't expect. It beautifully connects the past and present through the power of love and spirituality.",
-                created_at: "2025-03-22"
-            },
-            {
-                id: 2,
-                user_name: "Ahmed Raza",
-                rating: 5,
-                comment: "Absolutely loved this book! The writing is beautiful and the story is very engaging.",
-                created_at: "2025-03-20"
+                console.log('Loaded reviews from localStorage:', bookReviews);
+                return bookReviews;
+            } catch (error) {
+                console.error('Error loading reviews from localStorage:', error);
+                return [];
             }
-        ];
+        }
 
-        return mockReviews;
-    }
+        // ✅ GET MOCK REVIEWS AS FINAL FALLBACK
+        function getMockReviews(bookId) {
+            const mockReviews = [
+                {
+                    id: 1,
+                    user_name: "Laila Adam",
+                    rating: 4.5,
+                    comment: "This book touched my soul in ways I didn't expect. It beautifully connects the past and present through the power of love and spirituality.",
+                    created_at: "2025-03-22"
+                },
+                {
+                    id: 2,
+                    user_name: "Ahmed Raza",
+                    rating: 5,
+                    comment: "Absolutely loved this book! The writing is beautiful and the story is very engaging.",
+                    created_at: "2025-03-20"
+                }
+            ];
 
-    // ✅ DISPLAY REVIEWS
-    function displayReviews(reviews) {
-        const reviewsList = document.getElementById('reviewsList');
+            return mockReviews;
+        }
 
-        if (!reviews || reviews.length === 0) {
-            reviewsList.innerHTML = `
+        // ✅ DISPLAY REVIEWS
+        function displayReviews(reviews) {
+            const reviewsList = document.getElementById('reviewsList');
+
+            if (!reviews || reviews.length === 0) {
+                reviewsList.innerHTML = `
             <div class="text-center text-muted py-4">
                 <i class="fas fa-comments fa-2x mb-3"></i>
                 <p>No reviews yet. Be the first to review this book!</p>
             </div>
         `;
-            return;
-        }
+                return;
+            }
 
-        reviewsList.innerHTML = reviews.map((review, index) => {
-            const userInitial = (review.user_name || 'U').charAt(0).toUpperCase();
-            const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
-            const colorIndex = index % avatarColors.length;
+            reviewsList.innerHTML = reviews.map((review, index) => {
+                const userInitial = (review.user_name || 'U').charAt(0).toUpperCase();
+                const avatarColors = ['avatar-primary', 'avatar-success', 'avatar-warning', 'avatar-danger'];
+                const colorIndex = index % avatarColors.length;
 
-            return `
+                return `
             <div class="review-card">
                 <div class="reviewer">
                     <div class="avatar-placeholder ${avatarColors[colorIndex]}">
@@ -812,93 +812,149 @@
                 <p class="mt-2 mb-0">${review.comment}</p>
             </div>
         `;
-        }).join('');
-    }
+            }).join('');
+        }
 
-    // ✅ INITIALIZE RATING SYSTEM
-    function initializeRatingSystem() {
-        const stars = document.querySelectorAll('#ratingInput i');
+        // ✅ INITIALIZE RATING SYSTEM
+        function initializeRatingSystem() {
+            const stars = document.querySelectorAll('#ratingInput i');
 
-        stars.forEach(star => {
-            star.addEventListener('click', function () {
-                const rating = parseInt(this.getAttribute('data-rating'));
-                currentUserRating = rating;
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    currentUserRating = rating;
 
-                console.log('User selected rating:', rating);
+                    console.log('User selected rating:', rating);
 
-                // Update star display
-                stars.forEach((s, index) => {
-                    if (index < rating) {
-                        s.classList.add('active');
-                        s.style.color = 'gold';
-                    } else {
-                        s.classList.remove('active');
-                        s.style.color = '#ccc';
-                    }
+                    // Update star display
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('active');
+                            s.style.color = 'gold';
+                        } else {
+                            s.classList.remove('active');
+                            s.style.color = '#ccc';
+                        }
+                    });
                 });
             });
-        });
-    }
-
-    // ✅ SUBMIT REVIEW
-    async function submitReview() {
-        if (!currentUserId) {
-            alert('Please login to submit a review');
-            window.location.href = 'login.html';
-            return;
         }
 
-        const reviewText = document.getElementById('reviewText').value.trim();
+        // ✅ SUBMIT REVIEW
+        async function submitReview() {
+            if (!currentUserId) {
+                alert('Please login to submit a review');
+                window.location.href = 'login.html';
+                return;
+            }
 
-        if (!reviewText) {
-            alert('Please write a review before submitting');
-            return;
-        }
+            const reviewText = document.getElementById('reviewText').value.trim();
 
-        if (currentUserRating === 0) {
-            alert('Please select a rating');
-            return;
-        }
+            if (!reviewText) {
+                alert('Please write a review before submitting');
+                return;
+            }
 
-        console.log('Submitting review:', {
-            book_id: bookId,
-            user_id: currentUserId,
-            rating: currentUserRating,
-            comment: reviewText
-        });
+            if (currentUserRating === 0) {
+                alert('Please select a rating');
+                return;
+            }
 
-        try {
-            // Show loading state
-            const submitBtn = document.querySelector('#reviewForm button');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
-            submitBtn.disabled = true;
-
-            // Prepare review data
-            const reviewData = {
-                book_id: parseInt(bookId),
-                user_id: parseInt(currentUserId),
-                rating: parseInt(currentUserRating),
+            console.log('Submitting review:', {
+                book_id: bookId,
+                user_id: currentUserId,
+                rating: currentUserRating,
                 comment: reviewText
-            };
-
-            console.log('Sending review data:', reviewData);
-
-            // Submit review to backend API
-            const response = await fetch('http://localhost/project/backend/api/reviews/submit.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(reviewData)
             });
 
-            const result = await response.json();
-            console.log('Review submission response:', result);
+            try {
+                // Show loading state
+                const submitBtn = document.querySelector('#reviewForm button');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Submitting...';
+                submitBtn.disabled = true;
 
-            if (response.ok) {
-                // Show success message
-                showSuccessMessage('Review submitted successfully!');
+                // Prepare review data
+                const reviewData = {
+                    book_id: parseInt(bookId),
+                    user_id: parseInt(currentUserId),
+                    rating: parseInt(currentUserRating),
+                    comment: reviewText
+                };
+
+                console.log('Sending review data:', reviewData);
+
+                // Submit review to backend API
+                const response = await fetch('http://localhost/project/backend/api/reviews/submit.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(reviewData)
+                });
+
+                const result = await response.json();
+                console.log('Review submission response:', result);
+
+                if (response.ok) {
+                    // Show success message
+                    showSuccessMessage('Review submitted successfully!');
+
+                    // Clear form
+                    document.getElementById('reviewText').value = '';
+                    currentUserRating = 0;
+                    document.querySelectorAll('#ratingInput i').forEach(star => {
+                        star.classList.remove('active');
+                        star.style.color = '#ccc';
+                    });
+
+                    // Reload reviews to show the new one
+                    setTimeout(() => {
+                        loadBookReviews(bookId);
+                    }, 1000);
+
+                } else {
+                    throw new Error(result.message || 'Failed to submit review');
+                }
+
+            } catch (error) {
+                console.error('Error submitting review:', error);
+
+                // Fallback to mock submission if API fails
+                console.log('API failed, using fallback method');
+                await submitReviewFallback(reviewText);
+
+            } finally {
+                // Reset button state
+                const submitBtn = document.querySelector('#reviewForm button');
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Submit Review';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // ✅ FALLBACK METHOD IF API FAILS
+        async function submitReviewFallback(reviewText) {
+            try {
+                // Store review in localStorage as fallback
+                const reviewKey = `book_review_${bookId}_${currentUserId}`;
+                const reviewData = {
+                    id: Date.now(),
+                    book_id: parseInt(bookId),
+                    user_id: currentUserId,
+                    user_name: currentUser.name || 'Current User',
+                    rating: currentUserRating,
+                    comment: reviewText,
+                    created_at: new Date().toISOString()
+                };
+
+                localStorage.setItem(reviewKey, JSON.stringify(reviewData));
+
+                // Also add to reviews list
+                const reviewsList = JSON.parse(localStorage.getItem('local_reviews') || '[]');
+                reviewsList.push(reviewData);
+                localStorage.setItem('local_reviews', JSON.stringify(reviewsList));
+
+                showSuccessMessage('Review submitted successfully! (Saved locally)');
 
                 // Clear form
                 document.getElementById('reviewText').value = '';
@@ -908,175 +964,119 @@
                     star.style.color = '#ccc';
                 });
 
-                // Reload reviews to show the new one
-                setTimeout(() => {
-                    loadBookReviews(bookId);
-                }, 1000);
+                // Reload reviews
+                loadBookReviews(bookId);
 
-            } else {
-                throw new Error(result.message || 'Failed to submit review');
+            } catch (error) {
+                console.error('Fallback submission failed:', error);
+                alert('Error submitting review. Please try again.');
+            }
+        }
+
+        // ✅ REQUEST BORROW FUNCTION
+        function requestBorrow() {
+            console.log('Request borrow button clicked');
+
+            if (!bookId) {
+                alert('Book ID not found');
+                return;
             }
 
-        } catch (error) {
-            console.error('Error submitting review:', error);
+            if (!currentUserId) {
+                alert('Please login to request this book');
+                window.location.href = 'login.html';
+                return;
+            }
 
-            // Fallback to mock submission if API fails
-            console.log('API failed, using fallback method');
-            await submitReviewFallback(reviewText);
-
-        } finally {
-            // Reset button state
-            const submitBtn = document.querySelector('#reviewForm button');
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Submit Review';
-            submitBtn.disabled = false;
-        }
-    }
-
-    // ✅ FALLBACK METHOD IF API FAILS
-    async function submitReviewFallback(reviewText) {
-        try {
-            // Store review in localStorage as fallback
-            const reviewKey = `book_review_${bookId}_${currentUserId}`;
-            const reviewData = {
-                id: Date.now(),
-                book_id: parseInt(bookId),
-                user_id: currentUserId,
-                user_name: currentUser.name || 'Current User',
-                rating: currentUserRating,
-                comment: reviewText,
-                created_at: new Date().toISOString()
-            };
-
-            localStorage.setItem(reviewKey, JSON.stringify(reviewData));
-
-            // Also add to reviews list
-            const reviewsList = JSON.parse(localStorage.getItem('local_reviews') || '[]');
-            reviewsList.push(reviewData);
-            localStorage.setItem('local_reviews', JSON.stringify(reviewsList));
-
-            showSuccessMessage('Review submitted successfully! (Saved locally)');
-
-            // Clear form
-            document.getElementById('reviewText').value = '';
-            currentUserRating = 0;
-            document.querySelectorAll('#ratingInput i').forEach(star => {
-                star.classList.remove('active');
-                star.style.color = '#ccc';
-            });
-
-            // Reload reviews
-            loadBookReviews(bookId);
-
-        } catch (error) {
-            console.error('Fallback submission failed:', error);
-            alert('Error submitting review. Please try again.');
-        }
-    }
-
-    // ✅ REQUEST BORROW FUNCTION
-    function requestBorrow() {
-        console.log('Request borrow button clicked');
-
-        if (!bookId) {
-            alert('Book ID not found');
-            return;
+            // Show modal
+            showRequestModal();
         }
 
-        if (!currentUserId) {
-            alert('Please login to request this book');
-            window.location.href = 'login.html';
-            return;
+        // ✅ SHOW REQUEST MODAL
+        function showRequestModal() {
+            console.log('Showing request modal');
+
+            // Load user's books for swap options
+            loadUserBooksForSwap();
+
+            // Set minimum date for return (tomorrow)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const returnDateInput = document.getElementById('returnDate');
+            if (returnDateInput) {
+                returnDateInput.min = tomorrow.toISOString().split('T')[0];
+            }
+
+            // Show modal using Bootstrap
+            const requestModalElement = document.getElementById('requestModal');
+            if (requestModalElement) {
+                const requestModal = new bootstrap.Modal(requestModalElement);
+                requestModal.show();
+                console.log('Modal should be visible now');
+            } else {
+                console.error('Request modal element not found');
+                alert('Error: Could not open request form');
+            }
         }
 
-        // Show modal
-        showRequestModal();
-    }
+        // ✅ LOAD USER'S BOOKS FOR SWAP
+        function loadUserBooksForSwap() {
+            if (!currentUserId) return;
 
-    // ✅ SHOW REQUEST MODAL
-    function showRequestModal() {
-        console.log('Showing request modal');
+            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${currentUserId}&status=Available`)
+                .then(response => response.json())
+                .then(data => {
+                    const swapBookSelect = document.getElementById('swapBookSelect');
+                    swapBookSelect.innerHTML = '<option value="">Choose a book to swap...</option>';
 
-        // Load user's books for swap options
-        loadUserBooksForSwap();
-
-        // Set minimum date for return (tomorrow)
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const returnDateInput = document.getElementById('returnDate');
-        if (returnDateInput) {
-            returnDateInput.min = tomorrow.toISOString().split('T')[0];
-        }
-
-        // Show modal using Bootstrap
-        const requestModalElement = document.getElementById('requestModal');
-        if (requestModalElement) {
-            const requestModal = new bootstrap.Modal(requestModalElement);
-            requestModal.show();
-            console.log('Modal should be visible now');
-        } else {
-            console.error('Request modal element not found');
-            alert('Error: Could not open request form');
-        }
-    }
-
-    // ✅ LOAD USER'S BOOKS FOR SWAP
-    function loadUserBooksForSwap() {
-        if (!currentUserId) return;
-
-        fetch(`http://localhost/project/backend/api/books/read.php?user_id=${currentUserId}&status=Available`)
-            .then(response => response.json())
-            .then(data => {
-                const swapBookSelect = document.getElementById('swapBookSelect');
-                swapBookSelect.innerHTML = '<option value="">Choose a book to swap...</option>';
-
-                if (data.books && data.books.length > 0) {
-                    data.books.forEach(book => {
+                    if (data.books && data.books.length > 0) {
+                        data.books.forEach(book => {
+                            const option = document.createElement('option');
+                            option.value = book.id;
+                            option.textContent = `${book.title} by ${book.author} (${book.condition})`;
+                            swapBookSelect.appendChild(option);
+                        });
+                    } else {
                         const option = document.createElement('option');
-                        option.value = book.id;
-                        option.textContent = `${book.title} by ${book.author} (${book.condition})`;
+                        option.value = "";
+                        option.textContent = "No available books for swap";
+                        option.disabled = true;
                         swapBookSelect.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement('option');
-                    option.value = "";
-                    option.textContent = "No available books for swap";
-                    option.disabled = true;
-                    swapBookSelect.appendChild(option);
-                }
-            })
-            .catch(error => {
-                console.error('Error loading user books:', error);
-            });
-    }
-
-    // ✅ INITIALIZE REQUEST MODAL
-    function initializeRequestModal() {
-        console.log('Initializing request modal...');
-
-        // Request type change handler
-        const requestTypeRadios = document.querySelectorAll('input[name="requestType"]');
-        if (requestTypeRadios.length > 0) {
-            requestTypeRadios.forEach(radio => {
-                radio.addEventListener('change', function () {
-                    const isSwap = this.value === 'Swap';
-                    const swapSection = document.getElementById('swapBookSection');
-                    const borrowSection = document.getElementById('borrowOptions');
-
-                    if (swapSection) swapSection.style.display = isSwap ? 'block' : 'none';
-                    if (borrowSection) borrowSection.style.display = isSwap ? 'none' : 'block';
-
-                    if (isSwap) {
-                        loadUserBooksForSwap();
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading user books:', error);
                 });
-            });
         }
 
-        console.log('Request modal initialized successfully');
-    }
+        // ✅ INITIALIZE REQUEST MODAL
+        function initializeRequestModal() {
+            console.log('Initializing request modal...');
 
-    // ✅ FIXED SUBMIT REQUEST FUNCTION - SINGLE VERSION
- // ✅ ENHANCED SUBMIT REQUEST FUNCTION WITH DEBUGGING
+            // Request type change handler
+            const requestTypeRadios = document.querySelectorAll('input[name="requestType"]');
+            if (requestTypeRadios.length > 0) {
+                requestTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', function () {
+                        const isSwap = this.value === 'Swap';
+                        const swapSection = document.getElementById('swapBookSection');
+                        const borrowSection = document.getElementById('borrowOptions');
+
+                        if (swapSection) swapSection.style.display = isSwap ? 'block' : 'none';
+                        if (borrowSection) borrowSection.style.display = isSwap ? 'none' : 'block';
+
+                        if (isSwap) {
+                            loadUserBooksForSwap();
+                        }
+                    });
+                });
+            }
+
+            console.log('Request modal initialized successfully');
+        }
+
+        // ✅ FIXED SUBMIT REQUEST FUNCTION - SINGLE VERSION
+       // ✅ FIXED SUBMIT REQUEST FUNCTION - HANDLES DOUBLE JSON
 async function submitRequest() {
     console.log('🔄 submitRequest() called - Starting...');
 
@@ -1094,13 +1094,13 @@ async function submitRequest() {
 
     try {
         console.log('🔍 Step 1: Getting book details...');
-        
-        // ✅ FIRST: Get book details to get owner_id
+
+        // Get book details to get owner_id
         const bookResponse = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
         const bookData = await bookResponse.json();
-        
+
         console.log('📚 Book API Response:', bookData);
-        
+
         if (!bookData.books || bookData.books.length === 0) {
             alert('Book not found in database');
             return;
@@ -1116,14 +1116,14 @@ async function submitRequest() {
             isOwnBook: parseInt(ownerId) === parseInt(currentUserId)
         });
 
-        // ✅ CHECK: User cannot request their own book
+        // Check: User cannot request their own book
         if (parseInt(ownerId) === parseInt(currentUserId)) {
             alert("❌ You cannot request your own book!");
             return;
         }
 
         console.log('🔍 Step 2: Getting form data...');
-        
+
         // Get form data
         const requestType = document.querySelector('input[name="requestType"]:checked').value;
         const message = document.getElementById('requestMessage').value.trim();
@@ -1133,19 +1133,18 @@ async function submitRequest() {
             return;
         }
 
-        // ✅ FIXED: Prepare COMPLETE request data with CORRECT field names
+        // Prepare request data
         const requestData = {
             book_id: parseInt(bookId),
-            requester_id: parseInt(currentUserId), // ✅ CORRECT FIELD NAME
-            owner_id: parseInt(ownerId), // ✅ ADDED: This was missing!
+            requester_id: parseInt(currentUserId),
+            owner_id: parseInt(ownerId),
             request_type: requestType,
             message: message,
-            proposed_return_date: requestType === 'Borrow' ? 
+            proposed_return_date: requestType === 'Borrow' ?
                 document.getElementById('returnDate').value : null
         };
 
         console.log('📤 FINAL Request Data:', requestData);
-        console.log('📤 JSON Stringified:', JSON.stringify(requestData));
 
         const submitBtn = document.querySelector('#requestModal .btn-primary');
         const originalText = submitBtn.innerHTML;
@@ -1153,7 +1152,7 @@ async function submitRequest() {
         submitBtn.disabled = true;
 
         console.log('🚀 Step 3: Sending to API...');
-        
+
         const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
             method: 'POST',
             headers: {
@@ -1165,28 +1164,45 @@ async function submitRequest() {
         console.log('📡 Response Status:', response.status);
         console.log('📡 Response OK:', response.ok);
 
+        // ✅ FIX: HANDLE DOUBLE JSON RESPONSE
         const responseText = await response.text();
         console.log('📡 Raw server response:', responseText);
 
         let result;
-        try {
-            result = JSON.parse(responseText);
-            console.log('✅ Parsed response:', result);
-        } catch (parseError) {
-            console.error('❌ JSON parse error:', parseError);
-            console.log('📡 Raw response that failed:', responseText);
-            throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
+        
+        // ✅ CHECK FOR DOUBLE JSON AND EXTRACT FIRST ONE
+        if (responseText.includes('}{')) {
+            console.log('⚠️ Detected double JSON response, extracting first one...');
+            const firstJson = responseText.split('}{')[0] + '}';
+            try {
+                result = JSON.parse(firstJson);
+                console.log('✅ Using first JSON:', result);
+            } catch (parseError) {
+                console.error('❌ Failed to parse first JSON:', parseError);
+                throw new Error('Invalid double JSON response');
+            }
+        } else {
+            // Single JSON response
+            try {
+                result = JSON.parse(responseText);
+                console.log('✅ Parsed response:', result);
+            } catch (parseError) {
+                console.error('❌ JSON parse error:', parseError);
+                throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
+            }
         }
 
         if (result.success) {
             console.log('🎉 SUCCESS: Request created!');
             alert('✅ Request sent successfully! The book owner will be notified.');
+            
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
             modal.hide();
+            
             // Reset form
-            document.getElementById('requestMessage').value = '';
-            document.getElementById('returnDate').value = '';
+            document.getElementById('requestForm').reset();
+            
         } else {
             console.error('❌ API returned error:', result);
             throw new Error(result.message || 'Failed to send request');
@@ -1204,310 +1220,310 @@ async function submitRequest() {
     }
 }
 
-    // ✅ DEBUG FUNCTION - Add this before submitRequest
-async function debugSubmitRequest() {
-    console.log('🔍 DEBUG: Starting request submission debug...');
-    
-    const bookId = urlParams.get('id');
-    if (!bookId) {
-        console.error('❌ No book ID found');
-        return;
-    }
+        // ✅ DEBUG FUNCTION - Add this before submitRequest
+        async function debugSubmitRequest() {
+            console.log('🔍 DEBUG: Starting request submission debug...');
 
-    if (!currentUserId) {
-        console.error('❌ No user logged in');
-        return;
-    }
-
-    try {
-        // Get book details
-        const bookResponse = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
-        const bookData = await bookResponse.json();
-        
-        console.log('📚 Book API Response:', bookData);
-        
-        if (!bookData.books || bookData.books.length === 0) {
-            console.error('❌ Book not found in database');
-            return;
-        }
-
-        const book = bookData.books[0];
-        const ownerId = book.user_id;
-
-        console.log('👤 User Details:', {
-            currentUserId: currentUserId,
-            ownerId: ownerId,
-            isOwnBook: parseInt(ownerId) === parseInt(currentUserId)
-        });
-
-        // Get form data
-        const requestType = document.querySelector('input[name="requestType"]:checked')?.value || 'Borrow';
-        const message = document.getElementById('requestMessage')?.value.trim() || 'Test message';
-        const returnDate = document.getElementById('returnDate')?.value || '2024-12-31';
-
-        // Prepare the exact data that will be sent
-        const requestData = {
-            book_id: parseInt(bookId),
-            requester_id: parseInt(currentUserId),
-            owner_id: parseInt(ownerId),
-            request_type: requestType,
-            message: message,
-            proposed_return_date: requestType === 'Borrow' ? returnDate : null
-        };
-
-        console.log('📤 DATA TO BE SENT:', requestData);
-        console.log('📤 JSON stringified:', JSON.stringify(requestData));
-
-        // Test the API call directly
-        console.log('🚀 Testing API call...');
-        
-        const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        console.log('📡 Response Status:', response.status);
-        console.log('📡 Response OK:', response.ok);
-        
-        const responseText = await response.text();
-        console.log('📡 Raw Response:', responseText);
-
-        try {
-            const result = JSON.parse(responseText);
-            console.log('✅ Parsed Result:', result);
-            
-            if (result.success) {
-                console.log('🎉 SUCCESS: Request created!');
-            } else {
-                console.error('❌ API Error:', result);
-            }
-        } catch (parseError) {
-            console.error('❌ JSON Parse Error:', parseError);
-            console.log('📡 Raw response that failed to parse:', responseText);
-        }
-
-    } catch (error) {
-        console.error('❌ Debug Function Error:', error);
-    }
-}
-
-// ✅ TEMPORARY: Add debug button to test
-function addDebugButton() {
-    const debugBtn = document.createElement('button');
-    debugBtn.textContent = '🐛 Debug Request';
-    debugBtn.className = 'btn btn-danger position-fixed';
-    debugBtn.style.bottom = '20px';
-    debugBtn.style.left = '20px';
-    debugBtn.style.zIndex = '1000';
-    debugBtn.onclick = debugSubmitRequest;
-    document.body.appendChild(debugBtn);
-    console.log('🐛 Debug button added - click it to test the request');
-}
-
-// Add debug button when page loads
-setTimeout(addDebugButton, 2000);
-
-    // ✅ MESSAGE OWNER FUNCTION
-    async function messageOwner() {
-        if (!currentUserId) {
-            alert('Please login to send message');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        try {
-            // Check if user is trying to message themselves
-            const ownerId = await getBookOwnerId();
-            if (parseInt(ownerId) === parseInt(currentUserId)) {
-                alert("You cannot message yourself!");
+            const bookId = urlParams.get('id');
+            if (!bookId) {
+                console.error('❌ No book ID found');
                 return;
             }
 
-            // Get owner and book details
-            const ownerName = document.getElementById('ownerName').textContent;
+            if (!currentUserId) {
+                console.error('❌ No user logged in');
+                return;
+            }
+
+            try {
+                // Get book details
+                const bookResponse = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const bookData = await bookResponse.json();
+
+                console.log('📚 Book API Response:', bookData);
+
+                if (!bookData.books || bookData.books.length === 0) {
+                    console.error('❌ Book not found in database');
+                    return;
+                }
+
+                const book = bookData.books[0];
+                const ownerId = book.user_id;
+
+                console.log('👤 User Details:', {
+                    currentUserId: currentUserId,
+                    ownerId: ownerId,
+                    isOwnBook: parseInt(ownerId) === parseInt(currentUserId)
+                });
+
+                // Get form data
+                const requestType = document.querySelector('input[name="requestType"]:checked')?.value || 'Borrow';
+                const message = document.getElementById('requestMessage')?.value.trim() || 'Test message';
+                const returnDate = document.getElementById('returnDate')?.value || '2024-12-31';
+
+                // Prepare the exact data that will be sent
+                const requestData = {
+                    book_id: parseInt(bookId),
+                    requester_id: parseInt(currentUserId),
+                    owner_id: parseInt(ownerId),
+                    request_type: requestType,
+                    message: message,
+                    proposed_return_date: requestType === 'Borrow' ? returnDate : null
+                };
+
+                console.log('📤 DATA TO BE SENT:', requestData);
+                console.log('📤 JSON stringified:', JSON.stringify(requestData));
+
+                // Test the API call directly
+                console.log('🚀 Testing API call...');
+
+                const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                console.log('📡 Response Status:', response.status);
+                console.log('📡 Response OK:', response.ok);
+
+                const responseText = await response.text();
+                console.log('📡 Raw Response:', responseText);
+
+                try {
+                    const result = JSON.parse(responseText);
+                    console.log('✅ Parsed Result:', result);
+
+                    if (result.success) {
+                        console.log('🎉 SUCCESS: Request created!');
+                    } else {
+                        console.error('❌ API Error:', result);
+                    }
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    console.log('📡 Raw response that failed to parse:', responseText);
+                }
+
+            } catch (error) {
+                console.error('❌ Debug Function Error:', error);
+            }
+        }
+
+        // ✅ TEMPORARY: Add debug button to test
+        function addDebugButton() {
+            const debugBtn = document.createElement('button');
+            debugBtn.textContent = '🐛 Debug Request';
+            debugBtn.className = 'btn btn-danger position-fixed';
+            debugBtn.style.bottom = '20px';
+            debugBtn.style.left = '20px';
+            debugBtn.style.zIndex = '1000';
+            debugBtn.onclick = debugSubmitRequest;
+            document.body.appendChild(debugBtn);
+            console.log('🐛 Debug button added - click it to test the request');
+        }
+
+        // Add debug button when page loads
+        setTimeout(addDebugButton, 2000);
+
+        // ✅ MESSAGE OWNER FUNCTION
+        async function messageOwner() {
+            if (!currentUserId) {
+                alert('Please login to send message');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                // Check if user is trying to message themselves
+                const ownerId = await getBookOwnerId();
+                if (parseInt(ownerId) === parseInt(currentUserId)) {
+                    alert("You cannot message yourself!");
+                    return;
+                }
+
+                // Get owner and book details
+                const ownerName = document.getElementById('ownerName').textContent;
+                const bookTitle = document.getElementById('bookTitle').textContent;
+
+                // Set modal content
+                document.getElementById('receiverName').textContent = ownerName;
+                document.getElementById('messageBookTitle').textContent = bookTitle;
+
+                // Show modal
+                const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+                messageModal.show();
+
+            } catch (error) {
+                console.error('Error in messageOwner:', error);
+                alert('Error loading book details');
+            }
+        }
+
+        // ✅ SEND MESSAGE FUNCTION
+        async function sendMessage() {
+            if (!currentUserId) {
+                alert('Please login to send message');
+                return;
+            }
+
+            const messageText = document.getElementById('messageText').value.trim();
+
+            if (!messageText) {
+                alert('Please enter your message');
+                return;
+            }
+
+            // Get receiver ID (book owner)
+            const receiverId = await getBookOwnerId();
+            if (!receiverId) {
+                alert('Could not find book owner');
+                return;
+            }
+
+            // Get book info
             const bookTitle = document.getElementById('bookTitle').textContent;
 
-            // Set modal content
-            document.getElementById('receiverName').textContent = ownerName;
-            document.getElementById('messageBookTitle').textContent = bookTitle;
+            const messageData = {
+                sender_id: currentUserId,
+                receiver_id: receiverId,
+                message_text: `Regarding book "${bookTitle}": ${messageText}`,
+                book_id: parseInt(bookId)
+            };
 
-            // Show modal
-            const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
-            messageModal.show();
+            console.log('Sending message:', messageData);
 
-        } catch (error) {
-            console.error('Error in messageOwner:', error);
-            alert('Error loading book details');
-        }
-    }
+            const sendBtn = document.querySelector('#messageModal .btn-primary');
+            const originalText = sendBtn.innerHTML;
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+            sendBtn.disabled = true;
 
-    // ✅ SEND MESSAGE FUNCTION
-    async function sendMessage() {
-        if (!currentUserId) {
-            alert('Please login to send message');
-            return;
-        }
+            try {
+                const response = await fetch('http://localhost/project/backend/api/messages/send.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(messageData)
+                });
 
-        const messageText = document.getElementById('messageText').value.trim();
-        
-        if (!messageText) {
-            alert('Please enter your message');
-            return;
-        }
+                const result = await response.json();
+                console.log('Message response:', result);
 
-        // Get receiver ID (book owner)
-        const receiverId = await getBookOwnerId();
-        if (!receiverId) {
-            alert('Could not find book owner');
-            return;
-        }
+                if (result.success) {
+                    alert('✅ Message sent successfully!');
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('messageModal'));
+                    modal.hide();
+                    // Reset form
+                    document.getElementById('messageText').value = '';
+                } else {
+                    throw new Error(result.message || 'Failed to send message');
+                }
 
-        // Get book info
-        const bookTitle = document.getElementById('bookTitle').textContent;
-
-        const messageData = {
-            sender_id: currentUserId,
-            receiver_id: receiverId,
-            message_text: `Regarding book "${bookTitle}": ${messageText}`,
-            book_id: parseInt(bookId)
-        };
-
-        console.log('Sending message:', messageData);
-
-        const sendBtn = document.querySelector('#messageModal .btn-primary');
-        const originalText = sendBtn.innerHTML;
-        sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
-        sendBtn.disabled = true;
-
-        try {
-            const response = await fetch('http://localhost/project/backend/api/messages/send.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messageData)
-            });
-
-            const result = await response.json();
-            console.log('Message response:', result);
-
-            if (result.success) {
-                alert('✅ Message sent successfully!');
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('messageModal'));
-                modal.hide();
-                // Reset form
-                document.getElementById('messageText').value = '';
-            } else {
-                throw new Error(result.message || 'Failed to send message');
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                sendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Message';
+                sendBtn.disabled = false;
             }
-            
-        } catch (error) {
-            console.error('Error sending message:', error);
-            alert('❌ Error: ' + error.message);
-        } finally {
-            sendBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Message';
-            sendBtn.disabled = false;
         }
-    }
 
-    // ✅ GET BOOK OWNER ID FUNCTION
-    async function getBookOwnerId() {
-        try {
-            const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
-            const data = await response.json();
-            if (data.books && data.books.length > 0) {
-                return data.books[0].user_id;
+        // ✅ GET BOOK OWNER ID FUNCTION
+        async function getBookOwnerId() {
+            try {
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const data = await response.json();
+                if (data.books && data.books.length > 0) {
+                    return data.books[0].user_id;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting book owner:', error);
+                return null;
             }
-            return null;
-        } catch (error) {
-            console.error('Error getting book owner:', error);
-            return null;
-        }
-    }
-
-    // ✅ UTILITY FUNCTIONS
-    function getStatusClass(status) {
-        if (!status) return 'status-available';
-
-        switch (status.toLowerCase()) {
-            case 'available': return 'status-available';
-            case 'borrowed': return 'status-borrowed';
-            case 'reserved': return 'status-reserved';
-            case 'lent out': return 'status-borrowed';
-            default: return 'status-available';
-        }
-    }
-
-    function generateStars(rating) {
-        if (!rating) return '<i class="fa-regular fa-star"></i>'.repeat(5);
-
-        let stars = '';
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
-
-        for (let i = 0; i < fullStars; i++) {
-            stars += '<i class="fa-solid fa-star"></i>';
         }
 
-        if (hasHalfStar) {
-            stars += '<i class="fa-solid fa-star-half-stroke"></i>';
+        // ✅ UTILITY FUNCTIONS
+        function getStatusClass(status) {
+            if (!status) return 'status-available';
+
+            switch (status.toLowerCase()) {
+                case 'available': return 'status-available';
+                case 'borrowed': return 'status-borrowed';
+                case 'reserved': return 'status-reserved';
+                case 'lent out': return 'status-borrowed';
+                default: return 'status-available';
+            }
         }
 
-        const emptyStars = 5 - Math.ceil(rating);
-        for (let i = 0; i < emptyStars; i++) {
-            stars += '<i class="fa-regular fa-star"></i>';
+        function generateStars(rating) {
+            if (!rating) return '<i class="fa-regular fa-star"></i>'.repeat(5);
+
+            let stars = '';
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+
+            for (let i = 0; i < fullStars; i++) {
+                stars += '<i class="fa-solid fa-star"></i>';
+            }
+
+            if (hasHalfStar) {
+                stars += '<i class="fa-solid fa-star-half-stroke"></i>';
+            }
+
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '<i class="fa-regular fa-star"></i>';
+            }
+
+            return stars;
         }
 
-        return stars;
-    }
-
-    function formatDate(dateString) {
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        } catch (error) {
-            return 'Recent';
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                return 'Recent';
+            }
         }
-    }
 
-    function changeMainImage(src) {
-        const mainImage = document.getElementById('mainBookImage');
-        if (mainImage && src) {
-            mainImage.src = src;
+        function changeMainImage(src) {
+            const mainImage = document.getElementById('mainBookImage');
+            if (mainImage && src) {
+                mainImage.src = src;
 
-            // Update active thumbnail
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            event.target.classList.add('active');
+                // Update active thumbnail
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                event.target.classList.add('active');
+            }
         }
-    }
 
-    function showSuccessMessage(message) {
-        const toast = document.createElement('div');
-        toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
-        toast.style.zIndex = '1000';
-        toast.innerHTML = `
+        function showSuccessMessage(message) {
+            const toast = document.createElement('div');
+            toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
+            toast.style.zIndex = '1000';
+            toast.innerHTML = `
         <i class="fas fa-check-circle me-2"></i>
         ${message}
     `;
-        document.body.appendChild(toast);
+            document.body.appendChild(toast);
 
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    }
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
 
-    function showError(message) {
-        document.querySelector('.book-section').innerHTML = `
+        function showError(message) {
+            document.querySelector('.book-section').innerHTML = `
         <div class="alert alert-danger text-center m-5">
             <i class="fas fa-exclamation-triangle me-2"></i>
             ${message}
@@ -1517,8 +1533,8 @@ setTimeout(addDebugButton, 2000);
             </a>
         </div>
     `;
-    }
-</script>
+        }
+    </script>
 </body>
 
 </html>

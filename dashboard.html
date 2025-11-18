@@ -372,7 +372,47 @@
             background: #d4edda;
             color: #155724;
         }
-    </style>
+
+      
+/* ✅ NOTIFICATION TOAST STYLES */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
+.notification-toast {
+    animation: slideInRight 0.3s ease;
+}
+
+.badge-pulse {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Make badges more visible */
+.sidebar .badge {
+    font-size: 0.7rem;
+    padding: 0.25em 0.4em;
+}
+</style>
+    
 </head>
 
 <body>
@@ -948,7 +988,8 @@
             </div>
         </div>
     </div>
-
+<!-- ✅ NOTIFICATION POLLER -->
+<script src="assets/js/notification_poller.js"></script>
     <script>
         // ✅ GLOBAL VARIABLES - ADD AT THE VERY TOP
         let messageCheckInterval = null;
@@ -967,37 +1008,35 @@
         }
 
         // ✅ COMPLETE INITIALIZE DASHBOARD
-        function initializeDashboard() {
-            console.log('🚀 Initializing dashboard...');
+     function initializeDashboard() {
+    console.log('🚀 Initializing dashboard...');
 
-            // Basic user info
-            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-            updateSidebarInfo();
+    // Basic user info
+    document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+    updateSidebarInfo();
 
-            // Load all data
-            loadUserBooks();
-            loadDashboardStats();
-            updateRequestsCount();
-            loadRecentRequests();
+    // ✅ START NOTIFICATION POLLING
+    if (userData && userData.user_id) {
+        notificationPoller.start(userData.user_id);
+    }
 
-            // Initialize disputes badge
-            updateDisputesBadge();
+    // Load all data
+    loadUserBooks();
+    loadDashboardStats();
+    updateRequestsCount();
+    loadRecentRequests();
+    updateDisputesBadge();
+    
+    setTimeout(() => {
+        updateUnreadNotificationsCount();
+    }, 2000);
 
-            // Initialize notifications
-            setTimeout(() => {
-                updateUnreadNotificationsCount();
-            }, 2000);
+    initializeModals();
+    setupAutoCheckers();
+    startMessagePolling();
 
-            initializeModals();
-
-            // Setup auto-checkers
-            setupAutoCheckers();
-
-            // ✅ START MESSAGE POLLING FOR BADGE UPDATES
-            startMessagePolling();
-
-            console.log('✅ Dashboard fully initialized');
-        }
+    console.log('✅ Dashboard fully initialized');
+}
 
         // ✅ LOAD USER'S ACTUAL BOOKS FROM DATABASE
         function loadUserBooks() {
@@ -2712,24 +2751,25 @@ function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') 
         }
 
         // ✅ IMPROVED: STOP ALL POLLING
-        function stopAllPolling() {
-            try {
-                // Stop message polling
-                if (window.messagePollingInterval) {
-                    console.log('🛑 Stopping message polling');
-                    clearInterval(window.messagePollingInterval);
-                    window.messagePollingInterval = null;
-                }
-
-                // Stop other intervals
-                if (window.messageCheckInterval) {
-                    clearInterval(window.messageCheckInterval);
-                    window.messageCheckInterval = null;
-                }
-            } catch (error) {
-                console.log('No polling intervals to stop');
-            }
+ function stopAllPolling() {
+    try {
+        // Stop notification polling
+        notificationPoller.stop();
+        
+        // Stop message polling
+        if (window.messagePollingInterval) {
+            clearInterval(window.messagePollingInterval);
+            window.messagePollingInterval = null;
         }
+
+        if (window.messageCheckInterval) {
+            clearInterval(window.messageCheckInterval);
+            window.messageCheckInterval = null;
+        }
+    } catch (error) {
+        console.log('No polling intervals to stop');
+    }
+}
 
         // ✅ UTILITY FUNCTIONS
         function loadDashboardStats() {

@@ -128,4 +128,38 @@ if(
     ));
     error_log("❌ Incomplete data received");
 }
+if($request->update()) {
+    // ✅ SEND NOTIFICATION TO REQUESTER
+    $notification_user_id = ($new_status == 'Approved' || $new_status == 'Rejected') 
+        ? $current_request['requester_id'] 
+        : $current_request['owner_id'];
+    
+    $message = $new_status == 'Approved' ? "Your request was approved!" : "Your request was declined";
+    
+    $notification_data = [
+        'user_id' => $notification_user_id,
+        'title' => 'Request Update',
+        'message' => $message,
+        'type' => 'Request',
+        'related_id' => $data->request_id
+    ];
+    
+    // Call notification API
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost/project/backend/api/notifications/create.php");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notification_data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+    curl_exec($ch);
+    curl_close($ch);
+    
+    http_response_code(200);
+    echo json_encode(array(
+        "success" => true,
+        "message" => "Request {$new_status} successfully."
+    ));
+}
 ?>
