@@ -476,6 +476,71 @@
     </div>
 </div>
     
+<!-- Transactions Management Section -->
+<div id="transactions-section" class="content-section" style="display: none;">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-exchange-alt me-2"></i>Manage Transactions</h2>
+            <p class="text-muted">Monitor all book exchange transactions</p>
+        </div>
+    </div>
+
+    <!-- Transaction Statistics -->
+    <div class="row mb-4">
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="totalTransactionsCount">0</h3>
+                    <p class="text-muted mb-0">Total</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="ongoingTransactions">0</h3>
+                    <p class="text-muted mb-0">Ongoing</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 mb-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <h3 id="completedTransactions">0</h3>
+                    <p class="text-muted mb-0">Completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">All Transactions</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Book</th>
+                            <th>Borrower</th>
+                            <th>Lender</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="admin-dashboard.js"></script>

@@ -10,35 +10,40 @@ $db = $database->getConnection();
 
 $request = new Request($db);
 
-$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
-$type = isset($_GET['type']) ? $_GET['type'] : 'outgoing'; // outgoing or incoming
+$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : die();
+$type = isset($_GET['type']) ? $_GET['type'] : 'incoming';
 
-if($user_id) {
-    if($type === 'incoming') {
-        $result = $request->getByOwner($user_id);
-    } else {
-        $result = $request->getByRequester($user_id);
-    }
+if($type == 'incoming') {
+    $stmt = $request->getIncomingRequests($user_id);
+} else {
+    $stmt = $request->getOutgoingRequests($user_id);
+}
 
+$num = $stmt->rowCount();
+
+if($num > 0) {
     $requests_arr = array();
     
-    if($result) {
-        while($row = $result->fetch(PDO::FETCH_ASSOC)){
-            $request_item = array(
-                "id" => $row['id'],
-                "book_id" => $row['book_id'],
-                "book_title" => $row['book_title'],
-                "book_author" => $row['book_author'],
-                "book_image" => $row['book_image'],
-                "requester_name" => $row['requester_name'] ?? null,
-                "owner_name" => $row['owner_name'] ?? null,
-                "status" => $row['status'],
-                "request_type" => $row['request_type'],
-                "message" => $row['message'],
-                "created_at" => $row['created_at']
-            );
-            array_push($requests_arr, $request_item);
-        }
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        extract($row);
+        
+        $request_item = array(
+            "id" => $id,
+            "book_id" => $book_id,
+            "book_title" => $book_title,
+            "requester_id" => $requester_id,
+            "requester_name" => $requester_name,
+            "owner_id" => $owner_id,
+            "owner_name" => $owner_name,
+            "status" => $status,
+            "request_type" => $request_type,
+            "message" => $message,
+            "proposed_return_date" => $proposed_return_date,
+            "actual_return_date" => $actual_return_date,
+            "created_at" => $created_at
+        );
+        
+        array_push($requests_arr, $request_item);
     }
     
     echo json_encode($requests_arr);

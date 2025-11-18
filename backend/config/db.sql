@@ -208,3 +208,34 @@ CREATE TABLE IF NOT EXISTS conversations (
     FOREIGN KEY (user1_id) REFERENCES users(id),
     FOREIGN KEY (user2_id) REFERENCES users(id)
 );
+
+-- Add Cancelled status to book_requests table
+ALTER TABLE book_requests 
+MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Completed', 'Cancelled') DEFAULT 'Pending';
+
+-- Create index for better performance
+CREATE INDEX idx_requests_owner ON book_requests(owner_id, status);
+CREATE INDEX idx_requests_requester ON book_requests(requester_id, status);
+CREATE INDEX idx_requests_book ON book_requests(book_id);
+
+-- YEH QUERY RUN KARO:
+CREATE TABLE transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT NOT NULL,
+    borrower_id INT NOT NULL,
+    lender_id INT NOT NULL,
+    request_id INT NOT NULL,
+    status ENUM('ongoing', 'completed', 'cancelled') DEFAULT 'ongoing',
+    start_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    end_date DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE transaction_history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    transaction_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

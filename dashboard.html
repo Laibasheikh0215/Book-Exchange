@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your CSS remains unchanged */
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
@@ -180,6 +181,27 @@
             border-left-color: #17a2b8;
         }
 
+        .request-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-accepted { background-color: #d1edff; color: #004085; }
+        .status-rejected { background-color: #f8d7da; color: #721c24; }
+        .status-cancelled { background-color: #e2e3e5; color: #383d41; }
+
+        .action-buttons button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .btn-accept { background-color: #28a745; color: white; }
+        .btn-reject { background-color: #dc3545; color: white; }
+        .btn-cancel { background-color: #ffc107; color: black; }
+        
         /* Badge improvements */
         .badge-sm {
             font-size: 0.7rem;
@@ -769,108 +791,109 @@
     </div>
 
     <!-- ✅ UPDATED FILE DISPUTE MODAL -->
-<div class="modal fade" id="fileDisputeModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle me-2"></i>File a Dispute
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="disputeForm">
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Select a book from your listings to automatically fill dispute details.
-                    </div>
-
-                    <!-- ✅ BOOK SELECTION SECTION -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Select Your Book *</label>
-                        <div id="userBooksList" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
-                            <div class="text-center p-3">
-                                <div class="spinner-border spinner-border-sm"></div> Loading your books...
-                            </div>
-                        </div>
-                        <div class="form-text">Select the book related to this dispute</div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="disputeTitle" class="form-label">Dispute Title *</label>
-                            <input type="text" class="form-control" id="disputeTitle" required
-                                placeholder="Brief description of the issue">
+    <div class="modal fade" id="fileDisputeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle me-2"></i>File a Dispute
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="disputeForm">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Select a book from your listings to automatically fill dispute details.
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="disputeCategory" class="form-label">Category *</label>
-                            <select class="form-select" id="disputeCategory" required>
-                                <option value="">Select category</option>
-                                <option value="Return Issue">Return Issue</option>
-                                <option value="Damage Issue">Damage Issue</option>
-                                <option value="Communication Issue">Communication Issue</option>
-                                <option value="Book Quality Issue">Book Quality Issue</option>
-                                <option value="User Behavior">User Behavior</option>
-                                <option value="Payment Issue">Payment Issue</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="disputePriority" class="form-label">Priority</label>
-                            <select class="form-select" id="disputePriority">
-                                <option value="low">Low - Minor issue</option>
-                                <option value="medium" selected>Medium - Standard issue</option>
-                                <option value="high">High - Urgent issue</option>
-                                <option value="urgent">Urgent - Critical issue</option>
-                            </select>
-                        </div>
-
-                        <!-- ✅ AUTO-FILLED USER DETAILS -->
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Dispute Against User</label>
-                            <div class="p-2 border rounded bg-light">
-                                <div id="selectedUserInfo" class="text-muted">
-                                    Select a book to see user details
+                        <!-- ✅ BOOK SELECTION SECTION -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Select Your Book *</label>
+                            <div id="userBooksList"
+                                style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; border-radius: 5px; padding: 10px;">
+                                <div class="text-center p-3">
+                                    <div class="spinner-border spinner-border-sm"></div> Loading your books...
                                 </div>
-                                <input type="hidden" id="respondentIdInput">
+                            </div>
+                            <div class="form-text">Select the book related to this dispute</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="disputeTitle" class="form-label">Dispute Title *</label>
+                                <input type="text" class="form-control" id="disputeTitle" required
+                                    placeholder="Brief description of the issue">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="disputeCategory" class="form-label">Category *</label>
+                                <select class="form-select" id="disputeCategory" required>
+                                    <option value="">Select category</option>
+                                    <option value="Return Issue">Return Issue</option>
+                                    <option value="Damage Issue">Damage Issue</option>
+                                    <option value="Communication Issue">Communication Issue</option>
+                                    <option value="Book Quality Issue">Book Quality Issue</option>
+                                    <option value="User Behavior">User Behavior</option>
+                                    <option value="Payment Issue">Payment Issue</option>
+                                    <option value="Other">Other</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="mb-3">
-                        <label for="disputeDescription" class="form-label">Detailed Description *</label>
-                        <textarea class="form-control" id="disputeDescription" rows="4" required 
-                            placeholder="Please provide detailed information about the issue..."></textarea>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="disputePriority" class="form-label">Priority</label>
+                                <select class="form-select" id="disputePriority">
+                                    <option value="low">Low - Minor issue</option>
+                                    <option value="medium" selected>Medium - Standard issue</option>
+                                    <option value="high">High - Urgent issue</option>
+                                    <option value="urgent">Urgent - Critical issue</option>
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="disputeEvidence" class="form-label">Evidence & Supporting Information</label>
-                        <textarea class="form-control" id="disputeEvidence" rows="3" 
-                            placeholder="Any evidence, links, screenshots, or additional information..."></textarea>
-                    </div>
+                            <!-- ✅ AUTO-FILLED USER DETAILS -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Dispute Against User</label>
+                                <div class="p-2 border rounded bg-light">
+                                    <div id="selectedUserInfo" class="text-muted">
+                                        Select a book to see user details
+                                    </div>
+                                    <input type="hidden" id="respondentIdInput">
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="desiredResolution" class="form-label">Desired Resolution</label>
-                        <textarea class="form-control" id="desiredResolution" rows="2"
-                            placeholder="What would you like to happen to resolve this issue?"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-1"></i>Cancel
-                </button>
-                <button type="button" class="btn btn-warning" onclick="submitDispute()" id="submitDisputeBtn">
-                    <i class="fas fa-paper-plane me-1"></i>Submit Dispute
-                </button>
+                        <div class="mb-3">
+                            <label for="disputeDescription" class="form-label">Detailed Description *</label>
+                            <textarea class="form-control" id="disputeDescription" rows="4" required
+                                placeholder="Please provide detailed information about the issue..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="disputeEvidence" class="form-label">Evidence & Supporting Information</label>
+                            <textarea class="form-control" id="disputeEvidence" rows="3"
+                                placeholder="Any evidence, links, screenshots, or additional information..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="desiredResolution" class="form-label">Desired Resolution</label>
+                            <textarea class="form-control" id="desiredResolution" rows="2"
+                                placeholder="What would you like to happen to resolve this issue?"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="submitDispute()" id="submitDisputeBtn">
+                        <i class="fas fa-paper-plane me-1"></i>Submit Dispute
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- My Disputes Section -->
     <div id="disputesInterface" class="container-fluid" style="display: none;">
@@ -930,6 +953,9 @@
         // ✅ GLOBAL VARIABLES - ADD AT THE VERY TOP
         let messageCheckInterval = null;
         let currentConversation = null;
+        let messagePollingInterval = null;
+        let selectedBookId = null;
+        
         // Check if user is logged in
         const userData = JSON.parse(localStorage.getItem('user')) || null;
 
@@ -954,6 +980,9 @@
             updateRequestsCount();
             loadRecentRequests();
 
+            // Initialize disputes badge
+            updateDisputesBadge();
+
             // Initialize notifications
             setTimeout(() => {
                 updateUnreadNotificationsCount();
@@ -963,6 +992,9 @@
 
             // Setup auto-checkers
             setupAutoCheckers();
+
+            // ✅ START MESSAGE POLLING FOR BADGE UPDATES
+            startMessagePolling();
 
             console.log('✅ Dashboard fully initialized');
         }
@@ -1109,51 +1141,321 @@
 
             if (!requests || requests.length === 0) {
                 recentRequestsDiv.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-handshake"></i>
-                <p>No recent requests</p>
-                <small>When someone requests your book, it will appear here</small>
-            </div>
-        `;
+                    <div class="empty-state">
+                        <i class="fas fa-handshake"></i>
+                        <p>No recent requests</p>
+                        <small>When someone requests your book, it will appear here</small>
+                    </div>
+                `;
                 return;
             }
 
             recentRequestsDiv.innerHTML = requests.slice(0, 3).map(request => `
-        <div class="border-bottom pb-2 mb-2 recent-request-${request.id}">
-            <div class="d-flex justify-content-between align-items-start">
-                <div class="flex-grow-1">
-                    <div class="d-flex align-items-center mb-1">
-                        <h6 class="mb-0 me-2">${request.book_title}</h6>
-                        <span class="badge bg-primary badge-sm">Incoming</span>
+                <div class="border-bottom pb-2 mb-2 recent-request-${request.id}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center mb-1">
+                                <h6 class="mb-0 me-2">${request.book_title}</h6>
+                                <span class="badge bg-primary badge-sm">Incoming</span>
+                            </div>
+                            <p class="mb-1 text-muted small">From: <strong>${request.requester_name}</strong></p>
+                            <p class="mb-1 text-muted small">
+                                Type: <span class="badge ${request.request_type === 'Borrow' ? 'bg-warning' : 'bg-success'}">${request.request_type}</span>
+                                • Status: <span class="request-status status-${request.status.toLowerCase()}">${request.status}</span>
+                            </p>
+                            <small class="text-muted">${new Date(request.created_at).toLocaleDateString()}</small>
+                        </div>
+                        ${request.status === 'Pending' ? `
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-accept mb-1" onclick="handleAcceptRequest(${request.id}, ${userData.user_id})">
+                                    <i class="fas fa-check me-1"></i> Accept
+                                </button>
+                                <button class="btn btn-sm btn-reject" onclick="handleRejectRequest(${request.id}, ${userData.user_id})">
+                                    <i class="fas fa-times me-1"></i> Reject
+                                </button>
+                            </div>
+                        ` : '<span>Action Completed</span>'}
                     </div>
-                    <p class="mb-1 text-muted small">From: <strong>${request.requester_name}</strong></p>
-                    <p class="mb-1 text-muted small">
-                        Type: <span class="badge ${request.request_type === 'Borrow' ? 'bg-warning' : 'bg-success'}">${request.request_type}</span>
-                        • Status: <span class="badge ${getStatusBadgeClass(request.status)}">${request.status}</span>
-                    </p>
-                    <small class="text-muted">${new Date(request.created_at).toLocaleDateString()}</small>
                 </div>
-                ${request.status === 'Pending' ? `
-                    <div class="btn-group-vertical btn-group-sm recent-actions-${request.id}">
-                        <button class="btn btn-sm btn-success mb-1" onclick="updateRequestStatus(${request.id}, 'Approved')">
-                            <i class="fas fa-check me-1"></i> Approve
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="updateRequestStatus(${request.id}, 'Rejected')">
-                            <i class="fas fa-times me-1"></i> Reject
-                        </button>
-                    </div>
-                ` : ''}
-            </div>
-        </div>
-    `).join('');
+            `).join('');
 
             recentRequestsDiv.innerHTML += `
-        <div class="text-center mt-3">
-            <button class="btn btn-sm btn-outline-primary" onclick="showRequests()">
-                <i class="fas fa-list me-1"></i> View All Requests
-            </button>
-        </div>
-    `;
+                <div class="text-center mt-3">
+                    <button class="btn btn-sm btn-outline-primary" onclick="showRequests()">
+                        <i class="fas fa-list me-1"></i> View All Requests
+                    </button>
+                </div>
+            `;
+        }
+
+      // ✅ REQUEST ACTIONS HANDLERS
+async function handleAcceptRequest(requestId, userId) {
+    await updateRequestStatus(requestId, 'accepted', userId);
+}
+
+async function handleRejectRequest(requestId, userId) {
+    await updateRequestStatus(requestId, 'rejected', userId);
+}
+
+async function handleCancelRequest(requestId, userId) {
+    await updateRequestStatus(requestId, 'cancelled', userId);
+}
+
+// ✅ DEBUG VERSION: Add this temporary function to see the actual API response
+async function updateRequestStatus(requestId, status, userId) {
+    let button;
+    
+    try {
+        console.log('🔄 DEBUG: Starting updateRequestStatus');
+        console.log('📋 Parameters:', { requestId, status, userId });
+
+        // ✅ FIX: Map frontend status to backend status
+        const statusMap = {
+            'accepted': 'Approved',
+            'rejected': 'Rejected', 
+            'cancelled': 'Cancelled'
+        };
+        
+        const backendStatus = statusMap[status] || status;
+        
+        if (!confirm(`Are you sure you want to ${status} this request?`)) {
+            return;
+        }
+
+        // Get button reference
+        button = event.target.closest('button');
+        if (button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            button.disabled = true;
+        }
+
+        // ✅ FIX: Ensure all required data is sent with proper types
+        const requestData = {
+            request_id: parseInt(requestId),
+            status: backendStatus,
+            user_id: parseInt(userId)
+        };
+
+        console.log('📤 Sending to API:', requestData);
+
+        // ✅ DEBUG: Log the exact fetch call
+        const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response ok:', response.ok);
+
+        // ✅ DEBUG: Get the raw response text first
+        const responseText = await response.text();
+        console.log('📡 Raw response:', responseText);
+
+        let result;
+        try {
+            result = JSON.parse(responseText);
+            console.log('✅ Parsed JSON response:', result);
+        } catch (parseError) {
+            console.error('❌ JSON Parse Error:', parseError);
+            throw new Error('Invalid JSON response from server');
+        }
+
+        if (result.success) {
+            console.log('✅ Request updated successfully');
+            updateAllRequestUIs(requestId, backendStatus);
+            showToast(`Request ${backendStatus} successfully!`, 'success');
+            updateRequestsCount();
+        } else {
+            console.error('❌ API returned error:', result);
+            throw new Error(result.message || 'Failed to update request');
+        }
+
+    } catch (error) {
+        console.error('❌ Full error details:', error);
+        showToast('Error: ' + error.message, 'error');
+        
+        // Reset button
+        if (button) {
+            button.innerHTML = button.textContent || 'Action';
+            button.disabled = false;
+        }
+    }
+}
+
+// ✅ FIXED: REAL-TIME Request status update
+async function updateRequestStatus(requestId, status, userId) {
+     debugRequestData(requestId, status, userId);
+    let button;
+    
+    try {
+        console.log('🔄 Updating request:', { requestId, status, userId });
+
+        // ✅ FIX: Map frontend status to backend status
+        const statusMap = {
+            'accepted': 'Approved',
+            'rejected': 'Rejected', 
+            'cancelled': 'Cancelled'
+        };
+        
+        const backendStatus = statusMap[status] || status;
+        
+        if (!confirm(`Are you sure you want to ${status} this request?`)) {
+            return;
+        }
+
+        // ✅ FIX: Get button reference safely
+        button = event.target.closest('button');
+        if (button) {
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            button.disabled = true;
+        }
+
+        // ✅ FIX: Ensure all required data is sent
+        const requestData = {
+            request_id: parseInt(requestId),
+            status: backendStatus,
+            user_id: parseInt(userId)
+        };
+
+        console.log('📤 Sending update data:', requestData);
+
+        const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        const result = await response.json();
+        console.log('✅ API Response:', result);
+
+        if (result.success) {
+            // ✅ IMMEDIATE UI UPDATE
+            updateAllRequestUIs(requestId, backendStatus);
+            showToast(`Request ${backendStatus} successfully!`, 'success');
+            
+            // Update counts
+            updateRequestsCount();
+            
+        } else {
+            throw new Error(result.message || 'Failed to update request');
+        }
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        showToast('Error: ' + error.message, 'error');
+        
+        // ✅ FIX: Reset button safely
+        if (button) {
+            button.innerHTML = button.textContent || 'Action';
+            button.disabled = false;
+        }
+    }
+}
+        
+// When user clicks "Request Book" button
+function requestBook(bookId, ownerId) {
+    const message = prompt("Add a message to the book owner (optional):");
+    sendBookRequest(bookId, ownerId, 'Borrow', message || '');
+}
+
+        // ✅ REAL-TIME: Update ALL UI locations for a request
+        function updateAllRequestUIs(requestId, newStatus) {
+    console.log('🎨 Updating ALL UIs for request:', requestId, '→', newStatus);
+    
+    // 1. Update in incoming requests list
+    updateRequestCardUI(requestId, newStatus, 'incomingRequestsList');
+    
+    // 2. Update in outgoing requests list  
+    updateRequestCardUI(requestId, newStatus, 'outgoingRequestsList');
+    
+    // 3. Update in recent requests (dashboard)
+    updateRecentRequestUI(requestId, newStatus);
+    
+    // 4. Update in any active request details
+    updateActiveRequestUI(requestId, newStatus);
+}
+
+       // ✅ FIXED: Update request cards in lists - PROPERLY REMOVE BUTTONS
+function updateRequestCardUI(requestId, newStatus, listId) {
+    const list = document.getElementById(listId);
+    if (!list) return;
+    
+    const cards = list.querySelectorAll('.request-card');
+    cards.forEach(card => {
+        const cardRequestId = card.getAttribute('data-request-id');
+        
+        if (cardRequestId == requestId) {
+            // Update status badge
+            const statusBadge = card.querySelector('.request-status');
+            if (statusBadge) {
+                statusBadge.textContent = newStatus;
+                statusBadge.className = `request-status status-${newStatus.toLowerCase()}`;
+            }
+            
+            // Update data-status attribute
+            card.setAttribute('data-status', newStatus);
+            
+            // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+            const actionButtons = card.querySelector('.action-buttons');
+            if (actionButtons) {
+                // If status is not pending, remove action buttons completely
+                if (newStatus.toLowerCase() !== 'pending') {
+                    actionButtons.innerHTML = `
+                        <span class="text-muted">
+                            <i class="fas fa-check-circle me-1"></i>
+                            Request ${newStatus}
+                        </span>
+                    `;
+                }
+            }
+        }
+    });
+}  
+
+        // ✅ Update recent requests in dashboard
+        function updateRecentRequestUI(requestId, newStatus) {
+    const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
+    recentItems.forEach(item => {
+        if (item.classList.contains(`recent-request-${requestId}`)) {
+            // Update status
+            const statusElement = item.querySelector('.request-status');
+            if (statusElement) {
+                statusElement.textContent = newStatus;
+                statusElement.className = `request-status status-${newStatus.toLowerCase()}`;
+            }
+            
+            // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+            const actionButtons = item.querySelector('.action-buttons');
+            if (actionButtons && newStatus.toLowerCase() !== 'pending') {
+                actionButtons.innerHTML = `
+                    <span class="text-muted">
+                        <i class="fas fa-check-circle me-1"></i>
+                        Action Completed
+                    </span>
+                `;
+            }
+        }
+    });
+}
+
+        // ✅ Update active request details if open
+        function updateActiveRequestUI(requestId, newStatus) {
+            // If request details modal is open, update it too
+            const activeModal = document.querySelector('.modal.show');
+            if (activeModal) {
+                const modalStatus = activeModal.querySelector('.request-status');
+                if (modalStatus) {
+                    modalStatus.textContent = newStatus;
+                    modalStatus.className = `request-status status-${newStatus.toLowerCase()}`;
+                }
+            }
         }
 
         // ✅ LOAD REQUESTS FUNCTION
@@ -1219,237 +1521,36 @@
                 });
         }
 
-        // ✅ COMPLETELY FIXED REQUEST STATUS UPDATE FUNCTION
-        window.updateRequestStatus = function (requestId, newStatus) {
-            console.log('🎯 START: updateRequestStatus called', { requestId, newStatus });
+        // ✅ FIXED: Display incoming requests with proper buttons
+       // ✅ FIXED: Display incoming requests with proper conditional buttons
+function displayIncomingRequests(requests) {
+    const incomingList = document.getElementById('incomingRequestsList');
 
-            if (!confirm(`Are you sure you want to ${newStatus.toLowerCase()} this request?`)) {
-                console.log('❌ User cancelled');
-                return;
-            }
-
-            // ✅ 1. FIRST UPDATE THE DATABASE
-            const requestData = {
-                request_id: parseInt(requestId),
-                status: newStatus,
-                user_id: parseInt(userData.user_id)
-            };
-
-            console.log('📡 Sending API request:', requestData);
-
-            fetch('http://localhost/project/backend/api/requests/update.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('✅ Database update successful');
-
-                        // ✅ 2. UPDATE UI IMMEDIATELY WITHOUT REFRESHING DATA
-                        updateRequestStatusInUI(requestId, newStatus);
-
-                        // ✅ 3. SHOW SUCCESS MESSAGE
-                        showToast(`Request ${newStatus.toLowerCase()} successfully!`, 'success');
-
-                        // ✅ 4. UPDATE COUNTS ONLY (NO DATA RELOAD)
-                        updateRequestsCount();
-
-                    } else {
-                        throw new Error(data.message || 'Failed to update request');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error updating request:', error);
-                    showToast('Error updating request: ' + error.message, 'error');
-                });
-        };
-
-        // ✅ IMPROVED UI UPDATE FUNCTION - COMPLETELY REMOVE BUTTONS
-        window.updateRequestStatusInUI = function (requestId, newStatus) {
-            console.log('🔄 UI UPDATE: Looking for request', requestId);
-
-            // ✅ UPDATE IN INCOMING REQUESTS
-            const incomingCards = document.querySelectorAll('#incomingRequestsList .request-card');
-            incomingCards.forEach(card => {
-                if (card.getAttribute('data-request-id') == requestId) {
-                    updateCardStatus(card, newStatus);
-                }
-            });
-
-            // ✅ UPDATE IN RECENT REQUESTS (DASHBOARD)
-            const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
-            recentItems.forEach(item => {
-                const buttons = item.querySelectorAll(`[onclick*="updateRequestStatus(${requestId}"]`);
-                if (buttons.length > 0) {
-                    updateRecentItemStatus(item, newStatus);
-                }
-            });
-
-            // ✅ UPDATE IN OUTGOING REQUESTS
-            const outgoingCards = document.querySelectorAll('#outgoingRequestsList .request-card');
-            outgoingCards.forEach(card => {
-                if (card.id === `request-${requestId}`) {
-                    updateCardStatus(card, newStatus);
-                }
-            });
-        };
-
-        // ✅ UPDATED CARD STATUS FUNCTION - COMPLETELY REMOVE ACTION BUTTONS
-        function updateCardStatus(card, newStatus) {
-            console.log('🔄 Updating card status to:', newStatus);
-
-            // Update status badge
-            const badges = card.querySelectorAll('.badge');
-            badges.forEach(badge => {
-                const currentText = badge.textContent.trim();
-                if (['Pending', 'Approved', 'Rejected', 'Completed'].includes(currentText)) {
-                    console.log(`🔄 Updating badge: ${currentText} → ${newStatus}`);
-                    badge.textContent = newStatus;
-                    badge.className = 'badge ' + getRequestStatusBadge(newStatus);
-                }
-            });
-
-            // ✅ COMPLETELY REMOVE ACTION BUTTONS FOR NON-PENDING STATUS
-            if (newStatus !== 'Pending') {
-                const buttonGroups = card.querySelectorAll('.btn-group-vertical, .btn-group-sm');
-                buttonGroups.forEach(group => {
-                    console.log('🗑️ Removing action buttons permanently');
-                    group.style.display = 'none'; // Hide immediately
-                    group.remove(); // Remove from DOM completely
-                });
-
-                // ✅ ALSO REMOVE INDIVIDUAL BUTTONS
-                const actionButtons = card.querySelectorAll('button[onclick*="updateRequestStatus"]');
-                actionButtons.forEach(button => {
-                    console.log('🗑️ Removing individual action button');
-                    button.style.display = 'none';
-                    button.remove();
-                });
-            }
-        }
-
-        // ✅ UPDATED RECENT ITEM FUNCTION
-        function updateRecentItemStatus(item, newStatus) {
-            console.log('🔄 Updating recent item status to:', newStatus);
-
-            const badges = item.querySelectorAll('.badge');
-            badges.forEach(badge => {
-                const currentText = badge.textContent.trim();
-                if (['Pending', 'Approved', 'Rejected', 'Completed'].includes(currentText)) {
-                    badge.textContent = newStatus;
-                    badge.className = 'badge ' + getStatusBadgeClass(newStatus);
-                }
-            });
-
-            // ✅ COMPLETELY REMOVE BUTTONS FOR NON-PENDING STATUS
-            if (newStatus !== 'Pending') {
-                const buttonGroups = item.querySelectorAll('.btn-group-vertical');
-                buttonGroups.forEach(group => {
-                    console.log('🗑️ Removing recent item action buttons');
-                    group.style.display = 'none';
-                    group.remove();
-                });
-            }
-        }
-
-        // ✅ FIXED DISPLAY FUNCTION - BETTER BUTTON REMOVAL
-        function displayIncomingRequests(requests) {
-            const incomingList = document.getElementById('incomingRequestsList');
-
-            if (!requests || requests.length === 0) {
-                incomingList.innerHTML = `
+    if (!requests || requests.length === 0) {
+        incomingList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
                 <p>No incoming requests</p>
                 <small>Requests for your books will appear here</small>
             </div>
         `;
-                document.getElementById('incomingCount').textContent = '0';
-                return;
-            }
+        document.getElementById('incomingCount').textContent = '0';
+        return;
+    }
 
-            document.getElementById('incomingCount').textContent = requests.length;
+    document.getElementById('incomingCount').textContent = requests.length;
 
-            incomingList.innerHTML = requests.map(request => `
-        <div class="card mb-3 request-card" data-status="${request.status}" data-request-id="${request.id}">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
-                        <p class="card-text mb-1">
-                            <strong>Requested by:</strong> ${request.requester_name || 'Unknown User'}
-                        </p>
-                        <p class="card-text mb-1">
-                            <strong>Type:</strong> 
-                            <span class="badge ${request.request_type === 'Borrow' ? 'bg-info' : 'bg-warning'}">
-                                ${request.request_type}
-                            </span>
-                        </p>
-                        ${request.request_type === 'Borrow' && request.proposed_return_date ? `
-                            <p class="card-text mb-1">
-                                <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
-                            </p>
-                        ` : ''}
-                        <p class="card-text mb-2">
-                            <strong>Message:</strong> "${request.message || 'No message'}"
-                        </p>
-                        <small class="text-muted">
-                            Requested on: ${new Date(request.created_at).toLocaleDateString()}
-                        </small>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <div class="mb-2">
-                            <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
-                        </div>
-                        ${request.status === 'Pending' ? `
-                            <div class="btn-group-vertical action-buttons-${request.id}">
-                                <button class="btn btn-sm btn-success mb-1" 
-                                        onclick="updateRequestStatus(${request.id}, 'Approved')">
-                                    <i class="fas fa-check me-1"></i> Approve
-                                </button>
-                                <button class="btn btn-sm btn-danger" 
-                                        onclick="updateRequestStatus(${request.id}, 'Rejected')">
-                                    <i class="fas fa-times me-1"></i> Reject
-                                </button>
-                            </div>
-                        ` : '<small class="text-muted">No actions available</small>'}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-        }
-
-        // ✅ DISPLAY OUTGOING REQUESTS
-        function displayOutgoingRequests(requests) {
-            const outgoingList = document.getElementById('outgoingRequestsList');
-
-            if (!requests || requests.length === 0) {
-                outgoingList.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-paper-plane"></i>
-                    <p>No outgoing requests</p>
-                    <small>Your requests to other users will appear here</small>
-                </div>
-            `;
-                document.getElementById('outgoingCount').textContent = '0';
-                return;
-            }
-
-            document.getElementById('outgoingCount').textContent = requests.length;
-
-            outgoingList.innerHTML = requests.map(request => `
-            <div class="card mb-3 request-card" data-status="${request.status}" id="request-${request.id}">
+    incomingList.innerHTML = requests.map(request => {
+        const isPending = request.status === 'pending' || request.status === 'Pending';
+        
+        return `
+            <div class="card mb-3 request-card" data-status="${request.status}" data-request-id="${request.id}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-8">
                             <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
                             <p class="card-text mb-1">
-                                <strong>Owner:</strong> ${request.owner_name || 'Unknown User'}
+                                <strong>Requested by:</strong> ${request.requester_name || 'Unknown User'}
                             </p>
                             <p class="card-text mb-1">
                                 <strong>Type:</strong> 
@@ -1457,114 +1558,169 @@
                                     ${request.request_type}
                                 </span>
                             </p>
-                            ${request.request_type === 'Borrow' && request.proposed_return_date ? `
-                                <p class="card-text mb-1">
-                                    <strong>Return Date:</strong> ${new Date(request.proposed_return_date).toLocaleDateString()}
-                                </p>
-                            ` : ''}
                             <p class="card-text mb-2">
-                                <strong>Your Message:</strong> "${request.message || 'No message'}"
+                                <strong>Status:</strong> 
+                                <span class="request-status status-${request.status.toLowerCase()}">
+                                    ${request.status}
+                                </span>
+                            </p>
+                            <p class="card-text mb-2">
+                                <strong>Message:</strong> "${request.message || 'No message'}"
                             </p>
                             <small class="text-muted">
-                                Sent on: ${new Date(request.created_at).toLocaleDateString()}
+                                Requested on: ${new Date(request.created_at).toLocaleDateString()}
                             </small>
                         </div>
                         <div class="col-md-4 text-end">
-                            <div class="mb-2">
-                                <span class="badge ${getRequestStatusBadge(request.status)}">${request.status}</span>
-                            </div>
-                            ${request.status === 'Pending' ? `
-                                <button class="btn btn-sm btn-outline-danger" onclick="cancelRequest(${request.id}, this)">
-                                    <i class="fas fa-times me-1"></i> Cancel
-                                </button>
-                            ` : ''}
-                            ${request.status === 'Approved' ? `
-                                <button class="btn btn-sm btn-outline-success" onclick="markAsCompleted(${request.id}, this)">
-                                    <i class="fas fa-check me-1"></i> Mark Complete
-                                </button>
-                            ` : ''}
+                            ${isPending ? `
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-success mb-2" 
+                                            onclick="handleAcceptRequest(${request.id}, ${userData.user_id})">
+                                        <i class="fas fa-check me-1"></i> Accept
+                                    </button>
+                                    <br>
+                                    <button class="btn btn-sm btn-danger" 
+                                            onclick="handleRejectRequest(${request.id}, ${userData.user_id})">
+                                        <i class="fas fa-times me-1"></i> Reject
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="action-buttons">
+                                    <span class="text-muted">
+                                        <i class="fas fa-check-circle me-1"></i>
+                                        ${request.status}
+                                    </span>
+                                </div>
+                            `}
                         </div>
                     </div>
                 </div>
             </div>
-        `).join('');
-        }
+        `;
+    }).join('');
+}
 
-        // ✅ CANCEL REQUEST FUNCTION
-        function cancelRequest(requestId, buttonElement) {
-            if (!confirm('Are you sure you want to cancel this request?')) return;
+// ✅ DEBUG: Check what data is being sent
+function debugRequestData(requestId, status, userId) {
+    console.log('🔍 DEBUG Request Data:');
+    console.log('Request ID:', requestId, 'Type:', typeof requestId);
+    console.log('Status:', status, 'Type:', typeof status);
+    console.log('User ID:', userId, 'Type:', typeof userId);
+    
+    // Check if elements exist
+    console.log('Incoming list exists:', !!document.getElementById('incomingRequestsList'));
+    console.log('Outgoing list exists:', !!document.getElementById('outgoingRequestsList'));
+}
 
-            if (buttonElement) {
-                const originalText = buttonElement.innerHTML;
-                buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Cancelling...';
-                buttonElement.disabled = true;
-            }
-
-            const requestData = {
-                request_id: parseInt(requestId),
-                user_id: parseInt(userData.user_id)
-            };
-
-            fetch('http://localhost/project/backend/api/requests/cancel.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('Request cancelled successfully!', 'success');
-
-                        // Remove from UI
-                        const requestElement = document.getElementById(`request-${requestId}`);
-                        if (requestElement) {
-                            requestElement.remove();
-                        }
-
-                        // Update counts
-                        updateOutgoingRequestsCount();
-                        updateRequestsCount();
-                    } else {
-                        throw new Error(data.message || 'Failed to cancel request');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error cancelling request:', error);
-                    showToast('Error cancelling request', 'error');
-                    if (buttonElement) {
-                        buttonElement.innerHTML = '<i class="fas fa-times me-1"></i> Cancel';
-                        buttonElement.disabled = false;
-                    }
-                });
-        }
-
-        // ✅ MARK AS COMPLETED FUNCTION
-        function markAsCompleted(requestId, buttonElement) {
-            if (!confirm('Mark this request as completed?')) return;
-
-            if (buttonElement) {
-                const originalText = buttonElement.innerHTML;
-                buttonElement.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Updating...';
-                buttonElement.disabled = true;
-            }
-
-            updateRequestStatus(requestId, 'Completed');
-        }
-
-        // ✅ UPDATE OUTGOING REQUESTS COUNT
-        function updateOutgoingRequestsCount() {
+        // ✅ FIXED: Display outgoing requests
+        function displayOutgoingRequests(requests) {
             const outgoingList = document.getElementById('outgoingRequestsList');
-            if (outgoingList) {
-                const remainingRequests = outgoingList.querySelectorAll('.request-card');
-                const outgoingCountElement = document.getElementById('outgoingCount');
-                if (outgoingCountElement) {
-                    outgoingCountElement.textContent = remainingRequests.length;
-                }
+
+            if (!requests || requests.length === 0) {
+                outgoingList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-paper-plane"></i>
+                        <p>No outgoing requests</p>
+                        <small>Your requests to other users will appear here</small>
+                    </div>
+                `;
+                document.getElementById('outgoingCount').textContent = '0';
+                return;
             }
+
+            document.getElementById('outgoingCount').textContent = requests.length;
+
+            outgoingList.innerHTML = requests.map(request => `
+                <div class="card mb-3 request-card" data-status="${request.status}" id="request-${request.id}">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="card-title">${request.book_title || 'Unknown Book'}</h6>
+                                <p class="card-text mb-1">
+                                    <strong>Owner:</strong> ${request.owner_name || 'Unknown User'}
+                                </p>
+                                <p class="card-text mb-1">
+                                    <strong>Status:</strong> 
+                                    <span class="request-status status-${request.status.toLowerCase()}">
+                                        ${request.status}
+                                    </span>
+                                </p>
+                                <p class="card-text mb-2">
+                                    <strong>Your Message:</strong> "${request.message || 'No message'}"
+                                </p>
+                                <small class="text-muted">
+                                    Sent on: ${new Date(request.created_at).toLocaleDateString()}
+                                </small>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                ${request.status === 'pending' || request.status === 'Pending' ? `
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-cancel" 
+                                                onclick="handleCancelRequest(${request.id}, ${userData.user_id})">
+                                            <i class="fas fa-times me-1"></i> Cancel Request
+                                        </button>
+                                    </div>
+                                ` : `
+                                    <div class="action-buttons">
+                                        <span class="text-muted">Action Completed</span>
+                                    </div>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
+     // ✅ SEND BOOK REQUEST FUNCTION
+function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') {
+    if (!userData || !userData.user_id) {
+        alert('Please login to send a request');
+        return;
+    }
+
+    const requestData = {
+        book_id: bookId,
+        requester_id: userData.user_id,
+        owner_id: ownerId,
+        request_type: requestType,
+        message: message
+    };
+
+    console.log('📤 Sending book request:', requestData);
+
+    fetch('http://localhost/project/backend/api/requests/create.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('✅ Request response:', data);
+        
+        if (data.success) {
+            showToast('📚 Request sent successfully!', 'success');
+            
+            // Update requests count
+            updateRequestsCount();
+            
+            // If on requests page, refresh the list
+            if (document.getElementById('requestsInterface').style.display !== 'none') {
+                loadRequests();
+            }
+        } else {
+            throw new Error(data.message || 'Failed to send request');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error sending request:', error);
+        showToast('Error: ' + error.message, 'error');
+    });
+}
+
+        
         // ✅ REFRESH REQUESTS
         function refreshRequests() {
             console.log('Refreshing requests...');
@@ -1606,11 +1762,11 @@
 
             // Show loading
             notificationsList.innerHTML = `
-        <div class="text-center p-4">
-            <div class="spinner-border text-primary"></div>
-            <p class="mt-2">Loading your notifications...</p>
-        </div>
-    `;
+                <div class="text-center p-4">
+                    <div class="spinner-border text-primary"></div>
+                    <p class="mt-2">Loading your notifications...</p>
+                </div>
+            `;
 
             console.log('🔍 Loading notifications for user:', userData.user_id);
 
@@ -1637,17 +1793,17 @@
                 .catch(error => {
                     console.error('❌ Error loading notifications:', error);
                     notificationsList.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>Error loading notifications</strong><br>
-                    <small>${error.message}</small>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-warning" onclick="loadNotifications()">
-                            <i class="fas fa-redo"></i> Retry
-                        </button>
-                    </div>
-                </div>
-            `;
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>Error loading notifications</strong><br>
+                            <small>${error.message}</small>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-warning" onclick="loadNotifications()">
+                                    <i class="fas fa-redo"></i> Retry
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
@@ -1681,20 +1837,20 @@
                 let message = '';
                 if (notifications.length === 0) {
                     message = `
-                <div class="text-center text-muted p-5">
-                    <i class="fas fa-bell-slash fa-4x mb-3"></i>
-                    <h4>No notifications yet</h4>
-                    <p class="text-muted">When you receive notifications, they will appear here.</p>
-                </div>
-            `;
+                        <div class="text-center text-muted p-5">
+                            <i class="fas fa-bell-slash fa-4x mb-3"></i>
+                            <h4>No notifications yet</h4>
+                            <p class="text-muted">When you receive notifications, they will appear here.</p>
+                        </div>
+                    `;
                 } else {
                     message = `
-                <div class="text-center text-muted p-4">
-                    <i class="fas fa-filter fa-3x mb-3"></i>
-                    <h5>No ${filter === 'unread' ? 'unread' : filter} notifications</h5>
-                    <p>Try changing the filter to see all notifications.</p>
-                </div>
-            `;
+                        <div class="text-center text-muted p-4">
+                            <i class="fas fa-filter fa-3x mb-3"></i>
+                            <h5>No ${filter === 'unread' ? 'unread' : filter} notifications</h5>
+                            <p>Try changing the filter to see all notifications.</p>
+                        </div>
+                    `;
                 }
 
                 notificationsList.innerHTML = message;
@@ -1717,35 +1873,35 @@
                     const timeAgo = formatTimeAgo(createdAt);
 
                     return `
-                <div class="notification-item border-bottom p-3 ${!isRead ? 'bg-light' : ''}" 
-                     onclick="markNotificationAsRead(${notifId})"
-                     style="cursor: pointer; transition: all 0.3s ease; border-left: 4px solid ${getNotificationBorderColor(type)}">
-                    <div class="d-flex align-items-start">
-                        <div class="me-3 ${iconColor}">
-                            <i class="${icon} fa-2x"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0 ${!isRead ? 'text-dark fw-bold' : 'text-muted'}">
-                                    ${title}
-                                </h6>
-                                <small class="text-muted">${timeAgo}</small>
+                        <div class="notification-item border-bottom p-3 ${!isRead ? 'bg-light' : ''}" 
+                             onclick="markNotificationAsRead(${notifId})"
+                             style="cursor: pointer; transition: all 0.3s ease; border-left: 4px solid ${getNotificationBorderColor(type)}">
+                            <div class="d-flex align-items-start">
+                                <div class="me-3 ${iconColor}">
+                                    <i class="${icon} fa-2x"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="mb-0 ${!isRead ? 'text-dark fw-bold' : 'text-muted'}">
+                                            ${title}
+                                        </h6>
+                                        <small class="text-muted">${timeAgo}</small>
+                                    </div>
+                                    <p class="mb-2 text-dark">${message}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge ${getNotificationBadgeClass(type)}">
+                                            <i class="fas ${getNotificationIcon(type)} me-1"></i>${type}
+                                        </span>
+                                        ${!isRead ? `
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-circle me-1"></i>New
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                </div>
                             </div>
-                            <p class="mb-2 text-dark">${message}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="badge ${getNotificationBadgeClass(type)}">
-                                    <i class="fas ${getNotificationIcon(type)} me-1"></i>${type}
-                                </span>
-                                ${!isRead ? `
-                                    <span class="badge bg-danger">
-                                        <i class="fas fa-circle me-1"></i>New
-                                    </span>
-                                ` : ''}
-                            </div>
                         </div>
-                    </div>
-                </div>
-            `;
+                    `;
                 }).join('');
 
                 console.log('✅ Notifications displayed successfully');
@@ -1753,12 +1909,12 @@
             } catch (error) {
                 console.error('❌ Error in displayNotifications:', error);
                 notificationsList.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error displaying notifications
-                <br><small>${error.message}</small>
-            </div>
-        `;
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error displaying notifications
+                        <br><small>${error.message}</small>
+                    </div>
+                `;
             }
         }
 
@@ -2010,7 +2166,6 @@
                 if (userData && userData.user_id) {
                     updateUnreadNotificationsCount();
                     updateUnreadMessagesCount(); // ✅ Yeh add karein
-                    updateRequestsCount(); // ✅ Requests count bhi update ho
                 }
             }, 30000); // 30 seconds
 
@@ -2027,6 +2182,9 @@
         function showMessages() {
             console.log('💬 Showing messages interface');
 
+            // Stop any existing polling first
+            stopAllPolling();
+
             // Hide other sections
             document.querySelector('.dashboard-header').style.display = 'none';
             document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
@@ -2037,346 +2195,14 @@
             document.getElementById('messagesInterface').style.display = 'block';
             setActiveNavLink('messages');
 
-            // Load conversations
+            // ✅ IMPORTANT: Refresh all message data
             loadConversations();
-            updateUnreadMessagesCount();
-        }
+            updateUnreadMessagesCount(); // Count update karein
 
-        // Load conversations
-        // ✅ FIXED: Load conversations with better error handling
-        function loadConversations() {
-            if (!userData || !userData.user_id) {
-                console.error('User not logged in');
-                return;
-            }
+            // ✅ Restart polling for badge updates
+            startMessagePolling();
 
-            const conversationsList = document.getElementById('conversationsList');
-            conversationsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading conversations...</div>';
-
-            console.log('Loading conversations for user:', userData.user_id);
-
-            fetch(`http://localhost/project/backend/api/messages/get_conversations.php?user_id=${userData.user_id}`)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Raw conversations data:', data);
-
-                    // Handle different response formats
-                    let conversations = [];
-
-                    if (Array.isArray(data)) {
-                        conversations = data;
-                    } else if (data && Array.isArray(data.conversations)) {
-                        conversations = data.conversations;
-                    } else if (data && data.success && Array.isArray(data.data)) {
-                        conversations = data.data;
-                    } else if (data && data.message) {
-                        // No conversations found
-                        console.log('No conversations:', data.message);
-                    } else {
-                        console.error('Unexpected response format:', data);
-                    }
-
-                    console.log('Processed conversations:', conversations);
-                    displayConversations(conversations);
-                })
-                .catch(error => {
-                    console.error('Error loading conversations:', error);
-                    conversationsList.innerHTML = `
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Unable to load conversations</strong><br>
-                    <small>${error.message}</small>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-primary" onclick="loadConversations()">
-                            <i class="fas fa-redo me-1"></i> Try Again
-                        </button>
-                    </div>
-                </div>
-            `;
-                });
-        }
-
-        // Display conversations
-        function displayConversations(conversations) {
-            const conversationsList = document.getElementById('conversationsList');
-
-            console.log('Conversations data:', conversations);
-
-            // Check if conversations is an array
-            if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
-                conversationsList.innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-comments"></i>
-                <p>No conversations yet</p>
-                <small>Start a conversation by messaging a book owner</small>
-            </div>
-        `;
-                return;
-            }
-
-            conversationsList.innerHTML = conversations.map(conv => {
-                // Safely handle conversation data
-                const otherUserId = conv.other_user_id || 0;
-                const otherUserName = conv.other_user_name || 'Unknown User';
-                const lastMessage = conv.last_message || 'No messages yet';
-                const lastMessageTime = conv.last_message_time || new Date().toISOString();
-                const unreadCount = conv.unread_count || 0;
-
-                return `
-        <div class="conversation-item border-bottom p-3 ${unreadCount > 0 ? 'bg-light' : ''}" 
-             onclick="selectConversation(${otherUserId}, '${otherUserName.replace(/'/g, "\\'")}')"
-             style="cursor: pointer; transition: all 0.3s ease;">
-            <div class="d-flex align-items-start">
-                <div class="avatar-placeholder avatar-primary me-3">
-                    ${otherUserName.charAt(0).toUpperCase()}
-                </div>
-                <div class="flex-grow-1">
-                    <div class="d-flex justify-content-between align-items-start mb-1">
-                        <h6 class="mb-0">${otherUserName}</h6>
-                        <small class="text-muted">${formatTimeAgo(lastMessageTime)}</small>
-                    </div>
-                    <p class="mb-1 text-muted small text-truncate">${lastMessage}</p>
-                    ${unreadCount > 0 ? `
-                        <span class="badge bg-danger badge-sm">${unreadCount} unread</span>
-                    ` : ''}
-                </div>
-            </div>
-        </div>
-    `;
-            }).join('');
-        }
-
-        // ✅ FIXED: Select conversation WITHOUT calling undefined function
-        function selectConversation(otherUserId, otherUserName) {
-            console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
-
-            // Stop any existing polling first (using the safe function that exists)
-            stopAllPolling();
-
-            // Update chat header
-            document.getElementById('chatWithUser').textContent = otherUserName;
-            document.getElementById('chatHeader').style.display = 'block';
-            document.getElementById('messageInputArea').style.display = 'block';
-
-            // Store current conversation
-            window.currentConversation = {
-                userId: otherUserId,
-                userName: otherUserName
-            };
-
-            console.log('🎯 Current conversation set:', window.currentConversation);
-
-            // Load messages (just once, no polling)
-            loadMessages(otherUserId);
-
-            // Mark messages as read (just once)
-            markMessagesAsRead(otherUserId);
-
-            console.log('✅ Conversation loaded without auto-polling');
-        }
-        // ✅ MANUAL REFRESH: User clicks to refresh messages
-        function refreshCurrentMessages() {
-            if (!window.currentConversation) {
-                alert('Please select a conversation first');
-                return;
-            }
-
-            console.log('🔄 Manually refreshing messages');
-
-            const refreshBtn = event.target.closest('button') || event.target;
-            const originalHtml = refreshBtn.innerHTML;
-
-            // Show loading state
-            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            refreshBtn.disabled = true;
-
-            // Refresh messages
-            loadMessages(window.currentConversation.userId);
-
-            // Reset button after 1 second
-            setTimeout(() => {
-                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
-                refreshBtn.disabled = false;
-            }, 1000);
-        }
-
-        // ✅ DEBUG: Check message status
-        function debugMessageStatus() {
-            console.log('=== MESSAGE DEBUG ===');
-            console.log('Current Conversation:', window.currentConversation || currentConversation);
-            console.log('Message Input:', document.getElementById('messageInput')?.value);
-            console.log('Messages Container:', document.getElementById('messagesContainer')?.children.length, 'messages');
-            console.log('Send Button:', document.querySelector('#messageInputArea button')?.disabled);
-
-            // Check if polling is active (safe check)
-            const pollingActive = window.messageCheckInterval || messageCheckInterval;
-            console.log('Polling Active:', pollingActive ? 'Yes' : 'No');
-        }
-
-        // 🚨 EMERGENCY FIX: Force reload messages after sending
-        function sendMessageFromChat() {
-            const messageInput = document.getElementById('messageInput');
-            const messageText = messageInput.value.trim();
-
-            if (!messageText || !window.currentConversation) {
-                alert('Please select a conversation and type a message');
-                return;
-            }
-
-            console.log('💬 Sending message:', messageText);
-
-            // Get button and show loading
-            const sendBtn = document.querySelector('#messageInputArea button');
-            const originalHtml = sendBtn.innerHTML;
-            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            sendBtn.disabled = true;
-
-            // ✅ IMMEDIATE UI UPDATE
-            const messagesContainer = document.getElementById('messagesContainer');
-            const messageTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            // Create temporary message (will be replaced after server response)
-            const tempMessageId = 'temp-' + Date.now();
-            const messageElement = document.createElement('div');
-            messageElement.id = tempMessageId;
-            messageElement.className = 'd-flex mb-3 justify-content-end';
-            messageElement.innerHTML = `
-        <div class="message-bubble bg-primary text-white" style="opacity: 0.8;" 
-             style="max-width: 70%; padding: 12px 15px; border-radius: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <div class="message-text">${messageText}</div>
-            <div class="message-time small text-light" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">
-                ${messageTime} <span class="sending-status">🔄 Sending...</span>
-            </div>
-        </div>
-    `;
-
-            // Add to messages container
-            messagesContainer.appendChild(messageElement);
-
-            // Clear input
-            messageInput.value = '';
-
-            // Scroll to bottom
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            // ✅ Send to server
-            const messageData = {
-                sender_id: userData.user_id,
-                receiver_id: window.currentConversation.userId,
-                message_text: messageText,
-                book_id: null
-            };
-
-            fetch('http://localhost/project/backend/api/messages/send.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messageData)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        console.log('✅ Message sent successfully');
-
-                        // ✅ IMPORTANT: Unread count update karein
-                        setTimeout(() => {
-                            updateUnreadMessagesCount();
-                            loadConversations(); // Conversations list refresh
-                        }, 1000);
-
-                    } else {
-                        throw new Error(data.message || 'Failed to send message');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error sending message:', error);
-                    // Show error status
-                    const tempElement = document.getElementById(tempMessageId);
-                    if (tempElement) {
-                        tempElement.querySelector('.sending-status').textContent = ' ❌ Failed';
-                        tempElement.querySelector('.sending-status').style.color = '#dc3545';
-                    }
-                })
-                .finally(() => {
-                    // Reset button
-                    sendBtn.innerHTML = originalHtml;
-                    sendBtn.disabled = false;
-
-                    // Remove temporary message after 2 seconds and reload actual messages
-                    setTimeout(() => {
-                        const tempElement = document.getElementById(tempMessageId);
-                        if (tempElement) {
-                            tempElement.remove();
-                        }
-                        // Load fresh messages from server
-                        if (window.currentConversation) {
-                            loadMessages(window.currentConversation.userId);
-                        }
-                    }, 2000);
-                });
-
-
-        }
-        // Load messages for conversation
-        function loadMessages(otherUserId) {
-            const messagesContainer = document.getElementById('messagesContainer');
-            messagesContainer.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading messages...</div>';
-
-            console.log('🔍 Loading messages for user:', userData.user_id, 'with:', otherUserId);
-
-            fetch(`http://localhost/project/backend/api/messages/get_messages.php?user_id=${userData.user_id}&other_user_id=${otherUserId}`)
-                .then(response => {
-                    console.log('📡 API Response status:', response.status, response.statusText);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('✅ Messages data received:', data);
-
-                    let messages = [];
-
-                    // Handle different response formats
-                    if (Array.isArray(data)) {
-                        messages = data;
-                    } else if (data && Array.isArray(data.messages)) {
-                        messages = data.messages;
-                    } else if (data && data.success && Array.isArray(data.data)) {
-                        messages = data.data;
-                    } else if (data && data.message) {
-                        console.log('ℹ️ API Message:', data.message);
-                        messages = [];
-                    } else {
-                        console.warn('⚠️ Unexpected response structure:', data);
-                        messages = [];
-                    }
-
-                    console.log('🎯 Final messages array:', messages);
-                    displayMessages(messages);
-                })
-                .catch(error => {
-                    console.error('❌ Error loading messages:', error);
-                    messagesContainer.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Error loading messages</strong><br>
-                    <small>${error.message}</small>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-warning" onclick="loadMessages(${otherUserId})">
-                            <i class="fas fa-redo me-1"></i> Retry
-                        </button>
-                    </div>
-                </div>
-            `;
-                });
+            console.log('✅ Messages interface loaded');
         }
 
         // ✅ FIXED: Load conversations with better error handling
@@ -2426,17 +2252,177 @@
                 .catch(error => {
                     console.error('Error loading conversations:', error);
                     conversationsList.innerHTML = `
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Unable to load conversations</strong><br>
-                    <small>${error.message}</small>
-                    <div class="mt-2">
-                        <button class="btn btn-sm btn-primary" onclick="loadConversations()">
-                            <i class="fas fa-redo me-1"></i> Try Again
-                        </button>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Unable to load conversations</strong><br>
+                            <small>${error.message}</small>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-primary" onclick="loadConversations()">
+                                    <i class="fas fa-redo me-1"></i> Try Again
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+
+        // Display conversations
+        function displayConversations(conversations) {
+            const conversationsList = document.getElementById('conversationsList');
+
+            console.log('Conversations data:', conversations);
+
+            // Check if conversations is an array
+            if (!conversations || !Array.isArray(conversations) || conversations.length === 0) {
+                conversationsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-comments"></i>
+                        <p>No conversations yet</p>
+                        <small>Start a conversation by messaging a book owner</small>
                     </div>
-                </div>
-            `;
+                `;
+                return;
+            }
+
+            conversationsList.innerHTML = conversations.map(conv => {
+                // Safely handle conversation data
+                const otherUserId = conv.other_user_id || 0;
+                const otherUserName = conv.other_user_name || 'Unknown User';
+                const lastMessage = conv.last_message || 'No messages yet';
+                const lastMessageTime = conv.last_message_time || new Date().toISOString();
+                const unreadCount = conv.unread_count || 0;
+
+                return `
+                    <div class="conversation-item border-bottom p-3 ${unreadCount > 0 ? 'bg-light' : ''}" 
+                         onclick="selectConversation(${otherUserId}, '${otherUserName.replace(/'/g, "\\'")}')"
+                         style="cursor: pointer; transition: all 0.3s ease;">
+                        <div class="d-flex align-items-start">
+                            <div class="avatar-placeholder avatar-primary me-3">
+                                ${otherUserName.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="mb-0">${otherUserName}</h6>
+                                    <small class="text-muted">${formatTimeAgo(lastMessageTime)}</small>
+                                </div>
+                                <p class="mb-1 text-muted small text-truncate">${lastMessage}</p>
+                                ${unreadCount > 0 ? `
+                                    <span class="badge bg-danger badge-sm">${unreadCount} unread</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ✅ FIXED: Select conversation WITHOUT calling undefined function
+        function selectConversation(otherUserId, otherUserName) {
+            console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
+
+            // Stop any existing polling first (using the safe function that exists)
+            stopAllPolling();
+
+            // Update chat header
+            document.getElementById('chatWithUser').textContent = otherUserName;
+            document.getElementById('chatHeader').style.display = 'block';
+            document.getElementById('messageInputArea').style.display = 'block';
+
+            // Store current conversation
+            window.currentConversation = {
+                userId: otherUserId,
+                userName: otherUserName
+            };
+
+            console.log('🎯 Current conversation set:', window.currentConversation);
+
+            // Load messages (just once, no polling)
+            loadMessages(otherUserId);
+
+            // Mark messages as read (just once)
+            markMessagesAsRead(otherUserId);
+
+            console.log('✅ Conversation loaded without auto-polling');
+        }
+
+        // ✅ MANUAL REFRESH: User clicks to refresh messages
+        function refreshCurrentMessages() {
+            if (!window.currentConversation) {
+                alert('Please select a conversation first');
+                return;
+            }
+
+            console.log('🔄 Manually refreshing messages');
+
+            const refreshBtn = event.target.closest('button') || event.target;
+            const originalHtml = refreshBtn.innerHTML;
+
+            // Show loading state
+            refreshBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            refreshBtn.disabled = true;
+
+            // Refresh messages
+            loadMessages(window.currentConversation.userId);
+
+            // Reset button after 1 second
+            setTimeout(() => {
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+                refreshBtn.disabled = false;
+            }, 1000);
+        }
+
+        // Load messages for conversation
+        function loadMessages(otherUserId) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading messages...</div>';
+
+            console.log('🔍 Loading messages for user:', userData.user_id, 'with:', otherUserId);
+
+            fetch(`http://localhost/project/backend/api/messages/get_messages.php?user_id=${userData.user_id}&other_user_id=${otherUserId}`)
+                .then(response => {
+                    console.log('📡 API Response status:', response.status, response.statusText);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('✅ Messages data received:', data);
+
+                    let messages = [];
+
+                    // Handle different response formats
+                    if (Array.isArray(data)) {
+                        messages = data;
+                    } else if (data && Array.isArray(data.messages)) {
+                        messages = data.messages;
+                    } else if (data && data.success && Array.isArray(data.data)) {
+                        messages = data.data;
+                    } else if (data && data.message) {
+                        console.log('ℹ️ API Message:', data.message);
+                        messages = [];
+                    } else {
+                        console.warn('⚠️ Unexpected response structure:', data);
+                        messages = [];
+                    }
+
+                    console.log('🎯 Final messages array:', messages);
+                    displayMessages(messages);
+                })
+                .catch(error => {
+                    console.error('❌ Error loading messages:', error);
+                    messagesContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Error loading messages</strong><br>
+                            <small>${error.message}</small>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-warning" onclick="loadMessages(${otherUserId})">
+                                    <i class="fas fa-redo me-1"></i> Retry
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
@@ -2455,12 +2441,12 @@
 
             if (messages.length === 0) {
                 messagesContainer.innerHTML = `
-            <div class="text-center text-muted p-4">
-                <i class="fas fa-comment-slash fa-2x mb-3"></i>
-                <p>No messages yet</p>
-                <small>Start the conversation by sending a message!</small>
-            </div>
-        `;
+                    <div class="text-center text-muted p-4">
+                        <i class="fas fa-comment-slash fa-2x mb-3"></i>
+                        <p>No messages yet</p>
+                        <small>Start the conversation by sending a message!</small>
+                    </div>
+                `;
                 return;
             }
 
@@ -2477,26 +2463,26 @@
                     const senderName = msg.sender_name || (isSender ? 'You' : 'User');
 
                     return `
-                <div class="d-flex mb-3 ${isSender ? 'justify-content-end' : 'justify-content-start'}">
-                    <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}" 
-                         style="max-width: 70%; padding: 12px 15px; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                         
-                        ${!isSender ? `
-                            <div class="sender-name small text-muted mb-1" style="font-size: 0.75rem;">
-                                <strong>${senderName}</strong>
+                        <div class="d-flex mb-3 ${isSender ? 'justify-content-end' : 'justify-content-start'}">
+                            <div class="message-bubble ${isSender ? 'bg-primary text-white' : 'bg-light border'}" 
+                                 style="max-width: 70%; padding: 12px 15px; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                 
+                                ${!isSender ? `
+                                    <div class="sender-name small text-muted mb-1" style="font-size: 0.75rem;">
+                                        <strong>${senderName}</strong>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="message-text">${messageText}</div>
+                                
+                                <div class="message-time small ${isSender ? 'text-light' : 'text-muted'}" 
+                                     style="font-size: 0.7rem; text-align: right; margin-top: 8px;">
+                                    ${messageTime}
+                                    ${isSender ? ' ✓' : ''}
+                                </div>
                             </div>
-                        ` : ''}
-                        
-                        <div class="message-text">${messageText}</div>
-                        
-                        <div class="message-time small ${isSender ? 'text-light' : 'text-muted'}" 
-                             style="font-size: 0.7rem; text-align: right; margin-top: 8px;">
-                            ${messageTime}
-                            ${isSender ? ' ✓' : ''}
                         </div>
-                    </div>
-                </div>
-            `;
+                    `;
                 }).join('');
 
                 // Scroll to bottom
@@ -2506,11 +2492,11 @@
             } catch (error) {
                 console.error('❌ Error in displayMessages:', error);
                 messagesContainer.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error displaying messages: ${error.message}
-            </div>
-        `;
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error displaying messages: ${error.message}
+                    </div>
+                `;
             }
         }
 
@@ -2540,14 +2526,14 @@
             const messageElement = document.createElement('div');
             messageElement.className = 'd-flex mb-3 justify-content-end';
             messageElement.innerHTML = `
-        <div class="message-bubble bg-primary text-white" 
-             style="max-width: 70%; padding: 10px 15px; border-radius: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-            <div class="message-text">${messageText}</div>
-            <div class="message-time small text-light" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">
-                ${messageTime}
-            </div>
-        </div>
-    `;
+                <div class="message-bubble bg-primary text-white" 
+                     style="max-width: 70%; padding: 10px 15px; border-radius: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div class="message-text">${messageText}</div>
+                    <div class="message-time small text-light" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">
+                        ${messageTime}
+                    </div>
+                </div>
+            `;
 
             // Add to messages container
             messagesContainer.appendChild(messageElement);
@@ -2608,36 +2594,6 @@
             }
         }
 
-        // ✅ UPDATE selectConversation function to start polling:
-        function selectConversation(otherUserId, otherUserName) {
-            console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
-
-            // Stop previous polling
-            // stopMessagePolling();
-
-            // Update chat header
-            document.getElementById('chatWithUser').textContent = otherUserName;
-            document.getElementById('chatHeader').style.display = 'block';
-            document.getElementById('messageInputArea').style.display = 'block';
-
-            // Store current conversation
-            window.currentConversation = {
-                userId: otherUserId,
-                userName: otherUserName
-            };
-
-            console.log('🎯 Current conversation set:', window.currentConversation);
-
-            // Load messages
-            loadMessages(otherUserId);
-
-            // Start polling for new messages
-            startMessagePolling();
-
-            // Mark messages as read
-            markMessagesAsRead(otherUserId);
-        }
-
         // ✅ ADD THIS FUNCTION FOR MESSAGE POLLING
         function startMessagePolling() {
             console.log('🔔 Starting message polling for badge updates');
@@ -2659,101 +2615,6 @@
                     }
                 }
             }, 10000); // 10 seconds
-        }
-
-        // ✅ INITIALIZE DASHBOARD MEIN ADD KAREIN
-        function initializeDashboard() {
-            console.log('🚀 Initializing dashboard...');
-
-            // Basic user info
-            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-            updateSidebarInfo();
-
-            // Load all data
-            loadUserBooks();
-            loadDashboardStats();
-            updateRequestsCount();
-            loadRecentRequests();
-
-            // ✅ IMPORTANT: Messages count bhi initialize karein
-            updateUnreadMessagesCount();
-
-            // Initialize notifications
-            setTimeout(() => {
-                updateUnreadNotificationsCount();
-            }, 2000);
-
-            initializeModals();
-
-            // Setup auto-checkers
-            setupAutoCheckers();
-
-            // ✅ START MESSAGE POLLING FOR BADGE UPDATES
-            startMessagePolling();
-
-            console.log('✅ Dashboard fully initialized');
-        }
-
-        // ✅ UPDATE clearChatSelection to stop polling:
-        function clearChatSelection() {
-            stopAllPolling();
-            window.currentConversation = null;
-            document.getElementById('chatHeader').style.display = 'none';
-            document.getElementById('messageInputArea').style.display = 'none';
-            document.getElementById('messagesContainer').innerHTML = `
-        <div class="text-center text-muted p-4">
-            <i class="fas fa-comments fa-2x mb-3"></i>
-            <p>Select a conversation to start messaging</p>
-        </div>
-    `;
-        }
-
-        // ✅ IMPROVED: STOP ALL POLLING
-        function stopAllPolling() {
-            try {
-                // Stop message polling
-                if (window.messagePollingInterval) {
-                    console.log('🛑 Stopping message polling');
-                    clearInterval(window.messagePollingInterval);
-                    window.messagePollingInterval = null;
-                }
-
-                // Stop other intervals
-                if (window.messageCheckInterval) {
-                    clearInterval(window.messageCheckInterval);
-                    window.messageCheckInterval = null;
-                }
-            } catch (error) {
-                console.log('No polling intervals to stop');
-            }
-        }
-
-
-        // ✅ SIDEBAR MESSAGES LINK KO UPDATE KAREIN
-        function showMessages() {
-            console.log('💬 Showing messages interface');
-
-            // Stop any existing polling first
-            stopAllPolling();
-
-            // Hide other sections
-            document.querySelector('.dashboard-header').style.display = 'none';
-            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
-            document.getElementById('requestsInterface').style.display = 'none';
-            document.getElementById('notificationsInterface').style.display = 'none';
-
-            // Show messages interface
-            document.getElementById('messagesInterface').style.display = 'block';
-            setActiveNavLink('messages');
-
-            // ✅ IMPORTANT: Refresh all message data
-            loadConversations();
-            updateUnreadMessagesCount(); // Count update karein
-
-            // ✅ Restart polling for badge updates
-            startMessagePolling();
-
-            console.log('✅ Messages interface loaded');
         }
 
         // Mark messages as read
@@ -2826,19 +2687,18 @@
                 });
         }
 
-
-
         // Clear chat selection
         function clearChatSelection() {
+            stopAllPolling();
             window.currentConversation = null;
             document.getElementById('chatHeader').style.display = 'none';
             document.getElementById('messageInputArea').style.display = 'none';
             document.getElementById('messagesContainer').innerHTML = `
-        <div class="text-center text-muted p-4">
-            <i class="fas fa-comments fa-2x mb-3"></i>
-            <p>Select a conversation to start messaging</p>
-        </div>
-    `;
+                <div class="text-center text-muted p-4">
+                    <i class="fas fa-comments fa-2x mb-3"></i>
+                    <p>Select a conversation to start messaging</p>
+                </div>
+            `;
         }
 
         // Refresh messages
@@ -2851,15 +2711,26 @@
             showToast('Messages refreshed!', 'success');
         }
 
-        // Auto-refresh messages every 10 seconds
-        setInterval(() => {
-            if (document.getElementById('messagesInterface').style.display !== 'none') {
-                if (window.currentConversation) {
-                    loadMessages(window.currentConversation.userId);
+        // ✅ IMPROVED: STOP ALL POLLING
+        function stopAllPolling() {
+            try {
+                // Stop message polling
+                if (window.messagePollingInterval) {
+                    console.log('🛑 Stopping message polling');
+                    clearInterval(window.messagePollingInterval);
+                    window.messagePollingInterval = null;
                 }
-                updateUnreadMessagesCount();
+
+                // Stop other intervals
+                if (window.messageCheckInterval) {
+                    clearInterval(window.messageCheckInterval);
+                    window.messageCheckInterval = null;
+                }
+            } catch (error) {
+                console.log('No polling intervals to stop');
             }
-        }, 10000);
+        }
+
         // ✅ UTILITY FUNCTIONS
         function loadDashboardStats() {
             // Simple stats loading
@@ -2884,7 +2755,8 @@
                 case 'mybooks': navLinks[2].classList.add('active'); break;
                 case 'transactions': navLinks[3].classList.add('active'); break;
                 case 'requests': navLinks[6].classList.add('active'); break;
-                case 'notifications': navLinks[7].classList.add('active'); break;
+                case 'disputes': navLinks[7].classList.add('active'); break; // New case
+                case 'notifications': navLinks[8].classList.add('active'); break; // Updated index
             }
         }
 
@@ -3012,23 +2884,6 @@
             return date.toLocaleDateString();
         }
 
-        // ✅ AUTO-REFRESH EVERY 30 SECONDS
-        setInterval(() => {
-            if (userData && userData.user_id) {
-                updateRequestsCount();
-                loadRecentRequests();
-                updateUnreadNotificationsCount();
-            }
-        }, 30000);
-
-        // ✅ INITIALIZE ON DASHBOARD LOAD
-        document.addEventListener('DOMContentLoaded', function () {
-            if (userData && userData.user_id) {
-                updateRequestsCount();
-                loadRecentRequests();
-            }
-        });
-
         // ✅ SIMPLIFIED fileDispute function
         function fileDispute(transactionId = null, respondentId = null, respondentName = null) {
             console.log('📝 Opening dispute form');
@@ -3048,10 +2903,12 @@
                 disputeForm.reset();
             }
 
-            // Load transactions (optional)
-            setTimeout(() => {
-                loadTransactionsForDispute();
-            }, 100);
+            // Load user's books
+            loadUserBooksForDispute();
+
+            // Reset user info
+            document.getElementById('selectedUserInfo').innerHTML = 'Select a book to see user details';
+            selectedBookId = null;
 
             // Pre-fill respondent ID if provided
             if (respondentId) {
@@ -3085,72 +2942,110 @@
             }, 600);
         }
 
-        // ✅ DEBUG FUNCTION - Add karein aapke code mein
-        function debugDisputeForm() {
-            console.log('🔍 DEBUG Dispute Form Elements:');
-            const elements = {
-                'fileDisputeModal': document.getElementById('fileDisputeModal'),
-                'disputeForm': document.getElementById('disputeForm'),
-                'disputeTitle': document.getElementById('disputeTitle'),
-                'disputeDescription': document.getElementById('disputeDescription'),
-                'disputeCategory': document.getElementById('disputeCategory'),
-                'respondentIdInput': document.getElementById('respondentIdInput'),
-                'relatedTransaction': document.getElementById('relatedTransaction'),
-                'submitDisputeBtn': document.getElementById('submitDisputeBtn')
-            };
-
-            Object.entries(elements).forEach(([name, element]) => {
-                console.log(`${name}:`, element ? '✅ FOUND' : '❌ NOT FOUND');
-            });
-
-            return elements;
-        }
-
-        // Page load par debug run karein
-        setTimeout(() => {
-            console.log('🔄 Running dispute form debug...');
-            debugDisputeForm();
-        }, 2000);
-
-        // Load transactions for dispute form
-        function loadTransactionsForDispute() {
+        // ✅ LOAD USER'S BOOKS FOR DISPUTE
+        function loadUserBooksForDispute() {
             if (!userData || !userData.user_id) return;
 
-            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}`)
-                .then(response => response.json())
-                .then(transactions => {
-                    const select = document.getElementById('relatedTransaction');
-                    select.innerHTML = '<option value="">Select transaction</option>';
+            const booksList = document.getElementById('userBooksList');
 
-                    if (transactions && transactions.length > 0) {
-                        transactions.forEach(transaction => {
-                            const option = document.createElement('option');
-                            option.value = transaction.id;
-                            option.textContent = `#${transaction.id} - ${transaction.book_title} with ${transaction.other_user_name}`;
-                            select.appendChild(option);
-                        });
+            fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('User books for dispute:', data);
+
+                    if (data.books && data.books.length > 0) {
+                        displayUserBooksForDispute(data.books);
+                    } else {
+                        booksList.innerHTML = `
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                No books found. You need to add books first to file a dispute.
+                            </div>
+                        `;
                     }
                 })
                 .catch(error => {
-                    console.error('Error loading transactions:', error);
+                    console.error('Error loading user books:', error);
+                    booksList.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading your books. Please try again.
+                        </div>
+                    `;
                 });
         }
 
-        // Load users for dispute form
-        function loadUsersForDispute() {
-            // This would typically come from your users API
-            // For now, we'll use a placeholder
-            const select = document.getElementById('respondentUser');
-            select.innerHTML = '<option value="">Select user</option>';
+        // ✅ DISPLAY USER'S BOOKS FOR SELECTION
+        function displayUserBooksForDispute(books) {
+            const booksList = document.getElementById('userBooksList');
 
-            // In a real implementation, you'd fetch users from your API
-            // fetch('http://localhost/project/backend/api/users.php')
-            // .then(response => response.json())
-            // .then(users => { ... });
+            booksList.innerHTML = books.map(book => `
+                <div class="book-item border-bottom pb-2 mb-2" style="cursor: pointer;" 
+                     onclick="selectBookForDispute(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}')">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">${book.title}</h6>
+                            <p class="mb-1 text-muted small">by ${book.author}</p>
+                            <small class="text-muted">Condition: ${book.condition} • Status: ${book.status}</small>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">ID: ${book.id}</small>
+                            <div class="mt-1">
+                                <span class="badge bg-success">Select</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add "No books" message if empty
+            if (books.length === 0) {
+                booksList.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-book me-2"></i>
+                        No books found. Add books first to file disputes.
+                    </div>
+                `;
+            }
         }
 
-        // Submit dispute
-        // ✅ FIXED submitDispute function - SIRF YEH COPY KARO
+        // ✅ SELECT BOOK FOR DISPUTE - FIND OTHER USER AUTOMATICALLY
+        function selectBookForDispute(bookId, bookTitle, bookAuthor) {
+            console.log('📚 Selected book for dispute:', { bookId, bookTitle, bookAuthor });
+
+            // Remove previous selections
+            document.querySelectorAll('.book-item').forEach(item => {
+                item.style.backgroundColor = '';
+                item.style.borderColor = '';
+            });
+
+            // Highlight selected book
+            event.currentTarget.style.backgroundColor = '#e3f2fd';
+            event.currentTarget.style.borderColor = '#2196f3';
+
+            // Auto-fill dispute title
+            document.getElementById('disputeTitle').value = `Issue with ${bookTitle}`;
+
+            // Show book info
+            document.getElementById('selectedUserInfo').innerHTML = `
+                <div class="text-success">
+                    <i class="fas fa-check-circle me-1"></i>
+                    <strong>Book Selected:</strong> ${bookTitle}
+                </div>
+                <small class="text-muted">by ${bookAuthor}</small>
+                <div class="mt-1">
+                    <small><strong>Note:</strong> Our team will identify the other user involved</small>
+                </div>
+            `;
+
+            // Store book ID for dispute submission
+            selectedBookId = bookId;
+
+            // Focus on description
+            document.getElementById('disputeDescription').focus();
+        }
+
+        // ✅ FIXED submitDispute function
         function submitDispute() {
             console.log('🔄 Starting dispute submission...');
 
@@ -3158,9 +3053,6 @@
             const title = document.getElementById('disputeTitle').value.trim();
             const description = document.getElementById('disputeDescription').value.trim();
             const category = document.getElementById('disputeCategory').value;
-            const respondentId = document.getElementById('respondentIdInput').value.trim();
-
-            console.log('🔍 Form Values:', { title, description, category, respondentId });
 
             // Validate required fields
             if (!title) {
@@ -3181,22 +3073,21 @@
                 return;
             }
 
-            if (!respondentId) {
-                showToast('Please enter the user ID you have dispute with', 'error');
-                document.getElementById('respondentIdInput').focus();
+            if (!selectedBookId) {
+                showToast('Please select a book related to this dispute', 'error');
                 return;
             }
 
-            // Prepare dispute data - YAHI IMPORTANT CHANGE HAI
+            // ✅ IMPORTANT: Respondent ID ab automatically handle hoga backend mein
             const disputeData = {
                 title: title,
                 description: description,
                 category: category,
                 priority: document.getElementById('disputePriority').value,
                 complainant_id: parseInt(userData.user_id),
-                respondent_id: parseInt(respondentId), // ✅ YEH LINE FIX HAI - parseInt LAGAO
-                transaction_id: document.getElementById('relatedTransaction').value ?
-                    parseInt(document.getElementById('relatedTransaction').value) : null,
+                respondent_id: 1, // ✅ Temporary - backend will find the actual user
+                book_id: selectedBookId, // ✅ Yeh naya field add karo
+                transaction_id: null,
                 evidence: document.getElementById('disputeEvidence').value.trim() || '',
                 desired_resolution: document.getElementById('desiredResolution').value.trim() || ''
             };
@@ -3222,7 +3113,7 @@
                     console.log('✅ Dispute submission response:', data);
 
                     if (data.success) {
-                        showToast('✅ Dispute filed successfully! Our team will review it shortly.', 'success');
+                        showToast('✅ Dispute filed successfully! Admin will review it shortly.', 'success');
 
                         // Close modal
                         const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
@@ -3230,6 +3121,7 @@
 
                         // Reset form
                         document.getElementById('disputeForm').reset();
+                        selectedBookId = null;
 
                         // Refresh disputes list
                         if (document.getElementById('disputesInterface').style.display !== 'none') {
@@ -3248,13 +3140,6 @@
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 });
-        }
-        // Add dispute button to your UI where needed
-        function addDisputeButton() {
-            // You can add this to transaction cards or user profiles
-            return `<button class="btn btn-sm btn-outline-warning" onclick="fileDispute()">
-                <i class="fas fa-exclamation-triangle me-1"></i>File Dispute
-            </button>`;
         }
 
         // Dispute Management Functions
@@ -3278,231 +3163,6 @@
             updateDisputesBadge();
         }
 
-        // ✅ UPDATED fileDispute function
-        function fileDispute(transactionId = null, respondentId = null, respondentName = null) {
-            console.log('📝 Opening dispute form');
-
-            const modal = new bootstrap.Modal(document.getElementById('fileDisputeModal'));
-
-            // Reset form
-            document.getElementById('disputeForm').reset();
-
-            // ✅ SIRF TRANSACTIONS LOAD KAREIN ✅
-            loadTransactionsForDispute();
-
-            // Pre-fill respondent ID if provided
-            if (respondentId) {
-                setTimeout(() => {
-                    document.getElementById('respondentIdInput').value = respondentId;
-                    console.log(`✅ Pre-filled respondent ID: ${respondentId}`);
-                }, 500);
-            }
-
-            // Pre-fill transaction if provided
-            if (transactionId) {
-                setTimeout(() => {
-                    document.getElementById('relatedTransaction').value = transactionId;
-                }, 500);
-            }
-
-            modal.show();
-
-            // Form ko focus dein
-            setTimeout(() => {
-                document.getElementById('disputeTitle').focus();
-            }, 600);
-        }
-
-        // ✅ FIXED loadTransactionsForDispute function
-        function loadTransactionsForDispute() {
-            if (!userData || !userData.user_id) return;
-
-            const select = document.getElementById('relatedTransaction');
-            if (!select) {
-                console.log('⚠️ Transaction select element not found');
-                return;
-            }
-
-            // Clear and set default
-            select.innerHTML = '<option value="">Select transaction (optional)</option>';
-
-            console.log('📋 Loading transactions for dispute form...');
-
-            // Simple API call with error handling
-            fetch(`http://localhost/project/backend/api/requests/my_requests.php?user_id=${userData.user_id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(transactions => {
-                    console.log('📥 Transactions data:', transactions);
-
-                    if (transactions && transactions.length > 0) {
-                        transactions.forEach(transaction => {
-                            // Only include relevant transactions
-                            if (transaction.status !== 'Cancelled' && transaction.status !== 'Rejected') {
-                                const otherUserName = transaction.requester_name || transaction.owner_name;
-                                const option = document.createElement('option');
-                                option.value = transaction.id;
-                                option.textContent = `#${transaction.id} - ${transaction.book_title} with ${otherUserName}`;
-                                select.appendChild(option);
-                            }
-                        });
-
-                        console.log(`✅ Loaded ${select.options.length - 1} transactions`);
-                    } else {
-                        const option = document.createElement('option');
-                        option.textContent = 'No transactions available';
-                        option.disabled = true;
-                        select.appendChild(option);
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error loading transactions:', error);
-                    const option = document.createElement('option');
-                    option.textContent = 'Error loading transactions';
-                    option.disabled = true;
-                    select.appendChild(option);
-                });
-        }
-
-
-
-        // ✅ FIXED submitDispute function
-        function submitDispute() {
-            console.log('🔄 Starting dispute submission...');
-
-            // Pehle check karein elements available hain ya nahi
-            const titleInput = document.getElementById('disputeTitle');
-            const descriptionInput = document.getElementById('disputeDescription');
-            const categoryInput = document.getElementById('disputeCategory');
-            const respondentInput = document.getElementById('respondentIdInput');
-
-            if (!titleInput || !descriptionInput || !categoryInput || !respondentInput) {
-                console.error('❌ Form elements not found:', {
-                    title: !!titleInput,
-                    description: !!descriptionInput,
-                    category: !!categoryInput,
-                    respondent: !!respondentInput
-                });
-                showToast('Error: Form not loaded properly. Please refresh the page.', 'error');
-                return;
-            }
-
-            // Manual validation karein
-            const title = titleInput.value.trim();
-            const description = descriptionInput.value.trim();
-            const category = categoryInput.value;
-            const respondentId = respondentInput.value.trim();
-
-            console.log('🔍 Form Values:', {
-                title,
-                description,
-                category,
-                respondentId
-            });
-
-            // Validate required fields
-            if (!title) {
-                showToast('Please enter a dispute title', 'error');
-                titleInput.focus();
-                return;
-            }
-
-            if (!description) {
-                showToast('Please enter a detailed description', 'error');
-                descriptionInput.focus();
-                return;
-            }
-
-            if (!category) {
-                showToast('Please select a category', 'error');
-                categoryInput.focus();
-                return;
-            }
-
-            if (!respondentId) {
-                showToast('Please enter the user ID you have dispute with', 'error');
-                respondentInput.focus();
-                return;
-            }
-
-            const disputeData = {
-                title: title,
-                description: description,
-                category: category,
-                priority: document.getElementById('disputePriority').value,
-                complainant_id: parseInt(userData.user_id),
-                respondent_id: parseInt(respondentId),
-                transaction_id: document.getElementById('relatedTransaction')?.value ?
-                    parseInt(document.getElementById('relatedTransaction').value) : null,
-                evidence: document.getElementById('disputeEvidence')?.value.trim() || '',
-                desired_resolution: document.getElementById('desiredResolution')?.value.trim() || ''
-            };
-
-            console.log('📤 Final Dispute Data:', disputeData);
-
-            // Show loading state
-            const submitBtn = document.getElementById('submitDisputeBtn');
-            if (!submitBtn) {
-                showToast('Error: Submit button not found', 'error');
-                return;
-            }
-
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
-            submitBtn.disabled = true;
-
-            fetch('http://localhost/project/backend/api/users/disputes.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(disputeData)
-            })
-                .then(response => {
-                    console.log('📡 Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('✅ Dispute submission response:', data);
-
-                    if (data.success) {
-                        showToast('✅ Dispute filed successfully! Our team will review it shortly.', 'success');
-
-                        // Close modal
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
-                        if (modal) modal.hide();
-
-                        // Reset form
-                        document.getElementById('disputeForm').reset();
-
-                        // Refresh disputes list if on disputes page
-                        if (document.getElementById('disputesInterface')?.style.display !== 'none') {
-                            loadUserDisputes();
-                        }
-
-                        // Update badge
-                        updateDisputesBadge();
-
-                    } else {
-                        throw new Error(data.message || 'Failed to file dispute');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error filing dispute:', error);
-                    showToast('❌ Error filing dispute: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                });
-        }
         // Load user's disputes
         function loadUserDisputes(filter = 'all') {
             if (!userData || !userData.user_id) return;
@@ -3525,16 +3185,16 @@
                 .catch(error => {
                     console.error('❌ Error loading disputes:', error);
                     disputesList.innerHTML = `
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle me-2"></i>
-                Error loading disputes. Please try again.
-                <div class="mt-2">
-                    <button class="btn btn-sm btn-warning" onclick="loadUserDisputes()">
-                        <i class="fas fa-redo me-1"></i> Retry
-                    </button>
-                </div>
-            </div>
-        `;
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading disputes. Please try again.
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-warning" onclick="loadUserDisputes()">
+                                    <i class="fas fa-redo me-1"></i> Retry
+                                </button>
+                            </div>
+                        </div>
+                    `;
                 });
         }
 
@@ -3561,47 +3221,47 @@
                 const roleBadge = isComplainant ? '<span class="badge bg-primary me-2">You: Complainant</span>' : '<span class="badge bg-secondary me-2">You: Respondent</span>';
 
                 return `
-            <div class="card mb-3 dispute-card" data-status="${dispute.status}">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="d-flex align-items-center mb-2">
-                                <h6 class="mb-0 me-2">${dispute.title}</h6>
-                                ${roleBadge}
-                            </div>
-                            <p class="text-muted mb-2">${dispute.description.substring(0, 150)}...</p>
-                            <div class="d-flex flex-wrap gap-2 mb-2">
-                                <span class="badge ${priorityClass}">
-                                    <i class="fas ${getPriorityIcon(dispute.priority)} me-1"></i>
-                                    ${dispute.priority.charAt(0).toUpperCase() + dispute.priority.slice(1)}
-                                </span>
-                                <span class="badge bg-light text-dark">${dispute.category}</span>
-                                <span class="badge ${statusClass}">
-                                    ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                </span>
-                            </div>
-                            <div class="small text-muted">
-                                <strong>With:</strong> ${otherUserName} | 
-                                <strong>Filed:</strong> ${new Date(dispute.created_at).toLocaleDateString()}
-                                ${dispute.assigned_admin_name ? `| <strong>Assigned to:</strong> ${dispute.assigned_admin_name}` : ''}
-                            </div>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <div class="btn-group-vertical">
-                                <button class="btn btn-sm btn-outline-primary mb-1" onclick="viewDisputeDetails(${dispute.id})">
-                                    <i class="fas fa-eye me-1"></i>View Details
-                                </button>
-                                ${dispute.status === 'open' ? `
-                                    <button class="btn btn-sm btn-outline-warning" onclick="addDisputeEvidence(${dispute.id})">
-                                        <i class="fas fa-plus me-1"></i>Add Evidence
-                                    </button>
-                                ` : ''}
+                    <div class="card mb-3 dispute-card" data-status="${dispute.status}">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0 me-2">${dispute.title}</h6>
+                                        ${roleBadge}
+                                    </div>
+                                    <p class="text-muted mb-2">${dispute.description.substring(0, 150)}...</p>
+                                    <div class="d-flex flex-wrap gap-2 mb-2">
+                                        <span class="badge ${priorityClass}">
+                                            <i class="fas ${getPriorityIcon(dispute.priority)} me-1"></i>
+                                            ${dispute.priority.charAt(0).toUpperCase() + dispute.priority.slice(1)}
+                                        </span>
+                                        <span class="badge bg-light text-dark">${dispute.category}</span>
+                                        <span class="badge ${statusClass}">
+                                            ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                        </span>
+                                    </div>
+                                    <div class="small text-muted">
+                                        <strong>With:</strong> ${otherUserName} | 
+                                        <strong>Filed:</strong> ${new Date(dispute.created_at).toLocaleDateString()}
+                                        ${dispute.assigned_admin_name ? `| <strong>Assigned to:</strong> ${dispute.assigned_admin_name}` : ''}
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="btn-group-vertical">
+                                        <button class="btn btn-sm btn-outline-primary mb-1" onclick="viewDisputeDetails(${dispute.id})">
+                                            <i class="fas fa-eye me-1"></i>View Details
+                                        </button>
+                                        ${dispute.status === 'open' ? `
+                                            <button class="btn btn-sm btn-outline-warning" onclick="addDisputeEvidence(${dispute.id})">
+                                                <i class="fas fa-plus me-1"></i>Add Evidence
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        `;
+                `;
             }).join('');
         }
 
@@ -3612,26 +3272,26 @@
             let message = '';
             if (filter === 'all') {
                 message = `
-            <div class="text-center p-5">
-                <i class="fas fa-gavel fa-4x text-muted mb-3"></i>
-                <h4>No Disputes Filed</h4>
-                <p class="text-muted">You haven't filed any disputes yet.</p>
-                <button class="btn btn-warning mt-2" onclick="fileDispute()">
-                    <i class="fas fa-plus me-1"></i>File Your First Dispute
-                </button>
-            </div>
-        `;
+                    <div class="text-center p-5">
+                        <i class="fas fa-gavel fa-4x text-muted mb-3"></i>
+                        <h4>No Disputes Filed</h4>
+                        <p class="text-muted">You haven't filed any disputes yet.</p>
+                        <button class="btn btn-warning mt-2" onclick="fileDispute()">
+                            <i class="fas fa-plus me-1"></i>File Your First Dispute
+                        </button>
+                    </div>
+                `;
             } else {
                 message = `
-            <div class="text-center p-4">
-                <i class="fas fa-filter fa-3x text-muted mb-3"></i>
-                <h5>No ${filter.replace('_', ' ')} disputes</h5>
-                <p>You don't have any ${filter.replace('_', ' ')} disputes at the moment.</p>
-                <button class="btn btn-outline-primary" onclick="filterDisputes('all')">
-                    View All Disputes
-                </button>
-            </div>
-        `;
+                    <div class="text-center p-4">
+                        <i class="fas fa-filter fa-3x text-muted mb-3"></i>
+                        <h5>No ${filter.replace('_', ' ')} disputes</h5>
+                        <p>You don't have any ${filter.replace('_', ' ')} disputes at the moment.</p>
+                        <button class="btn btn-outline-primary" onclick="filterDisputes('all')">
+                            View All Disputes
+                        </button>
+                    </div>
+                `;
             }
 
             disputesList.innerHTML = message;
@@ -3667,6 +3327,7 @@
                 showToast('Evidence added successfully!', 'success');
             }
         }
+
         // Update disputes badge count
         function updateDisputesBadge() {
             if (!userData || !userData.user_id) return;
@@ -3703,17 +3364,6 @@
             return icons[priority] || 'fa-circle';
         }
 
-        // Add dispute filing to transaction cards
-        function addDisputeButtonToTransaction(transactionId, respondentId, respondentName) {
-            return `
-        <button class="btn btn-sm btn-outline-warning" 
-                onclick="fileDispute(${transactionId}, ${respondentId}, '${respondentName}')"
-                title="File dispute about this transaction">
-            <i class="fas fa-exclamation-triangle me-1"></i>File Dispute
-        </button>
-    `;
-        }
-
         // Refresh disputes
         function refreshDisputes() {
             console.log('🔄 Refreshing disputes...');
@@ -3722,271 +3372,22 @@
             showToast('Disputes refreshed!', 'success');
         }
 
-        // Update the setActiveNavLink function to include disputes
-        function setActiveNavLink(activeItem) {
-            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+        // ✅ AUTO-REFRESH EVERY 30 SECONDS
+        // setInterval(() => {
+        //     if (userData && userData.user_id) {
+        //         updateRequestsCount();
+        //         loadRecentRequests();
+        //         updateUnreadNotificationsCount();
+        //     }
+        // }, 30000);
 
-            const navLinks = document.querySelectorAll('.sidebar .nav-link');
-            switch (activeItem) {
-                case 'dashboard': navLinks[0].classList.add('active'); break;
-                case 'profile': navLinks[1].classList.add('active'); break;
-                case 'mybooks': navLinks[2].classList.add('active'); break;
-                case 'transactions': navLinks[3].classList.add('active'); break;
-                case 'requests': navLinks[6].classList.add('active'); break;
-                case 'disputes': navLinks[7].classList.add('active'); break; // New case
-                case 'notifications': navLinks[8].classList.add('active'); break; // Updated index
+        // ✅ INITIALIZE ON DASHBOARD LOAD
+        document.addEventListener('DOMContentLoaded', function () {
+            if (userData && userData.user_id) {
+                updateRequestsCount();
+                loadRecentRequests();
             }
-        }
-
-        // ✅ LOAD USER'S BOOKS FOR DISPUTE
-function loadUserBooksForDispute() {
-    if (!userData || !userData.user_id) return;
-
-    const booksList = document.getElementById('userBooksList');
-    
-    fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('User books for dispute:', data);
-            
-            if (data.books && data.books.length > 0) {
-                displayUserBooksForDispute(data.books);
-            } else {
-                booksList.innerHTML = `
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        No books found. You need to add books first to file a dispute.
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading user books:', error);
-            booksList.innerHTML = `
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    Error loading your books. Please try again.
-                </div>
-            `;
         });
-}
-
-// ✅ DISPLAY USER'S BOOKS FOR SELECTION
-function displayUserBooksForDispute(books) {
-    const booksList = document.getElementById('userBooksList');
-    
-    booksList.innerHTML = books.map(book => `
-        <div class="book-item border-bottom pb-2 mb-2" style="cursor: pointer;" 
-             onclick="selectBookForDispute(${book.id}, '${book.title.replace(/'/g, "\\'")}', '${book.author.replace(/'/g, "\\'")}')">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <h6 class="mb-1">${book.title}</h6>
-                    <p class="mb-1 text-muted small">by ${book.author}</p>
-                    <small class="text-muted">Condition: ${book.condition} • Status: ${book.status}</small>
-                </div>
-                <div class="text-end">
-                    <small class="text-muted">ID: ${book.id}</small>
-                    <div class="mt-1">
-                        <span class="badge bg-success">Select</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
-    // Add "No books" message if empty
-    if (books.length === 0) {
-        booksList.innerHTML = `
-            <div class="alert alert-warning">
-                <i class="fas fa-book me-2"></i>
-                No books found. Add books first to file disputes.
-            </div>
-        `;
-    }
-}
-
-// ✅ SELECT BOOK FOR DISPUTE - FIND OTHER USER AUTOMATICALLY
-function selectBookForDispute(bookId, bookTitle, bookAuthor) {
-    console.log('📚 Selected book for dispute:', { bookId, bookTitle, bookAuthor });
-    
-    // Remove previous selections
-    document.querySelectorAll('.book-item').forEach(item => {
-        item.style.backgroundColor = '';
-        item.style.borderColor = '';
-    });
-    
-    // Highlight selected book
-    event.currentTarget.style.backgroundColor = '#e3f2fd';
-    event.currentTarget.style.borderColor = '#2196f3';
-    
-    // Auto-fill dispute title
-    document.getElementById('disputeTitle').value = `Issue with ${bookTitle}`;
-    
-    // Show book info
-    document.getElementById('selectedUserInfo').innerHTML = `
-        <div class="text-success">
-            <i class="fas fa-check-circle me-1"></i>
-            <strong>Book Selected:</strong> ${bookTitle}
-        </div>
-        <small class="text-muted">by ${bookAuthor}</small>
-        <div class="mt-1">
-            <small><strong>Note:</strong> Our team will identify the other user involved</small>
-        </div>
-    `;
-    
-    // Store book ID for dispute submission
-    window.selectedBookId = bookId;
-    
-    // Focus on description
-    document.getElementById('disputeDescription').focus();
-}
-
-// ✅ UPDATED FILE DISPUTE FUNCTION
-function fileDispute() {
-    console.log('📝 Opening dispute form');
-    
-    const modal = new bootstrap.Modal(document.getElementById('fileDisputeModal'));
-    
-    // Reset form
-    document.getElementById('disputeForm').reset();
-    window.selectedBookId = null;
-    
-    // Load user's books
-    loadUserBooksForDispute();
-    
-    // Reset user info
-    document.getElementById('selectedUserInfo').innerHTML = 'Select a book to see user details';
-    
-    modal.show();
-}
-
-// ✅ UPDATED SUBMIT DISPUTE FUNCTION
-function submitDispute() {
-    console.log('🔄 Starting dispute submission...');
-    
-    // Get form values
-    const title = document.getElementById('disputeTitle').value.trim();
-    const description = document.getElementById('disputeDescription').value.trim();
-    const category = document.getElementById('disputeCategory').value;
-    
-    // Validate required fields
-    if (!title) {
-        showToast('Please enter a dispute title', 'error');
-        document.getElementById('disputeTitle').focus();
-        return;
-    }
-    
-    if (!description) {
-        showToast('Please enter a detailed description', 'error');
-        document.getElementById('disputeDescription').focus();
-        return;
-    }
-    
-    if (!category) {
-        showToast('Please select a category', 'error');
-        document.getElementById('disputeCategory').focus();
-        return;
-    }
-    
-    if (!window.selectedBookId) {
-        showToast('Please select a book related to this dispute', 'error');
-        return;
-    }
-
-    // ✅ IMPORTANT: Respondent ID ab automatically handle hoga backend mein
-    const disputeData = {
-        title: title,
-        description: description,
-        category: category,
-        priority: document.getElementById('disputePriority').value,
-        complainant_id: parseInt(userData.user_id),
-        respondent_id: 1, // ✅ Temporary - backend will find the actual user
-        book_id: window.selectedBookId, // ✅ Yeh naya field add karo
-        transaction_id: null,
-        evidence: document.getElementById('disputeEvidence').value.trim() || '',
-        desired_resolution: document.getElementById('desiredResolution').value.trim() || ''
-    };
-
-    console.log('📤 Final Dispute Data:', disputeData);
-
-    // Show loading state
-    const submitBtn = document.getElementById('submitDisputeBtn');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Submitting...';
-    submitBtn.disabled = true;
-
-    // Send request
-    fetch('http://localhost/project/backend/api/users/disputes.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(disputeData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('✅ Dispute submission response:', data);
-        
-        if (data.success) {
-            showToast('✅ Dispute filed successfully! Admin will review it shortly.', 'success');
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('fileDisputeModal'));
-            modal.hide();
-            
-            // Reset form
-            document.getElementById('disputeForm').reset();
-            window.selectedBookId = null;
-            
-            // Refresh disputes list
-            if (document.getElementById('disputesInterface').style.display !== 'none') {
-                loadUserDisputes();
-            }
-            
-        } else {
-            throw new Error(data.message || 'Failed to file dispute');
-        }
-    })
-    .catch(error => {
-        console.error('❌ Error filing dispute:', error);
-        showToast('❌ Error filing dispute: ' + error.message, 'error');
-    })
-    .finally(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    });
-}
-        // Update initializeDashboard to include disputes badge
-        function initializeDashboard() {
-            console.log('🚀 Initializing dashboard...');
-
-            // Basic user info
-            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-            updateSidebarInfo();
-
-            // Load all data
-            loadUserBooks();
-            loadDashboardStats();
-            updateRequestsCount();
-            loadRecentRequests();
-
-            // Initialize disputes badge
-            updateDisputesBadge();
-
-            // Initialize notifications
-            setTimeout(() => {
-                updateUnreadNotificationsCount();
-            }, 2000);
-
-            initializeModals();
-
-            // Setup auto-checkers
-            setupAutoCheckers();
-
-            console.log('✅ Dashboard fully initialized');
-        }
     </script>
 
     <!-- Bootstrap JS -->

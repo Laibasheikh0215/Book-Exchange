@@ -10,12 +10,11 @@ $db = $database->getConnection();
 
 $request = new Request($db);
 
-$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : null;
+$user_id = isset($_GET['user_id']) ? $_GET['user_id'] : die();
 
-if($user_id) {
-    $count = $request->countPendingRequests($user_id);
-    echo json_encode(array("count" => $count));
-} else {
-    echo json_encode(array("count" => 0));
-}
+$pending_count = $request->getPendingRequestsCount($user_id);
+
+echo json_encode(array(
+    "count" => $pending_count
+));
 ?>
