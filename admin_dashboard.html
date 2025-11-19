@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Book Exchange</title>
-        <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -57,13 +58,13 @@
 
         .navbar {
             background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
 
@@ -75,10 +76,21 @@
             border-left: 4px solid var(--accent);
         }
 
-        .stat-card.users { border-left-color: var(--success); }
-        .stat-card.books { border-left-color: var(--warning); }
-        .stat-card.transactions { border-left-color: var(--accent); }
-        .stat-card.disputes { border-left-color: var(--danger); }
+        .stat-card.users {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.books {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.transactions {
+            border-left-color: var(--accent);
+        }
+
+        .stat-card.disputes {
+            border-left-color: var(--danger);
+        }
 
         .table th {
             border-top: none;
@@ -86,31 +98,147 @@
             color: var(--secondary);
         }
 
-        .badge-priority { padding: 6px 12px; border-radius: 20px; }
-        .priority-low { background: #d4edda; color: #155724; }
-        .priority-medium { background: #fff3cd; color: #856404; }
-        .priority-high { background: #f8d7da; color: #721c24; }
-        .priority-urgent { background: #dc3545; color: white; }
+        .badge-priority {
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
 
-        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; }
-        .status-open { background: #d1ecf1; color: #0c5460; }
-        .status-under-review { background: #fff3cd; color: #856404; }
-        .status-resolved { background: #d4edda; color: #155724; }
-        .status-closed { background: #e2e3e5; color: #383d41; }
+        .priority-low {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .priority-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .priority-high {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .priority-urgent {
+            background: #dc3545;
+            color: white;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-open {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-under-review {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-closed {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .status-available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-lent {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-reserved {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .book-cover {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
 
         @media (max-width: 768px) {
             .sidebar {
                 margin-left: -250px;
             }
+
             .main-content {
                 margin-left: 0;
             }
+
             .sidebar.show {
                 margin-left: 0;
             }
         }
+
+        /* Policies Section Styles */
+        .policies-hero {
+            background: linear-gradient(90deg, rgba(13, 110, 253, 0.06), rgba(13, 110, 253, 0.02));
+            border-left: 4px solid #f8ca30;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .toc a {
+            color: #f8ca30;
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .small-muted {
+            font-size: .9rem;
+            color: #6c757d;
+        }
+
+        .policies-content {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 6px 18px rgba(20, 20, 50, 0.05);
+        }
+
+        .policies-sidebar {
+            position: sticky;
+            top: 20px;
+        }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -146,13 +274,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" data-section="policies">
+                    <a class="nav-link" href="policies.html" data-section="policies">
                         <i class="fas fa-cog"></i>Platform Policies
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-section="admins">
-                        <i class="fas fa-user-shield"></i>Admin Users
                     </a>
                 </li>
                 <li class="nav-item mt-4">
@@ -172,17 +295,22 @@
                 <button class="btn btn-primary d-md-none" id="sidebarToggle">
                     <i class="fas fa-bars"></i>
                 </button>
-                
+
+                <a class="navbar-brand d-flex align-items-center" href="index.html">
+                        <img src="Assets/main logo.png" alt="main-logo" id="main-logo"
+                            style="width:150px; margin-right:100px;">
+
+                    </a>
                 <div class="navbar-nav ms-auto">
                     <div class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="fas fa-user-circle me-2"></i>
                             <span id="adminUsername">Admin</span>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i
+                                        class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
                         </ul>
                     </div>
                 </div>
@@ -196,7 +324,7 @@
                 <div class="row mb-4">
                     <div class="col-12">
                         <h2>Dashboard Overview</h2>
-                        <p class="text-muted">Welcome to the Book Exchange Admin Panel</p>
+                        <p class="text-muted">Welcome to the Online Book Exchange Community's Admin Panel</p>
                     </div>
                 </div>
 
@@ -264,78 +392,6 @@
                     </div>
                 </div>
 
-                <!-- Users Management Section -->
-<div id="users-section" class="content-section" style="display: none;">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2><i class="fas fa-users me-2"></i>Manage Users</h2>
-            <p class="text-muted">View and manage all registered users</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">All Users (Total: <span id="usersCount">0</span>)</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Contact</th>
-                            <th>Location</th>
-                            <th>Books</th>
-                            <th>Joined</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <!-- Users will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Books Management Section -->
-<div id="books-section" class="content-section" style="display: none;">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2><i class="fas fa-book me-2"></i>Manage Books</h2>
-            <p class="text-muted">View and manage all books uploaded by users</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">All Books (Total: <span id="booksCount">0</span>)</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Cover</th>
-                            <th>Book Details</th>
-                            <th>Owner</th>
-                            <th>Condition</th>
-                            <th>Status</th>
-                            <th>Added</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="booksTableBody">
-                        <!-- Books will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-   
                 <!-- Recent Activity -->
                 <div class="row">
                     <div class="col-md-6 mb-4">
@@ -374,175 +430,434 @@
                     </div>
                 </div>
             </div>
-            
-      <!-- Disputes Management Section -->
-<div id="disputes-section" class="content-section" style="display: none;">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2><i class="fas fa-exclamation-triangle me-2"></i>Manage Disputes</h2>
-            <p class="text-muted">Resolve user disputes and issues</p>
+
+            <!-- Users Management Section -->
+            <div id="users-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2><i class="fas fa-users me-2"></i>Manage Users</h2>
+                        <p class="text-muted">View and manage all registered users</p>
+                    </div>
+                </div>
+
+                <!-- User Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="totalUsersCount">0</h3>
+                                <p class="text-muted mb-0">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="activeUsers">0</h3>
+                                <p class="text-muted mb-0">Active</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="newUsersToday">0</h3>
+                                <p class="text-muted mb-0">New Today</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">All Users (Total: <span id="usersCount">0</span>)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User</th>
+                                        <th>Contact</th>
+                                        <th>Location</th>
+                                        <th>Books</th>
+                                        <th>Status</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Management Section -->
+            <div id="books-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2><i class="fas fa-book me-2"></i>Manage Books</h2>
+                        <p class="text-muted">View and manage all books uploaded by users</p>
+                    </div>
+                </div>
+
+                <!-- Book Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="totalBooksCount">0</h3>
+                                <p class="text-muted mb-0">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="availableBooks">0</h3>
+                                <p class="text-muted mb-0">Available</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="lentBooks">0</h3>
+                                <p class="text-muted mb-0">Lent Out</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="reservedBooks">0</h3>
+                                <p class="text-muted mb-0">Reserved</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Books Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">All Books (Total: <span id="booksCount">0</span>)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Cover</th>
+                                        <th>Book Details</th>
+                                        <th>Owner</th>
+                                        <th>Condition</th>
+                                        <th>Status</th>
+                                        <th>Added</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="booksTableBody">
+                                    <!-- Books will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Management Section -->
+            <div id="transactions-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2><i class="fas fa-exchange-alt me-2"></i>Manage Transactions</h2>
+                        <p class="text-muted">Monitor all book exchange transactions</p>
+                    </div>
+                </div>
+
+                <!-- Transaction Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="totalTransactionsCount">0</h3>
+                                <p class="text-muted mb-0">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="ongoingTransactions">0</h3>
+                                <p class="text-muted mb-0">Ongoing</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="completedTransactions">0</h3>
+                                <p class="text-muted mb-0">Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">All Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Book</th>
+                                        <th>Borrower</th>
+                                        <th>Lender</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Start Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionsTableBody">
+                                    <!-- Transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disputes Management Section -->
+            <div id="disputes-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2><i class="fas fa-exclamation-triangle me-2"></i>Manage Disputes</h2>
+                        <p class="text-muted">Resolve user disputes and issues</p>
+                    </div>
+                </div>
+
+                <!-- Dispute Statistics -->
+                <div class="row mb-4">
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="totalDisputes">0</h3>
+                                <p class="text-muted mb-0">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="openDisputesCount">0</h3>
+                                <p class="text-muted mb-0">Open</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="underReviewDisputes">0</h3>
+                                <p class="text-muted mb-0">Under Review</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="resolvedDisputes">0</h3>
+                                <p class="text-muted mb-0">Resolved</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-md-4 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <h3 id="urgentDisputes">0</h3>
+                                <p class="text-muted mb-0">Urgent</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disputes Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Disputes List</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Parties</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Created</th>
+                                        <th>Assigned To</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="disputesTableBody">
+                                    <!-- Disputes will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Policies Section -->
+            <div id="policies-section" class="content-section" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h2><i class="fas fa-cog me-2"></i>Platform Policies</h2>
+                        <p class="text-muted">Manage and update platform policies</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Sidebar -->
+                    <div class="col-lg-4">
+                        <div class="policies-sidebar">
+                            <div class="card policies-hero mb-3">
+                                <h5 class="mb-2">Website Policies</h5>
+                                <p class="small-muted mb-2">Read our privacy, community, and safety rules.</p>
+
+                                <div class="mb-3">
+                                    <button class="btn btn-sm w-100" id="printBtn"
+                                        style="border:1px solid #f8ca30; color:#f8ca30;">
+                                        <i class="fas fa-print me-2"></i>Print / Save
+                                    </button>
+                                </div>
+
+                                <hr>
+                                <div class="toc">
+                                    <strong>Quick Links</strong>
+                                    <ul class="list-unstyled mt-2 mb-0">
+                                        <li><a href="#privacy">1. Privacy Policy</a></li>
+                                        <li><a href="#community">2. Community Guidelines</a></li>
+                                        <li><a href="#prohibited">3. Prohibited Activities</a></li>
+                                        <li><a href="#content">4. Content Ownership</a></li>
+                                        <li><a href="#cookies">5. Cookies Policy</a></li>
+                                        <li><a href="#changes">6. Policy Updates</a></li>
+                                        <li><a href="#contact">7. Contact Information</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="card text-center small-muted">
+                                <div class="card-body">
+                                    <div>Need help?</div>
+                                    <div class="mt-2"><a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="col-lg-8">
+                        <div class="policies-content">
+                            <header class="mb-4">
+                                <h1 class="h3">Website Policies</h1>
+                                <p class="small-muted mb-0">Online Community Book Exchange — Read carefully.</p>
+                            </header>
+
+                            <!-- PRIVACY POLICY -->
+                            <article id="privacy" class="mb-4">
+                                <h2 class="h5">1. Privacy Policy</h2>
+                                <ul>
+                                    <li>We collect basic user information such as name, email, book listings, and
+                                        activity logs.</li>
+                                    <li>Your data is used for account management, book exchange coordination, and
+                                        improving the platform.</li>
+                                    <li>We do not sell personal data; sharing occurs only with consent or legal
+                                        requirements.</li>
+                                    <li>We use reasonable security measures, but no system is 100% safe.</li>
+                                    <li>Users may request to update or delete their data at any time.</li>
+                                </ul>
+                            </article>
+
+                            <!-- COMMUNITY GUIDELINES -->
+                            <article id="community" class="mb-4">
+                                <h2 class="h5">2. Community Guidelines</h2>
+                                <ul>
+                                    <li>Users must behave respectfully, avoiding harassment or inappropriate content.
+                                    </li>
+                                    <li>All book listings should be accurate and truthful.</li>
+                                    <li>Users are responsible for safe exchange arrangements and checking books before
+                                        completing a swap.</li>
+                                </ul>
+                            </article>
+
+                            <!-- PROHIBITED ACTIVITIES -->
+                            <article id="prohibited" class="mb-4">
+                                <h2 class="h5">3. Prohibited Activities</h2>
+                                <ul>
+                                    <li>Listing stolen, illegal, or copyrighted books without permission.</li>
+                                    <li>Spamming, phishing, hacking attempts, or sharing harmful content.</li>
+                                    <li>Creating fake accounts or misleading other users.</li>
+                                </ul>
+                            </article>
+
+                            <!-- CONTENT OWNERSHIP -->
+                            <article id="content" class="mb-4">
+                                <h2 class="h5">4. Content Ownership</h2>
+                                <ul>
+                                    <li>Users own their uploaded content, including book photos and descriptions.</li>
+                                    <li>By posting, you grant us permission to display your content on the platform.
+                                    </li>
+                                </ul>
+                            </article>
+
+                            <!-- COOKIES POLICY -->
+                            <article id="cookies" class="mb-4">
+                                <h2 class="h5">5. Cookies Policy</h2>
+                                <ul>
+                                    <li>We use cookies to maintain login sessions and enhance user experience.</li>
+                                    <li>Cookies help personalize book suggestions and improve performance.</li>
+                                    <li>You may disable cookies, but some features may not work properly.</li>
+                                </ul>
+                            </article>
+
+                            <!-- CHANGES -->
+                            <article id="changes" class="mb-4">
+                                <h2 class="h5">6. Updates to Policies</h2>
+                                <ul>
+                                    <li>We may update these policies at any time.</li>
+                                    <li>Changes become effective upon posting.</li>
+                                    <li>Your continued use means you accept the updated policies.</li>
+                                </ul>
+                            </article>
+
+                            <!-- CONTACT -->
+                            <article id="contact" class="mb-4">
+                                <h2 class="h5">7. Contact Information</h2>
+                                <p class="small-muted">If you have any questions regarding these policies, contact:</p>
+                                <ul>
+                                    <li>Email: <a href="mailto:bookcrossing@gmail.com">bookcrossing@gmail.com</a></li>
+                                    <li>Phone: <a href="tel:+923412875468">+92 341 2875468</a></li>
+                                </ul>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Dispute Statistics -->
-    <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="totalDisputes">0</h3>
-                    <p class="text-muted mb-0">Total</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="openDisputesCount">0</h3>
-                    <p class="text-muted mb-0">Open</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="underReviewDisputes">0</h3>
-                    <p class="text-muted mb-0">Under Review</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="resolvedDisputes">0</h3>
-                    <p class="text-muted mb-0">Resolved</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="urgentDisputes">0</h3>
-                    <p class="text-muted mb-0">Urgent</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters and Actions -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary active" data-filter="all">All</button>
-                <button type="button" class="btn btn-outline-warning" data-filter="open">Open</button>
-                <button type="button" class="btn btn-outline-info" data-filter="under_review">Under Review</button>
-                <button type="button" class="btn btn-outline-success" data-filter="resolved">Resolved</button>
-                <button type="button" class="btn btn-outline-danger" data-filter="urgent">Urgent</button>
-            </div>
-        </div>
-        <div class="col-md-4 text-end">
-            <button class="btn btn-primary" onclick="adminDashboard.exportDisputes()">
-                <i class="fas fa-download me-1"></i>Export
-            </button>
-        </div>
-    </div>
-
-    <!-- Disputes Table -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Disputes List</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Parties</th>
-                            <th>Category</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Assigned To</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="disputesTableBody">
-                        <!-- Disputes will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-    
-<!-- Transactions Management Section -->
-<div id="transactions-section" class="content-section" style="display: none;">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2><i class="fas fa-exchange-alt me-2"></i>Manage Transactions</h2>
-            <p class="text-muted">Monitor all book exchange transactions</p>
-        </div>
-    </div>
-
-    <!-- Transaction Statistics -->
-    <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="totalTransactionsCount">0</h3>
-                    <p class="text-muted mb-0">Total</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="ongoingTransactions">0</h3>
-                    <p class="text-muted mb-0">Ongoing</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 mb-3">
-            <div class="card stat-card">
-                <div class="card-body text-center">
-                    <h3 id="completedTransactions">0</h3>
-                    <p class="text-muted mb-0">Completed</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Transactions Table -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">All Transactions</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Book</th>
-                            <th>Borrower</th>
-                            <th>Lender</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Start Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsTableBody">
-                        <!-- Transactions will be loaded here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="admin-dashboard.js"></script>
-</body>
-</html>

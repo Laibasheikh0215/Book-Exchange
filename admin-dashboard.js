@@ -43,19 +43,24 @@ class AdminDashboard {
             });
         });
 
-        // Dispute filters
+        // User and Book filters
         document.addEventListener('click', (e) => {
-            if (e.target.hasAttribute('data-filter')) {
+            if (e.target.hasAttribute('data-filter') && 
+                (e.target.closest('#users-section') || e.target.closest('#books-section'))) {
                 const filter = e.target.getAttribute('data-filter');
                 
                 // Update active state
-                document.querySelectorAll('[data-filter]').forEach(btn => {
+                e.target.closest('.btn-group').querySelectorAll('[data-filter]').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 e.target.classList.add('active');
                 
-                // Load disputes with filter
-                this.loadDisputes(filter);
+                // Load data with filter
+                if (e.target.closest('#users-section')) {
+                    this.loadUsers(filter);
+                } else if (e.target.closest('#books-section')) {
+                    this.loadBooks(filter);
+                }
             }
         });
     }
@@ -99,7 +104,7 @@ class AdminDashboard {
 
     async loadDashboardStats() {
         try {
-            console.log('Loading dashboard stats...');
+            console.log('🔄 Loading dashboard stats...');
 
             const response = await fetch(`${this.ADMIN_API_BASE}/stats.php`);
 
@@ -108,23 +113,62 @@ class AdminDashboard {
             }
 
             const data = await response.json();
-            console.log('Stats data received:', data);
+            console.log('📊 Stats data received:', data);
 
             if (data.success) {
                 // Update the statistics boxes
                 document.getElementById('totalUsers').textContent = data.stats.total_users;
                 document.getElementById('totalBooks').textContent = data.stats.total_books;
                 document.getElementById('totalTransactions').textContent = data.stats.total_transactions;
-                document.getElementById('openDisputes').textContent = data.stats.open_disputes;
+                
+                // IMPORTANT: Real-time dispute count load karo
+                await this.loadRealTimeDisputeCount();
 
-                console.log('Stats updated successfully');
+                console.log('✅ Stats updated successfully');
             } else {
-                console.error('Stats API returned error:', data.message);
+                console.error('❌ Stats API returned error:', data.message);
                 this.setDefaultStats();
             }
         } catch (error) {
-            console.error('Error loading stats:', error);
+            console.error('❌ Error loading stats:', error);
             this.setDefaultStats();
+        }
+    }
+
+    // Real-time dispute count load karega
+    async loadRealTimeDisputeCount() {
+        try {
+            console.log('🔄 Loading real-time dispute count...');
+            
+            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php`);
+            const data = await response.json();
+
+            console.log('📋 Disputes API response:', data);
+
+            if (data.success && data.disputes) {
+                // Count open and under_review disputes
+                const openDisputes = data.disputes.filter(dispute => 
+                    dispute.status === 'open' || dispute.status === 'under_review'
+                ).length;
+                
+                console.log('🔢 Calculated open disputes:', openDisputes);
+                console.log('📋 All disputes:', data.disputes.map(d => ({id: d.id, status: d.status})));
+                
+                // Update dashboard count
+                const openDisputesElement = document.getElementById('openDisputes');
+                if (openDisputesElement) {
+                    openDisputesElement.textContent = openDisputes;
+                    console.log('✅ Dashboard dispute count updated to:', openDisputes);
+                } else {
+                    console.error('❌ openDisputes element not found!');
+                }
+            } else {
+                console.error('❌ Disputes API error:', data);
+                document.getElementById('openDisputes').textContent = '0';
+            }
+        } catch (error) {
+            console.error('❌ Error loading real-time dispute count:', error);
+            document.getElementById('openDisputes').textContent = '0';
         }
     }
 
@@ -165,7 +209,7 @@ class AdminDashboard {
         const container = document.getElementById('recentUsers');
         container.innerHTML = '';
 
-        if (users.length === 0) {
+        if (!users || users.length === 0) {
             container.innerHTML = '<p class="text-muted">No users found</p>';
             return;
         }
@@ -175,15 +219,16 @@ class AdminDashboard {
             userElement.className = 'd-flex justify-content-between align-items-center border-bottom pb-2 mb-2';
             userElement.innerHTML = `
                 <div class="d-flex align-items-center">
-                    <img src="${user.profile_picture}" 
-                         class="rounded-circle me-3" width="40" height="40"
-                         onerror="this.src='assets/default-avatar.png'">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                         style="width: 40px; height: 40px;">
+                        <i class="fas fa-user"></i>
+                    </div>
                     <div>
-                        <h6 class="mb-0">${user.name}</h6>
-                        <small class="text-muted">${user.email}</small>
+                        <h6 class="mb-0">${this.safeString(user.name)}</h6>
+                        <small class="text-muted">${this.safeString(user.email)}</small>
                     </div>
                 </div>
-                <small class="text-muted">${new Date(user.joined_date).toLocaleDateString()}</small>
+                <small class="text-muted">${user.joined_date ? new Date(user.joined_date).toLocaleDateString() : 'N/A'}</small>
             `;
             container.appendChild(userElement);
         });
@@ -206,26 +251,26 @@ class AdminDashboard {
         const container = document.getElementById('recentDisputes');
         container.innerHTML = '';
 
-        if (disputes.length === 0) {
+        if (!disputes || disputes.length === 0) {
             container.innerHTML = '<p class="text-muted">No recent disputes</p>';
             return;
         }
 
         disputes.forEach(dispute => {
-            const statusClass = `status-${dispute.status.replace('-', '_')}`;
+            const statusClass = `status-${(dispute.status || 'open').replace('-', '_')}`;
             const disputeElement = document.createElement('div');
             disputeElement.className = 'border-bottom pb-2 mb-2';
             disputeElement.innerHTML = `
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
-                        <h6 class="mb-1">${dispute.title}</h6>
-                        <p class="mb-1 text-muted small">${dispute.description.substring(0, 60)}...</p>
+                        <h6 class="mb-1">${this.safeString(dispute.title)}</h6>
+                        <p class="mb-1 text-muted small">${this.safeString(dispute.description?.substring(0, 60) || 'No description')}...</p>
                         <small class="text-muted">
-                            Between ${dispute.complainant_name} and ${dispute.respondent_name}
+                            Between ${this.safeString(dispute.complainant_name)} and ${this.safeString(dispute.respondent_name)}
                         </small>
                     </div>
                     <span class="badge status-badge ${statusClass}">
-                        ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        ${this.formatStatus(dispute.status)}
                     </span>
                 </div>
             `;
@@ -233,34 +278,82 @@ class AdminDashboard {
         });
     }
 
-    // Load all users
-    async loadUsers() {
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/users.php`);
-            const data = await response.json();
+// Load all users with filter - IMPROVED VERSION
+async loadUsers(filter = 'all') {
+    try {
+        const url = filter === 'all' 
+            ? `${this.ADMIN_API_BASE}/users.php` 
+            : `${this.ADMIN_API_BASE}/users.php?filter=${filter}`;
+                
+        const response = await fetch(url);
+        const data = await response.json();
 
-            if (data.success) {
-                this.renderUsersTable(data.users);
-                document.getElementById('usersCount').textContent = data.users.length;
+        if (data.success) {
+            this.renderUsersTable(data.users);
+            this.updateUserStats(data.users);
+            
+            // Safely update users count
+            const usersCountElement = document.getElementById('usersCount');
+            if (usersCountElement) {
+                usersCountElement.textContent = data.users.length;
             }
-        } catch (error) {
-            console.error('Error loading users:', error);
-            this.showToast('Error loading users', 'error');
+        } else {
+            this.showToast('Error loading users: ' + (data.message || 'Unknown error'), 'error');
         }
+    } catch (error) {
+        console.error('Error loading users:', error);
+        this.showToast('Error loading users', 'error');
+    }
+}    
+
+// Update user statistics - FIXED VERSION
+updateUserStats(users) {
+    if (!users || !Array.isArray(users)) {
+        console.error('Invalid users data for stats:', users);
+        return;
     }
 
-    // Render users table
+    const stats = {
+        total: users.length,
+        active: users.filter(u => (u.status || 'active') === 'active').length,
+        verified: users.filter(u => u.is_verified).length,
+        newToday: users.filter(u => {
+            try {
+                const today = new Date().toDateString();
+                const userDate = new Date(u.joined_date).toDateString();
+                return today === userDate;
+            } catch (e) {
+                return false;
+            }
+        }).length
+    };
+
+    console.log('📊 User stats calculated:', stats);
+
+    // SAFELY update stats cards - check if elements exist first
+    const totalUsersElement = document.getElementById('totalUsersCount');
+    const activeUsersElement = document.getElementById('activeUsers');
+    const verifiedUsersElement = document.getElementById('verifiedUsers');
+    const newUsersElement = document.getElementById('newUsersToday');
+
+    if (totalUsersElement) totalUsersElement.textContent = stats.total;
+    if (activeUsersElement) activeUsersElement.textContent = stats.active;
+    if (verifiedUsersElement) verifiedUsersElement.textContent = stats.verified;
+    if (newUsersElement) newUsersElement.textContent = stats.newToday;
+}   
+
+    // Render users table with safe data handling
     renderUsersTable(users) {
         const tbody = document.getElementById('usersTableBody');
         tbody.innerHTML = '';
 
-        if (users.length === 0) {
+        if (!users || users.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="text-center py-4">
+                    <td colspan="8" class="text-center py-4">
                         <i class="fas fa-users fa-3x text-muted mb-3"></i>
                         <h5>No Users Found</h5>
-                        <p class="text-muted">No users have registered yet.</p>
+                        <p class="text-muted">No users match the current filter.</p>
                     </td>
                 </tr>
             `;
@@ -268,66 +361,74 @@ class AdminDashboard {
         }
 
         users.forEach(user => {
+            // Safe data handling with defaults
+            const userStatus = user.status || 'active';
+            const statusClass = userStatus === 'active' ? 'status-active' : 'status-inactive';
+            const avatarUrl = user.avatar || '';
+            const bookCount = user.book_count || 0;
+            const joinedDate = user.joined_date ? new Date(user.joined_date).toLocaleDateString() : 'N/A';
+
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${user.id}</td>
+                <td>${user.id || 'N/A'}</td>
                 <td>
                     <div class="d-flex align-items-center">
-                        <img src="${user.profile_picture}" 
-                             class="rounded-circle me-2" width="40" height="40" 
-                             onerror="this.src='assets/default-avatar.png'"
-                             style="object-fit: cover;">
+                        ${avatarUrl ? 
+                            `<img src="${avatarUrl}" class="user-avatar me-2" alt="${this.safeString(user.name)}" onerror="this.style.display='none'">` :
+                            `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2 user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>`
+                        }
                         <div>
-                            <strong>${user.name}</strong>
-                            <br><small class="text-muted">${user.email}</small>
+                            <strong>${this.safeString(user.name)}</strong>
+                            <br><small class="text-muted">${this.safeString(user.email)}</small>
                         </div>
                     </div>
                 </td>
                 <td>
                     <div>
-                        <strong>Email:</strong> ${user.email}<br>
+                        <strong>Email:</strong> ${this.safeString(user.email)}<br>
+                        ${user.phone ? `<strong>Phone:</strong> ${this.safeString(user.phone)}` : ''}
                     </div>
                 </td>
                 <td>
                     <div>
-                        ${user.city ? `<strong>City:</strong> ${user.city}<br>` : ''}
-                        ${user.address ? `<small class="text-muted">${user.address.substring(0, 30)}...</small>` : ''}
+                        ${user.city ? `<strong>City:</strong> ${this.safeString(user.city)}<br>` : ''}
+                        ${user.address ? `<small class="text-muted">${this.safeString(user.address.substring(0, 30))}...</small>` : ''}
                     </div>
                 </td>
                 <td>
-                    <span class="badge bg-primary fs-6">${user.book_count}</span>
+                    <span class="badge bg-primary fs-6">${bookCount}</span>
                 </td>
-                <td>${new Date(user.joined_date).toLocaleDateString()}</td>
                 <td>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-outline-primary" onclick="adminDashboard.viewUser(${user.id})" 
-                                title="View User Details">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-warning" onclick="adminDashboard.editUser(${user.id})"
-                                title="Edit User">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="adminDashboard.deleteUser(${user.id})"
-                                title="Delete User">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
+                    <span class="badge status-badge ${statusClass}">
+                        ${this.formatStatus(userStatus)}
+                    </span>
+                </td>
+                <td>${joinedDate}</td>
+                <td>
                 </td>
             `;
             tbody.appendChild(row);
         });
     }
 
-    // Load all books
-    async loadBooks() {
+    // Load all books with filter
+    async loadBooks(filter = 'all') {
         try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/books.php`);
+            const url = filter === 'all' 
+                ? `${this.ADMIN_API_BASE}/books.php` 
+                : `${this.ADMIN_API_BASE}/books.php?filter=${filter}`;
+                    
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.success) {
                 this.renderBooksTable(data.books);
+                this.updateBookStats(data.books);
                 document.getElementById('booksCount').textContent = data.books.length;
+            } else {
+                this.showToast('Error loading books: ' + (data.message || 'Unknown error'), 'error');
             }
         } catch (error) {
             console.error('Error loading books:', error);
@@ -335,18 +436,46 @@ class AdminDashboard {
         }
     }
 
-    // Render books table
+    // Update book statistics
+updateBookStats(books) {
+    if (!books || !Array.isArray(books)) {
+        console.error('Invalid books data for stats:', books);
+        return;
+    }
+
+    const stats = {
+        total: books.length,
+        available: books.filter(b => (b.status || 'Available') === 'Available').length,
+        lent: books.filter(b => (b.status || 'Available') === 'Lent Out').length,
+        reserved: books.filter(b => (b.status || 'Available') === 'Reserved').length
+    };
+
+    console.log('📊 Book stats calculated:', stats);
+
+    // SAFELY update stats cards - check if elements exist first
+    const totalBooksElement = document.getElementById('totalBooksCount');
+    const availableBooksElement = document.getElementById('availableBooks');
+    const lentBooksElement = document.getElementById('lentBooks');
+    const reservedBooksElement = document.getElementById('reservedBooks');
+
+    if (totalBooksElement) totalBooksElement.textContent = stats.total;
+    if (availableBooksElement) availableBooksElement.textContent = stats.available;
+    if (lentBooksElement) lentBooksElement.textContent = stats.lent;
+    if (reservedBooksElement) reservedBooksElement.textContent = stats.reserved;
+}
+
+    // Render books table with safe data handling
     renderBooksTable(books) {
         const tbody = document.getElementById('booksTableBody');
         tbody.innerHTML = '';
 
-        if (books.length === 0) {
+        if (!books || books.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="7" class="text-center py-4">
                         <i class="fas fa-book fa-3x text-muted mb-3"></i>
                         <h5>No Books Found</h5>
-                        <p class="text-muted">No books have been uploaded by users yet.</p>
+                        <p class="text-muted">No books match the current filter.</p>
                     </td>
                 </tr>
             `;
@@ -354,46 +483,53 @@ class AdminDashboard {
         }
 
         books.forEach(book => {
-            const statusClass = book.status === 'Available' ? 'bg-success' :
-                book.status === 'Lent Out' ? 'bg-warning' : 'bg-secondary';
+            // Safe data handling with defaults
+            const bookStatus = book.status || 'Available';
+            const statusClass = bookStatus === 'Available' ? 'status-available' :
+                bookStatus === 'Lent Out' ? 'status-lent' : 'status-reserved';
 
-            const conditionClass = book.condition === 'New' ? 'text-success' :
+            const conditionClass = (book.condition || 'Good') === 'New' ? 'text-success' :
                 book.condition === 'Like New' ? 'text-primary' :
                     book.condition === 'Very Good' ? 'text-info' :
                         book.condition === 'Good' ? 'text-warning' : 'text-muted';
 
+            const coverUrl = book.cover_image || '';
+            const addedDate = book.created_at ? new Date(book.created_at).toLocaleDateString() : 'N/A';
+
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>
-                    <img src="${book.image_path}" 
-                         class="rounded" width="50" height="70" 
-                         style="object-fit: cover;"
-                         onerror="this.src='assets/default-book.png'">
+                    ${coverUrl ? 
+                        `<img src="${coverUrl}" class="book-cover" alt="${this.safeString(book.title)}" onerror="this.style.display='none'">` :
+                        `<div class="rounded bg-light d-flex align-items-center justify-content-center book-cover">
+                            <i class="fas fa-book text-muted"></i>
+                        </div>`
+                    }
                 </td>
                 <td>
                     <div>
-                        <strong>${book.title}</strong><br>
-                        <small class="text-muted">by ${book.author}</small><br>
-                        ${book.genre ? `<span class="badge bg-light text-dark">${book.genre}</span>` : ''}
-                        ${book.isbn ? `<br><small class="text-muted">ISBN: ${book.isbn}</small>` : ''}
+                        <strong>${this.safeString(book.title)}</strong><br>
+                        <small class="text-muted">by ${this.safeString(book.author)}</small><br>
+                        ${book.genre ? `<span class="badge bg-light text-dark">${this.safeString(book.genre)}</span>` : ''}
+                        ${book.isbn ? `<br><small class="text-muted">ISBN: ${this.safeString(book.isbn)}</small>` : ''}
                     </div>
                 </td>
                 <td>
                     <div>
-                        <strong>${book.user.name}</strong><br>
-                        <small class="text-muted">${book.user.email}</small><br>
-                        <small class="text-muted">${book.user.city || 'N/A'}</small>
+                        <strong>${this.safeString(book.user?.name)}</strong><br>
+                        <small class="text-muted">${this.safeString(book.user?.email)}</small><br>
+                        <small class="text-muted">${this.safeString(book.user?.city || 'N/A')}</small>
                     </div>
                 </td>
                 <td>
                     <span class="${conditionClass}">
-                        <i class="fas fa-book me-1"></i>${book.condition}
+                        <i class="fas fa-book me-1"></i>${this.safeString(book.condition)}
                     </span>
                 </td>
                 <td>
-                    <span class="badge ${statusClass}">${book.status}</span>
+                    <span class="badge status-badge ${statusClass}">${this.safeString(bookStatus)}</span>
                 </td>
-                <td>${new Date(book.created_at).toLocaleDateString()}</td>
+                <td>${addedDate}</td>
                 <td>
                     <div class="btn-group">
                         <button class="btn btn-sm btn-outline-primary" onclick="adminDashboard.viewBook(${book.id})"
@@ -411,10 +547,22 @@ class AdminDashboard {
         });
     }
 
+    // Utility function to safely handle strings
+    safeString(str) {
+        if (str === null || str === undefined) return 'N/A';
+        return String(str);
+    }
+
+    // Utility function to format status strings
+    formatStatus(status) {
+        if (!status) return 'Unknown';
+        return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
+    }
+
     // Enhanced dispute management system
     async loadDisputes(filter = 'all') {
         try {
-            console.log('Loading disputes with filter:', filter);
+            console.log('🔄 Loading disputes with filter:', filter);
             
             const url = filter === 'all' 
                 ? `${this.ADMIN_API_BASE}/disputes.php` 
@@ -423,9 +571,13 @@ class AdminDashboard {
             const response = await fetch(url);
             const data = await response.json();
 
+            console.log('📋 Disputes data received:', data);
+
             if (data.success) {
                 this.renderDisputesTable(data.disputes);
                 this.updateDisputeStats(data.disputes);
+                // Update dashboard dispute count
+                this.updateDashboardDisputeCount(data.disputes);
             } else {
                 this.showToast('Error loading disputes', 'error');
             }
@@ -437,13 +589,20 @@ class AdminDashboard {
 
     // Update dispute statistics
     updateDisputeStats(disputes) {
+        if (!disputes || !Array.isArray(disputes)) {
+            console.error('Invalid disputes data for stats:', disputes);
+            return;
+        }
+
         const stats = {
             total: disputes.length,
-            open: disputes.filter(d => d.status === 'open').length,
-            under_review: disputes.filter(d => d.status === 'under_review').length,
-            resolved: disputes.filter(d => d.status === 'resolved').length,
-            urgent: disputes.filter(d => d.priority === 'urgent').length
+            open: disputes.filter(d => (d.status || 'open') === 'open').length,
+            under_review: disputes.filter(d => (d.status || 'open') === 'under_review').length,
+            resolved: disputes.filter(d => (d.status || 'open') === 'resolved').length,
+            urgent: disputes.filter(d => (d.priority || 'medium') === 'urgent').length
         };
+
+        console.log('📊 Dispute stats calculated:', stats);
 
         // Update stats cards if they exist
         if (document.getElementById('totalDisputes')) {
@@ -455,14 +614,37 @@ class AdminDashboard {
         }
     }
 
-    // Enhanced disputes table rendering
+    // Update dispute count in dashboard
+    updateDashboardDisputeCount(disputes) {
+        if (!disputes || !Array.isArray(disputes)) {
+            console.error('Invalid disputes data for dashboard count:', disputes);
+            return;
+        }
+
+        const openDisputes = disputes.filter(dispute => 
+            (dispute.status || 'open') === 'open' || (dispute.status || 'open') === 'under_review'
+        ).length;
+        
+        console.log('🔢 Updating dashboard dispute count to:', openDisputes);
+        
+        // Update in dashboard stats card
+        const openDisputesElement = document.getElementById('openDisputes');
+        if (openDisputesElement) {
+            openDisputesElement.textContent = openDisputes;
+            console.log('✅ Dashboard dispute count updated successfully');
+        } else {
+            console.error('❌ openDisputes element not found!');
+        }
+    }
+
+    // Enhanced disputes table rendering with safe data handling
     renderDisputesTable(disputes) {
         const tbody = document.getElementById('disputesTableBody');
         if (!tbody) return;
         
         tbody.innerHTML = '';
 
-        if (disputes.length === 0) {
+        if (!disputes || disputes.length === 0) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="9" class="text-center py-4">
@@ -476,50 +658,52 @@ class AdminDashboard {
         }
 
         disputes.forEach(dispute => {
-            const priorityClass = `priority-${dispute.priority}`;
-            const statusClass = `status-${dispute.status.replace('-', '_')}`;
+            const priority = dispute.priority || 'medium';
+            const status = dispute.status || 'open';
+            const priorityClass = `priority-${priority}`;
+            const statusClass = `status-${status.replace('-', '_')}`;
             const isAssignedToMe = dispute.assigned_admin_id == this.adminData.admin_id;
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${dispute.id}</td>
+                <td>${dispute.id || 'N/A'}</td>
                 <td>
                     <div>
-                        <strong class="d-block">${dispute.title}</strong>
-                        <small class="text-muted">${dispute.description.substring(0, 60)}...</small>
+                        <strong class="d-block">${this.safeString(dispute.title)}</strong>
+                        <small class="text-muted">${this.safeString(dispute.description?.substring(0, 60) || 'No description')}...</small>
                     </div>
                 </td>
                 <td>
                     <div>
-                        <small><strong>Complainant:</strong> ${dispute.complainant_name}</small><br>
-                        <small><strong>Respondent:</strong> ${dispute.respondent_name}</small>
+                        <small><strong>Complainant:</strong> ${this.safeString(dispute.complainant_name)}</small><br>
+                        <small><strong>Respondent:</strong> ${this.safeString(dispute.respondent_name)}</small>
                         ${dispute.transaction_id ? `<br><small class="text-muted">Transaction #${dispute.transaction_id}</small>` : ''}
                     </div>
                 </td>
                 <td>
-                    <span class="badge bg-light text-dark">${dispute.category}</span>
+                    <span class="badge bg-light text-dark">${this.safeString(dispute.category)}</span>
                 </td>
                 <td>
                     <span class="badge badge-priority ${priorityClass}">
-                        <i class="fas ${dispute.priority === 'urgent' ? 'fa-fire' : 
-                                       dispute.priority === 'high' ? 'fa-exclamation-circle' : 
-                                       dispute.priority === 'medium' ? 'fa-info-circle' : 'fa-arrow-down'} me-1"></i>
-                        ${dispute.priority.charAt(0).toUpperCase() + dispute.priority.slice(1)}
+                        <i class="fas ${priority === 'urgent' ? 'fa-fire' : 
+                                       priority === 'high' ? 'fa-exclamation-circle' : 
+                                       priority === 'medium' ? 'fa-info-circle' : 'fa-arrow-down'} me-1"></i>
+                        ${this.formatStatus(priority)}
                     </span>
                 </td>
                 <td>
                     <span class="badge status-badge ${statusClass}">
-                        ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        ${this.formatStatus(status)}
                     </span>
                 </td>
                 <td>
-                    <small>${new Date(dispute.created_at).toLocaleDateString()}</small><br>
-                    <small class="text-muted">${new Date(dispute.created_at).toLocaleTimeString()}</small>
+                    <small>${dispute.created_at ? new Date(dispute.created_at).toLocaleDateString() : 'N/A'}</small><br>
+                    <small class="text-muted">${dispute.created_at ? new Date(dispute.created_at).toLocaleTimeString() : ''}</small>
                 </td>
                 <td>
                     <div>
                         ${dispute.assigned_admin_name ? `
-                            <strong>${dispute.assigned_admin_name}</strong>
+                            <strong>${this.safeString(dispute.assigned_admin_name)}</strong>
                             ${isAssignedToMe ? '<span class="badge bg-info ms-1">You</span>' : ''}
                         ` : `
                             <span class="text-muted">Unassigned</span>
@@ -540,14 +724,14 @@ class AdminDashboard {
                                 <i class="fas fa-user-check"></i>
                             </button>
                         ` : ''}
-                        ${dispute.status === 'open' && isAssignedToMe ? `
+                        ${status === 'open' && isAssignedToMe ? `
                             <button class="btn btn-sm btn-outline-info" 
                                     onclick="adminDashboard.startReview(${dispute.id})"
                                     title="Start Review">
                                 <i class="fas fa-play"></i>
                             </button>
                         ` : ''}
-                        ${dispute.status === 'under_review' && isAssignedToMe ? `
+                        ${status === 'under_review' && isAssignedToMe ? `
                             <button class="btn btn-sm btn-outline-success" 
                                     onclick="adminDashboard.showResolveForm(${dispute.id})"
                                     title="Resolve">
@@ -561,335 +745,35 @@ class AdminDashboard {
         });
     }
 
-    // View dispute details
-    async viewDispute(disputeId) {
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php?id=${disputeId}`);
-            const data = await response.json();
-
-            if (data.success) {
-                this.showDisputeModal(data.dispute);
-            } else {
-                this.showToast('Error loading dispute details', 'error');
-            }
-        } catch (error) {
-            console.error('Error loading dispute details:', error);
-            this.showToast('Error loading dispute details', 'error');
-        }
+    // Export functions
+    async exportUsers() {
+        this.showToast('Exporting users data...', 'info');
+        // Implementation for exporting users
     }
 
-    // Show dispute details modal
-    showDisputeModal(dispute) {
-        const priorityClass = `priority-${dispute.priority}`;
-        const statusClass = `status-${dispute.status.replace('-', '_')}`;
-
-        const modalHtml = `
-            <div class="modal fade" id="disputeModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Dispute #${dispute.id}: ${dispute.title}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h6>Basic Information</h6>
-                                    <p><strong>Category:</strong> ${dispute.category}</p>
-                                    <p><strong>Priority:</strong> 
-                                        <span class="badge badge-priority ${priorityClass}">
-                                            ${dispute.priority.charAt(0).toUpperCase() + dispute.priority.slice(1)}
-                                        </span>
-                                    </p>
-                                    <p><strong>Status:</strong> 
-                                        <span class="badge status-badge ${statusClass}">
-                                            ${dispute.status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Parties Involved</h6>
-                                    <p><strong>Complainant:</strong> ${dispute.complainant_name} (${dispute.complainant_email})</p>
-                                    <p><strong>Respondent:</strong> ${dispute.respondent_name} (${dispute.respondent_email})</p>
-                                    ${dispute.transaction_id ? `
-                                        <p><strong>Transaction ID:</strong> #${dispute.transaction_id}</p>
-                                    ` : ''}
-                                </div>
-                            </div>
-                            
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <h6>Description</h6>
-                                    <div class="border p-3 bg-light rounded">
-                                        ${dispute.description}
-                                    </div>
-                                </div>
-                            </div>
-
-                            ${dispute.evidence ? `
-                            <div class="row mt-3">
-                                <div class="col-12">
-                                    <h6>Evidence/Attachments</h6>
-                                    <div class="border p-3 bg-light rounded">
-                                        ${dispute.evidence}
-                                    </div>
-                                </div>
-                            </div>
-                            ` : ''}
-
-                            <div class="row mt-3">
-                                <div class="col-md-6">
-                                    <h6>Timeline</h6>
-                                    <p><strong>Created:</strong> ${new Date(dispute.created_at).toLocaleString()}</p>
-                                    <p><strong>Last Updated:</strong> ${new Date(dispute.updated_at).toLocaleString()}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6>Assignment</h6>
-                                    <p><strong>Assigned To:</strong> ${dispute.assigned_admin_name || 'Unassigned'}</p>
-                                    ${dispute.resolution_notes ? `
-                                        <p><strong>Resolution Notes:</strong> ${dispute.resolution_notes}</p>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            ${!dispute.assigned_admin_id ? `
-                                <button type="button" class="btn btn-primary" onclick="adminDashboard.assignDisputeToMe(${dispute.id})">
-                                    <i class="fas fa-user-check me-1"></i>Assign to Me
-                                </button>
-                            ` : ''}
-                            ${dispute.status === 'open' && dispute.assigned_admin_id == this.adminData.admin_id ? `
-                                <button type="button" class="btn btn-info" onclick="adminDashboard.startReview(${dispute.id})">
-                                    <i class="fas fa-play me-1"></i>Start Review
-                                </button>
-                            ` : ''}
-                            ${dispute.status === 'under_review' && dispute.assigned_admin_id == this.adminData.admin_id ? `
-                                <button type="button" class="btn btn-success" onclick="adminDashboard.showResolveForm(${dispute.id})">
-                                    <i class="fas fa-check me-1"></i>Resolve Dispute
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Remove existing modal if any
-        const existingModal = document.getElementById('disputeModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-        const modal = new bootstrap.Modal(document.getElementById('disputeModal'));
-        modal.show();
+    async exportBooks() {
+        this.showToast('Exporting books data...', 'info');
+        // Implementation for exporting books
     }
 
-    // Assign dispute to current admin
-    async assignDisputeToMe(disputeId) {
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'assign',
-                    dispute_id: disputeId,
-                    admin_id: this.adminData.admin_id
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                this.showToast('Dispute assigned to you successfully', 'success');
-                this.loadDisputes();
-                // Close modal if open
-                const modal = bootstrap.Modal.getInstance(document.getElementById('disputeModal'));
-                if (modal) modal.hide();
-            } else {
-                this.showToast('Error: ' + data.message, 'error');
-            }
-        } catch (error) {
-            console.error('Error assigning dispute:', error);
-            this.showToast('Error assigning dispute', 'error');
-        }
-    }
-
-    // Start reviewing a dispute
-    async startReview(disputeId) {
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'start_review',
-                    dispute_id: disputeId,
-                    admin_id: this.adminData.admin_id
-                })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                this.showToast('Dispute review started', 'success');
-                this.loadDisputes();
-                // Close modal if open
-                const modal = bootstrap.Modal.getInstance(document.getElementById('disputeModal'));
-                if (modal) modal.hide();
-            } else {
-                this.showToast('Error: ' + data.message, 'error');
-            }
-        } catch (error) {
-            console.error('Error starting review:', error);
-            this.showToast('Error starting review', 'error');
-        }
-    }
-
-    // Show resolve dispute form
-    showResolveForm(disputeId) {
-        const resolveFormHtml = `
-            <div class="modal fade" id="resolveDisputeModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Resolve Dispute #${disputeId}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="resolveDisputeForm">
-                                <div class="mb-3">
-                                    <label for="resolution" class="form-label">Resolution</label>
-                                    <select class="form-select" id="resolution" required>
-                                        <option value="">Select resolution</option>
-                                        <option value="resolved_in_favor_complainant">Resolved in favor of complainant</option>
-                                        <option value="resolved_in_favor_respondent">Resolved in favor of respondent</option>
-                                        <option value="mutual_agreement">Mutual agreement</option>
-                                        <option value="dismissed">Dismissed</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="resolutionNotes" class="form-label">Resolution Notes</label>
-                                    <textarea class="form-control" id="resolutionNotes" rows="4" 
-                                              placeholder="Describe the resolution and any actions taken..." required></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="penalty" class="form-label">Penalty (if any)</label>
-                                    <select class="form-select" id="penalty">
-                                        <option value="none">No penalty</option>
-                                        <option value="warning">Warning</option>
-                                        <option value="temporary_suspension">Temporary suspension</option>
-                                        <option value="permanent_ban">Permanent ban</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3" id="penaltyDetails" style="display: none;">
-                                    <label for="penaltyDescription" class="form-label">Penalty Details</label>
-                                    <textarea class="form-control" id="penaltyDescription" rows="2" 
-                                              placeholder="Describe the penalty and duration..."></textarea>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success" onclick="adminDashboard.resolveDispute(${disputeId})">
-                                <i class="fas fa-check me-1"></i>Resolve Dispute
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Remove existing modal if any
-        const existingModal = document.getElementById('resolveDisputeModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        document.body.insertAdjacentHTML('beforeend', resolveFormHtml);
-        const modal = new bootstrap.Modal(document.getElementById('resolveDisputeModal'));
-        modal.show();
-
-        // Show/hide penalty details based on selection
-        document.getElementById('penalty').addEventListener('change', function() {
-            const penaltyDetails = document.getElementById('penaltyDetails');
-            penaltyDetails.style.display = this.value !== 'none' ? 'block' : 'none';
-        });
-    }
-
-    // Resolve dispute with details
-    async resolveDispute(disputeId) {
-        const form = document.getElementById('resolveDisputeForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
-
-        const resolutionData = {
-            action: 'resolve',
-            dispute_id: disputeId,
-            admin_id: this.adminData.admin_id,
-            resolution: document.getElementById('resolution').value,
-            resolution_notes: document.getElementById('resolutionNotes').value,
-            penalty: document.getElementById('penalty').value,
-            penalty_description: document.getElementById('penaltyDescription').value || ''
-        };
-
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(resolutionData)
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                this.showToast('Dispute resolved successfully', 'success');
-                this.loadDisputes();
-                // Close modals
-                const resolveModal = bootstrap.Modal.getInstance(document.getElementById('resolveDisputeModal'));
-                if (resolveModal) resolveModal.hide();
-                const disputeModal = bootstrap.Modal.getInstance(document.getElementById('disputeModal'));
-                if (disputeModal) disputeModal.hide();
-            } else {
-                this.showToast('Error: ' + data.message, 'error');
-            }
-        } catch (error) {
-            console.error('Error resolving dispute:', error);
-            this.showToast('Error resolving dispute', 'error');
-        }
-    }
-
-    // Export disputes
     async exportDisputes() {
-        try {
-            const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php?export=1`);
-            const blob = await response.blob();
-            
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            a.download = `disputes_export_${new Date().toISOString().split('T')[0]}.csv`;
-            
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            
-            this.showToast('Disputes exported successfully', 'success');
-        } catch (error) {
-            console.error('Error exporting disputes:', error);
-            this.showToast('Error exporting disputes', 'error');
-        }
+        this.showToast('Exporting disputes data...', 'info');
+        // Implementation for exporting disputes
+    }
+
+    // View user details
+    viewUser(userId) {
+        this.showToast(`Viewing user ID: ${userId} - Feature coming soon`, 'info');
+    }
+
+    // View book details  
+    viewBook(bookId) {
+        this.showToast(`Viewing book ID: ${bookId} - Feature coming soon`, 'info');
+    }
+
+    // Edit user
+    editUser(userId) {
+        this.showToast(`Editing user ID: ${userId} - Feature coming soon`, 'info');
     }
 
     // Delete user function
@@ -946,21 +830,6 @@ class AdminDashboard {
                 this.showToast('Error deleting book', 'error');
             }
         }
-    }
-
-    // View user details
-    viewUser(userId) {
-        this.showToast(`Viewing user ID: ${userId} - Feature coming soon`, 'info');
-    }
-
-    // View book details  
-    viewBook(bookId) {
-        this.showToast(`Viewing book ID: ${bookId} - Feature coming soon`, 'info');
-    }
-
-    // Edit user
-    editUser(userId) {
-        this.showToast(`Editing user ID: ${userId} - Feature coming soon`, 'info');
     }
 
     showToast(message, type = 'info') {

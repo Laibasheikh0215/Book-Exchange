@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login - Book Exchange</title>
-        <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
@@ -182,7 +182,6 @@
                     <h2>Admin Login</h2>
                     <p class="login-subtitle">Online Book Exchange Community System</p>
                 </div>
-
                 <!-- Message Alert -->
                 <div id="message" class="alert alert-danger" style="display: none;"></div>
 
@@ -194,7 +193,6 @@
                                 placeholder="Admin Username" required>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <div class="input-group">
                             <span class="input-group-text"><i class="bi bi-lock"></i></span>
@@ -205,7 +203,6 @@
                             </span>
                         </div>
                     </div>
-
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="rememberMe">
@@ -336,7 +333,7 @@
                         }, 1500);
 
                     } else {
-                        showMessage(result.message || 'Login failed. Please check your credentials.', 'danger');
+                        showMessage('Invalid username or password. Please try again.', 'danger');
                     }
 
                 } catch (error) {
