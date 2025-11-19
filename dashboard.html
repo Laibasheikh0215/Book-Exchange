@@ -187,10 +187,25 @@
             font-weight: bold;
         }
 
-        .status-pending { background-color: #fff3cd; color: #856404; }
-        .status-accepted { background-color: #d1edff; color: #004085; }
-        .status-rejected { background-color: #f8d7da; color: #721c24; }
-        .status-cancelled { background-color: #e2e3e5; color: #383d41; }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-accepted {
+            background-color: #d1edff;
+            color: #004085;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-cancelled {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
 
         .action-buttons button {
             margin: 0 5px;
@@ -198,10 +213,21 @@
             cursor: pointer;
         }
 
-        .btn-accept { background-color: #28a745; color: white; }
-        .btn-reject { background-color: #dc3545; color: white; }
-        .btn-cancel { background-color: #ffc107; color: black; }
-        
+        .btn-accept {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #ffc107;
+            color: black;
+        }
+
         /* Badge improvements */
         .badge-sm {
             font-size: 0.7rem;
@@ -373,46 +399,49 @@
             color: #155724;
         }
 
-      
-/* ✅ NOTIFICATION TOAST STYLES */
-@keyframes slideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
 
-@keyframes pulseGlow {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
-    }
-}
+        /* ✅ NOTIFICATION TOAST STYLES */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
 
-.notification-toast {
-    animation: slideInRight 0.3s ease;
-}
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
 
-.badge-pulse {
-    animation: pulseGlow 2s infinite;
-}
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
 
-/* Make badges more visible */
-.sidebar .badge {
-    font-size: 0.7rem;
-    padding: 0.25em 0.4em;
-}
-</style>
-    
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        .notification-toast {
+            animation: slideInRight 0.3s ease;
+        }
+
+        .badge-pulse {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* Make badges more visible */
+        .sidebar .badge {
+            font-size: 0.7rem;
+            padding: 0.25em 0.4em;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -893,15 +922,17 @@
                             </div>
 
                             <!-- ✅ AUTO-FILLED USER DETAILS -->
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Dispute Against User</label>
-                                <div class="p-2 border rounded bg-light">
-                                    <div id="selectedUserInfo" class="text-muted">
-                                        Select a book to see user details
-                                    </div>
-                                    <input type="hidden" id="respondentIdInput">
-                                </div>
-                            </div>
+                            <!-- ✅ AUTO-FILLED USER DETAILS -->
+<div class="col-md-6 mb-3">
+    <label class="form-label">Dispute Against User</label>
+    <div class="p-2 border rounded bg-light">
+        <div id="selectedUserInfo" class="text-muted">
+            Select a book to see user details
+        </div>
+        <!-- ✅ YEH HIDDEN INPUT FIELD ZAROOR HO -->
+        <input type="hidden" id="respondentIdInput" value="">
+    </div>
+</div>
                         </div>
 
                         <div class="mb-3">
@@ -988,15 +1019,15 @@
             </div>
         </div>
     </div>
-<!-- ✅ NOTIFICATION POLLER -->
-<script src="assets/js/notification_poller.js"></script>
+    <!-- ✅ NOTIFICATION POLLER -->
+    <script src="assets/js/notification_poller.js"></script>
     <script>
         // ✅ GLOBAL VARIABLES - ADD AT THE VERY TOP
         let messageCheckInterval = null;
         let currentConversation = null;
         let messagePollingInterval = null;
         let selectedBookId = null;
-        
+
         // Check if user is logged in
         const userData = JSON.parse(localStorage.getItem('user')) || null;
 
@@ -1008,35 +1039,35 @@
         }
 
         // ✅ COMPLETE INITIALIZE DASHBOARD
-     function initializeDashboard() {
-    console.log('🚀 Initializing dashboard...');
+        function initializeDashboard() {
+            console.log('🚀 Initializing dashboard...');
 
-    // Basic user info
-    document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
-    updateSidebarInfo();
+            // Basic user info
+            document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
+            updateSidebarInfo();
 
-    // ✅ START NOTIFICATION POLLING
-    if (userData && userData.user_id) {
-        notificationPoller.start(userData.user_id);
-    }
+            // ✅ START NOTIFICATION POLLING
+            if (userData && userData.user_id) {
+                notificationPoller.start(userData.user_id);
+            }
 
-    // Load all data
-    loadUserBooks();
-    loadDashboardStats();
-    updateRequestsCount();
-    loadRecentRequests();
-    updateDisputesBadge();
-    
-    setTimeout(() => {
-        updateUnreadNotificationsCount();
-    }, 2000);
+            // Load all data
+            loadUserBooks();
+            loadDashboardStats();
+            updateRequestsCount();
+            loadRecentRequests();
+            updateDisputesBadge();
 
-    initializeModals();
-    setupAutoCheckers();
-    startMessagePolling();
+            setTimeout(() => {
+                updateUnreadNotificationsCount();
+            }, 2000);
 
-    console.log('✅ Dashboard fully initialized');
-}
+            initializeModals();
+            setupAutoCheckers();
+            startMessagePolling();
+
+            console.log('✅ Dashboard fully initialized');
+        }
 
         // ✅ LOAD USER'S ACTUAL BOOKS FROM DATABASE
         function loadUserBooks() {
@@ -1227,262 +1258,262 @@
             `;
         }
 
-      // ✅ REQUEST ACTIONS HANDLERS
-async function handleAcceptRequest(requestId, userId) {
-    await updateRequestStatus(requestId, 'accepted', userId);
-}
-
-async function handleRejectRequest(requestId, userId) {
-    await updateRequestStatus(requestId, 'rejected', userId);
-}
-
-async function handleCancelRequest(requestId, userId) {
-    await updateRequestStatus(requestId, 'cancelled', userId);
-}
-
-// ✅ DEBUG VERSION: Add this temporary function to see the actual API response
-async function updateRequestStatus(requestId, status, userId) {
-    let button;
-    
-    try {
-        console.log('🔄 DEBUG: Starting updateRequestStatus');
-        console.log('📋 Parameters:', { requestId, status, userId });
-
-        // ✅ FIX: Map frontend status to backend status
-        const statusMap = {
-            'accepted': 'Approved',
-            'rejected': 'Rejected', 
-            'cancelled': 'Cancelled'
-        };
-        
-        const backendStatus = statusMap[status] || status;
-        
-        if (!confirm(`Are you sure you want to ${status} this request?`)) {
-            return;
+        // ✅ REQUEST ACTIONS HANDLERS
+        async function handleAcceptRequest(requestId, userId) {
+            await updateRequestStatus(requestId, 'accepted', userId);
         }
 
-        // Get button reference
-        button = event.target.closest('button');
-        if (button) {
-            const originalText = button.innerHTML;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            button.disabled = true;
+        async function handleRejectRequest(requestId, userId) {
+            await updateRequestStatus(requestId, 'rejected', userId);
         }
 
-        // ✅ FIX: Ensure all required data is sent with proper types
-        const requestData = {
-            request_id: parseInt(requestId),
-            status: backendStatus,
-            user_id: parseInt(userId)
-        };
-
-        console.log('📤 Sending to API:', requestData);
-
-        // ✅ DEBUG: Log the exact fetch call
-        const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        console.log('📡 Response status:', response.status);
-        console.log('📡 Response ok:', response.ok);
-
-        // ✅ DEBUG: Get the raw response text first
-        const responseText = await response.text();
-        console.log('📡 Raw response:', responseText);
-
-        let result;
-        try {
-            result = JSON.parse(responseText);
-            console.log('✅ Parsed JSON response:', result);
-        } catch (parseError) {
-            console.error('❌ JSON Parse Error:', parseError);
-            throw new Error('Invalid JSON response from server');
+        async function handleCancelRequest(requestId, userId) {
+            await updateRequestStatus(requestId, 'cancelled', userId);
         }
 
-        if (result.success) {
-            console.log('✅ Request updated successfully');
-            updateAllRequestUIs(requestId, backendStatus);
-            showToast(`Request ${backendStatus} successfully!`, 'success');
-            updateRequestsCount();
-        } else {
-            console.error('❌ API returned error:', result);
-            throw new Error(result.message || 'Failed to update request');
+        // ✅ DEBUG VERSION: Add this temporary function to see the actual API response
+        async function updateRequestStatus(requestId, status, userId) {
+            let button;
+
+            try {
+                console.log('🔄 DEBUG: Starting updateRequestStatus');
+                console.log('📋 Parameters:', { requestId, status, userId });
+
+                // ✅ FIX: Map frontend status to backend status
+                const statusMap = {
+                    'accepted': 'Approved',
+                    'rejected': 'Rejected',
+                    'cancelled': 'Cancelled'
+                };
+
+                const backendStatus = statusMap[status] || status;
+
+                if (!confirm(`Are you sure you want to ${status} this request?`)) {
+                    return;
+                }
+
+                // Get button reference
+                button = event.target.closest('button');
+                if (button) {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                    button.disabled = true;
+                }
+
+                // ✅ FIX: Ensure all required data is sent with proper types
+                const requestData = {
+                    request_id: parseInt(requestId),
+                    status: backendStatus,
+                    user_id: parseInt(userId)
+                };
+
+                console.log('📤 Sending to API:', requestData);
+
+                // ✅ DEBUG: Log the exact fetch call
+                const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response ok:', response.ok);
+
+                // ✅ DEBUG: Get the raw response text first
+                const responseText = await response.text();
+                console.log('📡 Raw response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                    console.log('✅ Parsed JSON response:', result);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    throw new Error('Invalid JSON response from server');
+                }
+
+                if (result.success) {
+                    console.log('✅ Request updated successfully');
+                    updateAllRequestUIs(requestId, backendStatus);
+                    showToast(`Request ${backendStatus} successfully!`, 'success');
+                    updateRequestsCount();
+                } else {
+                    console.error('❌ API returned error:', result);
+                    throw new Error(result.message || 'Failed to update request');
+                }
+
+            } catch (error) {
+                console.error('❌ Full error details:', error);
+                showToast('Error: ' + error.message, 'error');
+
+                // Reset button
+                if (button) {
+                    button.innerHTML = button.textContent || 'Action';
+                    button.disabled = false;
+                }
+            }
         }
 
-    } catch (error) {
-        console.error('❌ Full error details:', error);
-        showToast('Error: ' + error.message, 'error');
-        
-        // Reset button
-        if (button) {
-            button.innerHTML = button.textContent || 'Action';
-            button.disabled = false;
+        // ✅ FIXED: REAL-TIME Request status update
+        async function updateRequestStatus(requestId, status, userId) {
+            debugRequestData(requestId, status, userId);
+            let button;
+
+            try {
+                console.log('🔄 Updating request:', { requestId, status, userId });
+
+                // ✅ FIX: Map frontend status to backend status
+                const statusMap = {
+                    'accepted': 'Approved',
+                    'rejected': 'Rejected',
+                    'cancelled': 'Cancelled'
+                };
+
+                const backendStatus = statusMap[status] || status;
+
+                if (!confirm(`Are you sure you want to ${status} this request?`)) {
+                    return;
+                }
+
+                // ✅ FIX: Get button reference safely
+                button = event.target.closest('button');
+                if (button) {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                    button.disabled = true;
+                }
+
+                // ✅ FIX: Ensure all required data is sent
+                const requestData = {
+                    request_id: parseInt(requestId),
+                    status: backendStatus,
+                    user_id: parseInt(userId)
+                };
+
+                console.log('📤 Sending update data:', requestData);
+
+                const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const result = await response.json();
+                console.log('✅ API Response:', result);
+
+                if (result.success) {
+                    // ✅ IMMEDIATE UI UPDATE
+                    updateAllRequestUIs(requestId, backendStatus);
+                    showToast(`Request ${backendStatus} successfully!`, 'success');
+
+                    // Update counts
+                    updateRequestsCount();
+
+                } else {
+                    throw new Error(result.message || 'Failed to update request');
+                }
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                showToast('Error: ' + error.message, 'error');
+
+                // ✅ FIX: Reset button safely
+                if (button) {
+                    button.innerHTML = button.textContent || 'Action';
+                    button.disabled = false;
+                }
+            }
         }
-    }
-}
 
-// ✅ FIXED: REAL-TIME Request status update
-async function updateRequestStatus(requestId, status, userId) {
-     debugRequestData(requestId, status, userId);
-    let button;
-    
-    try {
-        console.log('🔄 Updating request:', { requestId, status, userId });
-
-        // ✅ FIX: Map frontend status to backend status
-        const statusMap = {
-            'accepted': 'Approved',
-            'rejected': 'Rejected', 
-            'cancelled': 'Cancelled'
-        };
-        
-        const backendStatus = statusMap[status] || status;
-        
-        if (!confirm(`Are you sure you want to ${status} this request?`)) {
-            return;
+        // When user clicks "Request Book" button
+        function requestBook(bookId, ownerId) {
+            const message = prompt("Add a message to the book owner (optional):");
+            sendBookRequest(bookId, ownerId, 'Borrow', message || '');
         }
-
-        // ✅ FIX: Get button reference safely
-        button = event.target.closest('button');
-        if (button) {
-            const originalText = button.innerHTML;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            button.disabled = true;
-        }
-
-        // ✅ FIX: Ensure all required data is sent
-        const requestData = {
-            request_id: parseInt(requestId),
-            status: backendStatus,
-            user_id: parseInt(userId)
-        };
-
-        console.log('📤 Sending update data:', requestData);
-
-        const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        const result = await response.json();
-        console.log('✅ API Response:', result);
-
-        if (result.success) {
-            // ✅ IMMEDIATE UI UPDATE
-            updateAllRequestUIs(requestId, backendStatus);
-            showToast(`Request ${backendStatus} successfully!`, 'success');
-            
-            // Update counts
-            updateRequestsCount();
-            
-        } else {
-            throw new Error(result.message || 'Failed to update request');
-        }
-
-    } catch (error) {
-        console.error('❌ Error:', error);
-        showToast('Error: ' + error.message, 'error');
-        
-        // ✅ FIX: Reset button safely
-        if (button) {
-            button.innerHTML = button.textContent || 'Action';
-            button.disabled = false;
-        }
-    }
-}
-        
-// When user clicks "Request Book" button
-function requestBook(bookId, ownerId) {
-    const message = prompt("Add a message to the book owner (optional):");
-    sendBookRequest(bookId, ownerId, 'Borrow', message || '');
-}
 
         // ✅ REAL-TIME: Update ALL UI locations for a request
         function updateAllRequestUIs(requestId, newStatus) {
-    console.log('🎨 Updating ALL UIs for request:', requestId, '→', newStatus);
-    
-    // 1. Update in incoming requests list
-    updateRequestCardUI(requestId, newStatus, 'incomingRequestsList');
-    
-    // 2. Update in outgoing requests list  
-    updateRequestCardUI(requestId, newStatus, 'outgoingRequestsList');
-    
-    // 3. Update in recent requests (dashboard)
-    updateRecentRequestUI(requestId, newStatus);
-    
-    // 4. Update in any active request details
-    updateActiveRequestUI(requestId, newStatus);
-}
+            console.log('🎨 Updating ALL UIs for request:', requestId, '→', newStatus);
 
-       // ✅ FIXED: Update request cards in lists - PROPERLY REMOVE BUTTONS
-function updateRequestCardUI(requestId, newStatus, listId) {
-    const list = document.getElementById(listId);
-    if (!list) return;
-    
-    const cards = list.querySelectorAll('.request-card');
-    cards.forEach(card => {
-        const cardRequestId = card.getAttribute('data-request-id');
-        
-        if (cardRequestId == requestId) {
-            // Update status badge
-            const statusBadge = card.querySelector('.request-status');
-            if (statusBadge) {
-                statusBadge.textContent = newStatus;
-                statusBadge.className = `request-status status-${newStatus.toLowerCase()}`;
-            }
-            
-            // Update data-status attribute
-            card.setAttribute('data-status', newStatus);
-            
-            // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
-            const actionButtons = card.querySelector('.action-buttons');
-            if (actionButtons) {
-                // If status is not pending, remove action buttons completely
-                if (newStatus.toLowerCase() !== 'pending') {
-                    actionButtons.innerHTML = `
+            // 1. Update in incoming requests list
+            updateRequestCardUI(requestId, newStatus, 'incomingRequestsList');
+
+            // 2. Update in outgoing requests list  
+            updateRequestCardUI(requestId, newStatus, 'outgoingRequestsList');
+
+            // 3. Update in recent requests (dashboard)
+            updateRecentRequestUI(requestId, newStatus);
+
+            // 4. Update in any active request details
+            updateActiveRequestUI(requestId, newStatus);
+        }
+
+        // ✅ FIXED: Update request cards in lists - PROPERLY REMOVE BUTTONS
+        function updateRequestCardUI(requestId, newStatus, listId) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+
+            const cards = list.querySelectorAll('.request-card');
+            cards.forEach(card => {
+                const cardRequestId = card.getAttribute('data-request-id');
+
+                if (cardRequestId == requestId) {
+                    // Update status badge
+                    const statusBadge = card.querySelector('.request-status');
+                    if (statusBadge) {
+                        statusBadge.textContent = newStatus;
+                        statusBadge.className = `request-status status-${newStatus.toLowerCase()}`;
+                    }
+
+                    // Update data-status attribute
+                    card.setAttribute('data-status', newStatus);
+
+                    // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+                    const actionButtons = card.querySelector('.action-buttons');
+                    if (actionButtons) {
+                        // If status is not pending, remove action buttons completely
+                        if (newStatus.toLowerCase() !== 'pending') {
+                            actionButtons.innerHTML = `
                         <span class="text-muted">
                             <i class="fas fa-check-circle me-1"></i>
                             Request ${newStatus}
                         </span>
                     `;
+                        }
+                    }
                 }
-            }
+            });
         }
-    });
-}  
 
         // ✅ Update recent requests in dashboard
         function updateRecentRequestUI(requestId, newStatus) {
-    const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
-    recentItems.forEach(item => {
-        if (item.classList.contains(`recent-request-${requestId}`)) {
-            // Update status
-            const statusElement = item.querySelector('.request-status');
-            if (statusElement) {
-                statusElement.textContent = newStatus;
-                statusElement.className = `request-status status-${newStatus.toLowerCase()}`;
-            }
-            
-            // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
-            const actionButtons = item.querySelector('.action-buttons');
-            if (actionButtons && newStatus.toLowerCase() !== 'pending') {
-                actionButtons.innerHTML = `
+            const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
+            recentItems.forEach(item => {
+                if (item.classList.contains(`recent-request-${requestId}`)) {
+                    // Update status
+                    const statusElement = item.querySelector('.request-status');
+                    if (statusElement) {
+                        statusElement.textContent = newStatus;
+                        statusElement.className = `request-status status-${newStatus.toLowerCase()}`;
+                    }
+
+                    // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+                    const actionButtons = item.querySelector('.action-buttons');
+                    if (actionButtons && newStatus.toLowerCase() !== 'pending') {
+                        actionButtons.innerHTML = `
                     <span class="text-muted">
                         <i class="fas fa-check-circle me-1"></i>
                         Action Completed
                     </span>
                 `;
-            }
+                    }
+                }
+            });
         }
-    });
-}
 
         // ✅ Update active request details if open
         function updateActiveRequestUI(requestId, newStatus) {
@@ -1561,28 +1592,28 @@ function updateRequestCardUI(requestId, newStatus, listId) {
         }
 
         // ✅ FIXED: Display incoming requests with proper buttons
-       // ✅ FIXED: Display incoming requests with proper conditional buttons
-function displayIncomingRequests(requests) {
-    const incomingList = document.getElementById('incomingRequestsList');
+        // ✅ FIXED: Display incoming requests with proper conditional buttons
+        function displayIncomingRequests(requests) {
+            const incomingList = document.getElementById('incomingRequestsList');
 
-    if (!requests || requests.length === 0) {
-        incomingList.innerHTML = `
+            if (!requests || requests.length === 0) {
+                incomingList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
                 <p>No incoming requests</p>
                 <small>Requests for your books will appear here</small>
             </div>
         `;
-        document.getElementById('incomingCount').textContent = '0';
-        return;
-    }
+                document.getElementById('incomingCount').textContent = '0';
+                return;
+            }
 
-    document.getElementById('incomingCount').textContent = requests.length;
+            document.getElementById('incomingCount').textContent = requests.length;
 
-    incomingList.innerHTML = requests.map(request => {
-        const isPending = request.status === 'pending' || request.status === 'Pending';
-        
-        return `
+            incomingList.innerHTML = requests.map(request => {
+                const isPending = request.status === 'pending' || request.status === 'Pending';
+
+                return `
             <div class="card mb-3 request-card" data-status="${request.status}" data-request-id="${request.id}">
                 <div class="card-body">
                     <div class="row">
@@ -1636,20 +1667,20 @@ function displayIncomingRequests(requests) {
                 </div>
             </div>
         `;
-    }).join('');
-}
+            }).join('');
+        }
 
-// ✅ DEBUG: Check what data is being sent
-function debugRequestData(requestId, status, userId) {
-    console.log('🔍 DEBUG Request Data:');
-    console.log('Request ID:', requestId, 'Type:', typeof requestId);
-    console.log('Status:', status, 'Type:', typeof status);
-    console.log('User ID:', userId, 'Type:', typeof userId);
-    
-    // Check if elements exist
-    console.log('Incoming list exists:', !!document.getElementById('incomingRequestsList'));
-    console.log('Outgoing list exists:', !!document.getElementById('outgoingRequestsList'));
-}
+        // ✅ DEBUG: Check what data is being sent
+        function debugRequestData(requestId, status, userId) {
+            console.log('🔍 DEBUG Request Data:');
+            console.log('Request ID:', requestId, 'Type:', typeof requestId);
+            console.log('Status:', status, 'Type:', typeof status);
+            console.log('User ID:', userId, 'Type:', typeof userId);
+
+            // Check if elements exist
+            console.log('Incoming list exists:', !!document.getElementById('incomingRequestsList'));
+            console.log('Outgoing list exists:', !!document.getElementById('outgoingRequestsList'));
+        }
 
         // ✅ FIXED: Display outgoing requests
         function displayOutgoingRequests(requests) {
@@ -1711,55 +1742,55 @@ function debugRequestData(requestId, status, userId) {
             `).join('');
         }
 
-     // ✅ SEND BOOK REQUEST FUNCTION
-function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') {
-    if (!userData || !userData.user_id) {
-        alert('Please login to send a request');
-        return;
-    }
-
-    const requestData = {
-        book_id: bookId,
-        requester_id: userData.user_id,
-        owner_id: ownerId,
-        request_type: requestType,
-        message: message
-    };
-
-    console.log('📤 Sending book request:', requestData);
-
-    fetch('http://localhost/project/backend/api/requests/create.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('✅ Request response:', data);
-        
-        if (data.success) {
-            showToast('📚 Request sent successfully!', 'success');
-            
-            // Update requests count
-            updateRequestsCount();
-            
-            // If on requests page, refresh the list
-            if (document.getElementById('requestsInterface').style.display !== 'none') {
-                loadRequests();
+        // ✅ SEND BOOK REQUEST FUNCTION
+        function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') {
+            if (!userData || !userData.user_id) {
+                alert('Please login to send a request');
+                return;
             }
-        } else {
-            throw new Error(data.message || 'Failed to send request');
-        }
-    })
-    .catch(error => {
-        console.error('❌ Error sending request:', error);
-        showToast('Error: ' + error.message, 'error');
-    });
-}
 
-        
+            const requestData = {
+                book_id: bookId,
+                requester_id: userData.user_id,
+                owner_id: ownerId,
+                request_type: requestType,
+                message: message
+            };
+
+            console.log('📤 Sending book request:', requestData);
+
+            fetch('http://localhost/project/backend/api/requests/create.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ Request response:', data);
+
+                    if (data.success) {
+                        showToast('📚 Request sent successfully!', 'success');
+
+                        // Update requests count
+                        updateRequestsCount();
+
+                        // If on requests page, refresh the list
+                        if (document.getElementById('requestsInterface').style.display !== 'none') {
+                            loadRequests();
+                        }
+                    } else {
+                        throw new Error(data.message || 'Failed to send request');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error sending request:', error);
+                    showToast('Error: ' + error.message, 'error');
+                });
+        }
+
+
         // ✅ REFRESH REQUESTS
         function refreshRequests() {
             console.log('Refreshing requests...');
@@ -2751,25 +2782,25 @@ function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') 
         }
 
         // ✅ IMPROVED: STOP ALL POLLING
- function stopAllPolling() {
-    try {
-        // Stop notification polling
-        notificationPoller.stop();
-        
-        // Stop message polling
-        if (window.messagePollingInterval) {
-            clearInterval(window.messagePollingInterval);
-            window.messagePollingInterval = null;
-        }
+        function stopAllPolling() {
+            try {
+                // Stop notification polling
+                notificationPoller.stop();
 
-        if (window.messageCheckInterval) {
-            clearInterval(window.messageCheckInterval);
-            window.messageCheckInterval = null;
+                // Stop message polling
+                if (window.messagePollingInterval) {
+                    clearInterval(window.messagePollingInterval);
+                    window.messagePollingInterval = null;
+                }
+
+                if (window.messageCheckInterval) {
+                    clearInterval(window.messageCheckInterval);
+                    window.messageCheckInterval = null;
+                }
+            } catch (error) {
+                console.log('No polling intervals to stop');
+            }
         }
-    } catch (error) {
-        console.log('No polling intervals to stop');
-    }
-}
 
         // ✅ UTILITY FUNCTIONS
         function loadDashboardStats() {
@@ -2982,6 +3013,7 @@ function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') 
             }, 600);
         }
 
+        
         // ✅ LOAD USER'S BOOKS FOR DISPUTE
         function loadUserBooksForDispute() {
             if (!userData || !userData.user_id) return;
@@ -3411,15 +3443,6 @@ function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') 
             updateDisputesBadge();
             showToast('Disputes refreshed!', 'success');
         }
-
-        // ✅ AUTO-REFRESH EVERY 30 SECONDS
-        // setInterval(() => {
-        //     if (userData && userData.user_id) {
-        //         updateRequestsCount();
-        //         loadRecentRequests();
-        //         updateUnreadNotificationsCount();
-        //     }
-        // }, 30000);
 
         // ✅ INITIALIZE ON DASHBOARD LOAD
         document.addEventListener('DOMContentLoaded', function () {
