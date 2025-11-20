@@ -67,6 +67,7 @@
         }
 
         // My Books page - sirf user ki apni books
+
 async function loadMyBooks() {
     try {
         const userData = JSON.parse(localStorage.getItem('user')) || null;
@@ -82,7 +83,7 @@ async function loadMyBooks() {
         if (data.books && data.books.length > 0) {
             displayMyBooks(data.books);
         } else {
-            document.getElementById('myBooksContainer').innerHTML = `
+            document.getElementById('booksList').innerHTML = `
                 <div class="text-center text-muted py-5">
                     <i class="fas fa-book fa-3x mb-3"></i>
                     <h4>You haven't added any books yet</h4>
@@ -93,6 +94,14 @@ async function loadMyBooks() {
         }
     } catch (error) {
         console.error('Error loading my books:', error);
+        document.getElementById('booksList').innerHTML = `
+            <div class="col-12 text-center">
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading books. Please try again.
+                </div>
+            </div>
+        `;
     }
 }
 
@@ -161,10 +170,19 @@ async function loadMyBooks() {
             booksList.innerHTML = html;
         }
 
-        function editBook(bookId) {
-            // Implement edit functionality
-            alert(`Edit book ID: ${bookId} - This will be implemented in the next phase`);
-        }
+       function editBook(bookId) {
+    // Check if user is logged in
+    const userData = JSON.parse(localStorage.getItem('user')) || null;
+    
+    if (!userData || !userData.loggedIn) {
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // Redirect to edit page with book ID
+    window.location.href = `edit-book.html?id=${bookId}`;
+}
 
         function deleteBook(bookId) {
             if (confirm('Are you sure you want to delete this book?')) {
