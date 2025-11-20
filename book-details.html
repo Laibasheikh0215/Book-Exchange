@@ -72,7 +72,7 @@
             margin-top: 25px;
         }
 
-        .borrow-btn {
+        /* .borrow-btn {
             background-color: #f8ca30;
             border: none;
             font-weight: 600;
@@ -100,6 +100,74 @@
         .message-btn:hover {
             background-color: #0056b3;
             transform: translateY(-2px);
+        } */
+
+        /* Existing CSS ke baad yeh add karen */
+
+        /* Responsive Action Buttons */
+        .action-buttons {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .borrow-btn {
+            background-color: #f8ca30;
+            border: none;
+            font-weight: 600;
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: 0.3s;
+            margin-right: 0;
+            /* Remove margin-right */
+        }
+
+        .borrow-btn:hover {
+            background-color: #e0b420;
+            transform: translateY(-2px);
+        }
+
+        .message-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            font-weight: 600;
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .message-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        /* Medium screens (tablets) */
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .borrow-btn,
+            .message-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Small screens (mobile) */
+        @media (max-width: 576px) {
+            .action-buttons {
+                gap: 12px;
+            }
+
+            .borrow-btn,
+            .message-btn {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
         }
 
         .review-section {
@@ -1076,149 +1144,149 @@
         }
 
         // ✅ FIXED SUBMIT REQUEST FUNCTION - SINGLE VERSION
-       // ✅ FIXED SUBMIT REQUEST FUNCTION - HANDLES DOUBLE JSON
-async function submitRequest() {
-    console.log('🔄 submitRequest() called - Starting...');
+        // ✅ FIXED SUBMIT REQUEST FUNCTION - HANDLES DOUBLE JSON
+        async function submitRequest() {
+            console.log('🔄 submitRequest() called - Starting...');
 
-    if (!currentUserId) {
-        alert('Please login to send request');
-        window.location.href = 'login.html';
-        return;
-    }
-
-    const bookId = urlParams.get('id');
-    if (!bookId) {
-        alert('Book not found');
-        return;
-    }
-
-    try {
-        console.log('🔍 Step 1: Getting book details...');
-
-        // Get book details to get owner_id
-        const bookResponse = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
-        const bookData = await bookResponse.json();
-
-        console.log('📚 Book API Response:', bookData);
-
-        if (!bookData.books || bookData.books.length === 0) {
-            alert('Book not found in database');
-            return;
-        }
-
-        const book = bookData.books[0];
-        const ownerId = book.user_id;
-
-        console.log('👤 User Details:', {
-            bookId: bookId,
-            currentUserId: currentUserId,
-            ownerId: ownerId,
-            isOwnBook: parseInt(ownerId) === parseInt(currentUserId)
-        });
-
-        // Check: User cannot request their own book
-        if (parseInt(ownerId) === parseInt(currentUserId)) {
-            alert("❌ You cannot request your own book!");
-            return;
-        }
-
-        console.log('🔍 Step 2: Getting form data...');
-
-        // Get form data
-        const requestType = document.querySelector('input[name="requestType"]:checked').value;
-        const message = document.getElementById('requestMessage').value.trim();
-
-        if (!message) {
-            alert('Please enter a message for your request');
-            return;
-        }
-
-        // Prepare request data
-        const requestData = {
-            book_id: parseInt(bookId),
-            requester_id: parseInt(currentUserId),
-            owner_id: parseInt(ownerId),
-            request_type: requestType,
-            message: message,
-            proposed_return_date: requestType === 'Borrow' ?
-                document.getElementById('returnDate').value : null
-        };
-
-        console.log('📤 FINAL Request Data:', requestData);
-
-        const submitBtn = document.querySelector('#requestModal .btn-primary');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
-        submitBtn.disabled = true;
-
-        console.log('🚀 Step 3: Sending to API...');
-
-        const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
-        });
-
-        console.log('📡 Response Status:', response.status);
-        console.log('📡 Response OK:', response.ok);
-
-        // ✅ FIX: HANDLE DOUBLE JSON RESPONSE
-        const responseText = await response.text();
-        console.log('📡 Raw server response:', responseText);
-
-        let result;
-        
-        // ✅ CHECK FOR DOUBLE JSON AND EXTRACT FIRST ONE
-        if (responseText.includes('}{')) {
-            console.log('⚠️ Detected double JSON response, extracting first one...');
-            const firstJson = responseText.split('}{')[0] + '}';
-            try {
-                result = JSON.parse(firstJson);
-                console.log('✅ Using first JSON:', result);
-            } catch (parseError) {
-                console.error('❌ Failed to parse first JSON:', parseError);
-                throw new Error('Invalid double JSON response');
+            if (!currentUserId) {
+                alert('Please login to send request');
+                window.location.href = 'login.html';
+                return;
             }
-        } else {
-            // Single JSON response
+
+            const bookId = urlParams.get('id');
+            if (!bookId) {
+                alert('Book not found');
+                return;
+            }
+
             try {
-                result = JSON.parse(responseText);
-                console.log('✅ Parsed response:', result);
-            } catch (parseError) {
-                console.error('❌ JSON parse error:', parseError);
-                throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
+                console.log('🔍 Step 1: Getting book details...');
+
+                // Get book details to get owner_id
+                const bookResponse = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
+                const bookData = await bookResponse.json();
+
+                console.log('📚 Book API Response:', bookData);
+
+                if (!bookData.books || bookData.books.length === 0) {
+                    alert('Book not found in database');
+                    return;
+                }
+
+                const book = bookData.books[0];
+                const ownerId = book.user_id;
+
+                console.log('👤 User Details:', {
+                    bookId: bookId,
+                    currentUserId: currentUserId,
+                    ownerId: ownerId,
+                    isOwnBook: parseInt(ownerId) === parseInt(currentUserId)
+                });
+
+                // Check: User cannot request their own book
+                if (parseInt(ownerId) === parseInt(currentUserId)) {
+                    alert("❌ You cannot request your own book!");
+                    return;
+                }
+
+                console.log('🔍 Step 2: Getting form data...');
+
+                // Get form data
+                const requestType = document.querySelector('input[name="requestType"]:checked').value;
+                const message = document.getElementById('requestMessage').value.trim();
+
+                if (!message) {
+                    alert('Please enter a message for your request');
+                    return;
+                }
+
+                // Prepare request data
+                const requestData = {
+                    book_id: parseInt(bookId),
+                    requester_id: parseInt(currentUserId),
+                    owner_id: parseInt(ownerId),
+                    request_type: requestType,
+                    message: message,
+                    proposed_return_date: requestType === 'Borrow' ?
+                        document.getElementById('returnDate').value : null
+                };
+
+                console.log('📤 FINAL Request Data:', requestData);
+
+                const submitBtn = document.querySelector('#requestModal .btn-primary');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sending...';
+                submitBtn.disabled = true;
+
+                console.log('🚀 Step 3: Sending to API...');
+
+                const response = await fetch('http://localhost/project/backend/api/requests/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                console.log('📡 Response Status:', response.status);
+                console.log('📡 Response OK:', response.ok);
+
+                // ✅ FIX: HANDLE DOUBLE JSON RESPONSE
+                const responseText = await response.text();
+                console.log('📡 Raw server response:', responseText);
+
+                let result;
+
+                // ✅ CHECK FOR DOUBLE JSON AND EXTRACT FIRST ONE
+                if (responseText.includes('}{')) {
+                    console.log('⚠️ Detected double JSON response, extracting first one...');
+                    const firstJson = responseText.split('}{')[0] + '}';
+                    try {
+                        result = JSON.parse(firstJson);
+                        console.log('✅ Using first JSON:', result);
+                    } catch (parseError) {
+                        console.error('❌ Failed to parse first JSON:', parseError);
+                        throw new Error('Invalid double JSON response');
+                    }
+                } else {
+                    // Single JSON response
+                    try {
+                        result = JSON.parse(responseText);
+                        console.log('✅ Parsed response:', result);
+                    } catch (parseError) {
+                        console.error('❌ JSON parse error:', parseError);
+                        throw new Error('Server returned invalid JSON: ' + responseText.substring(0, 100));
+                    }
+                }
+
+                if (result.success) {
+                    console.log('🎉 SUCCESS: Request created!');
+                    alert('✅ Request sent successfully! The book owner will be notified.');
+
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
+                    modal.hide();
+
+                    // Reset form
+                    document.getElementById('requestForm').reset();
+
+                } else {
+                    console.error('❌ API returned error:', result);
+                    throw new Error(result.message || 'Failed to send request');
+                }
+
+            } catch (error) {
+                console.error('❌ Error submitting request:', error);
+                alert('❌ Error: ' + error.message);
+            } finally {
+                const submitBtn = document.querySelector('#requestModal .btn-primary');
+                if (submitBtn) {
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Request';
+                    submitBtn.disabled = false;
+                }
             }
         }
-
-        if (result.success) {
-            console.log('🎉 SUCCESS: Request created!');
-            alert('✅ Request sent successfully! The book owner will be notified.');
-            
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById('requestModal'));
-            modal.hide();
-            
-            // Reset form
-            document.getElementById('requestForm').reset();
-            
-        } else {
-            console.error('❌ API returned error:', result);
-            throw new Error(result.message || 'Failed to send request');
-        }
-
-    } catch (error) {
-        console.error('❌ Error submitting request:', error);
-        alert('❌ Error: ' + error.message);
-    } finally {
-        const submitBtn = document.querySelector('#requestModal .btn-primary');
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Send Request';
-            submitBtn.disabled = false;
-        }
-    }
-}
 
         // ✅ DEBUG FUNCTION - Add this before submitRequest
         async function debugSubmitRequest() {
