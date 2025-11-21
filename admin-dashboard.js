@@ -45,16 +45,16 @@ class AdminDashboard {
 
         // User and Book filters
         document.addEventListener('click', (e) => {
-            if (e.target.hasAttribute('data-filter') && 
+            if (e.target.hasAttribute('data-filter') &&
                 (e.target.closest('#users-section') || e.target.closest('#books-section'))) {
                 const filter = e.target.getAttribute('data-filter');
-                
+
                 // Update active state
                 e.target.closest('.btn-group').querySelectorAll('[data-filter]').forEach(btn => {
                     btn.classList.remove('active');
                 });
                 e.target.classList.add('active');
-                
+
                 // Load data with filter
                 if (e.target.closest('#users-section')) {
                     this.loadUsers(filter);
@@ -81,6 +81,7 @@ class AdminDashboard {
         }
     }
 
+    // Initializes and loads data for the requested admin panel section
     loadSectionData(sectionName) {
         switch (sectionName) {
             case 'users':
@@ -102,6 +103,8 @@ class AdminDashboard {
         }
     }
 
+    //  Fetches and displays dashboard statistics from the admin API
+    //  Updates UI with total counts for users, books, and transactions
     async loadDashboardStats() {
         try {
             console.log('🔄 Loading dashboard stats...');
@@ -120,7 +123,7 @@ class AdminDashboard {
                 document.getElementById('totalUsers').textContent = data.stats.total_users;
                 document.getElementById('totalBooks').textContent = data.stats.total_books;
                 document.getElementById('totalTransactions').textContent = data.stats.total_transactions;
-                
+
                 // IMPORTANT: Real-time dispute count load karo
                 await this.loadRealTimeDisputeCount();
 
@@ -135,11 +138,11 @@ class AdminDashboard {
         }
     }
 
-    // Real-time dispute count load karega
+    // Load real-time dispute count and update dashboard
     async loadRealTimeDisputeCount() {
         try {
             console.log('🔄 Loading real-time dispute count...');
-            
+
             const response = await fetch(`${this.ADMIN_API_BASE}/disputes.php`);
             const data = await response.json();
 
@@ -147,13 +150,13 @@ class AdminDashboard {
 
             if (data.success && data.disputes) {
                 // Count open and under_review disputes
-                const openDisputes = data.disputes.filter(dispute => 
+                const openDisputes = data.disputes.filter(dispute =>
                     dispute.status === 'open' || dispute.status === 'under_review'
                 ).length;
-                
+
                 console.log('🔢 Calculated open disputes:', openDisputes);
-                console.log('📋 All disputes:', data.disputes.map(d => ({id: d.id, status: d.status})));
-                
+                console.log('📋 All disputes:', data.disputes.map(d => ({ id: d.id, status: d.status })));
+
                 // Update dashboard count
                 const openDisputesElement = document.getElementById('openDisputes');
                 if (openDisputesElement) {
@@ -278,69 +281,69 @@ class AdminDashboard {
         });
     }
 
-// Load all users with filter - IMPROVED VERSION
-async loadUsers(filter = 'all') {
-    try {
-        const url = filter === 'all' 
-            ? `${this.ADMIN_API_BASE}/users.php` 
-            : `${this.ADMIN_API_BASE}/users.php?filter=${filter}`;
-                
-        const response = await fetch(url);
-        const data = await response.json();
+    // Load all users with filter
+    async loadUsers(filter = 'all') {
+        try {
+            const url = filter === 'all'
+                ? `${this.ADMIN_API_BASE}/users.php`
+                : `${this.ADMIN_API_BASE}/users.php?filter=${filter}`;
 
-        if (data.success) {
-            this.renderUsersTable(data.users);
-            this.updateUserStats(data.users);
-            
-            // Safely update users count
-            const usersCountElement = document.getElementById('usersCount');
-            if (usersCountElement) {
-                usersCountElement.textContent = data.users.length;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderUsersTable(data.users);
+                this.updateUserStats(data.users);
+
+                // Safely update users count
+                const usersCountElement = document.getElementById('usersCount');
+                if (usersCountElement) {
+                    usersCountElement.textContent = data.users.length;
+                }
+            } else {
+                this.showToast('Error loading users: ' + (data.message || 'Unknown error'), 'error');
             }
-        } else {
-            this.showToast('Error loading users: ' + (data.message || 'Unknown error'), 'error');
+        } catch (error) {
+            console.error('Error loading users:', error);
+            this.showToast('Error loading users', 'error');
         }
-    } catch (error) {
-        console.error('Error loading users:', error);
-        this.showToast('Error loading users', 'error');
-    }
-}    
-
-// Update user statistics - FIXED VERSION
-updateUserStats(users) {
-    if (!users || !Array.isArray(users)) {
-        console.error('Invalid users data for stats:', users);
-        return;
     }
 
-    const stats = {
-        total: users.length,
-        active: users.filter(u => (u.status || 'active') === 'active').length,
-        verified: users.filter(u => u.is_verified).length,
-        newToday: users.filter(u => {
-            try {
-                const today = new Date().toDateString();
-                const userDate = new Date(u.joined_date).toDateString();
-                return today === userDate;
-            } catch (e) {
-                return false;
-            }
-        }).length
-    };
+    // Update user statistics 
+    updateUserStats(users) {
+        if (!users || !Array.isArray(users)) {
+            console.error('Invalid users data for stats:', users);
+            return;
+        }
 
-    console.log('📊 User stats calculated:', stats);
+        const stats = {
+            total: users.length,
+            active: users.filter(u => (u.status || 'active') === 'active').length,
+            verified: users.filter(u => u.is_verified).length,
+            newToday: users.filter(u => {
+                try {
+                    const today = new Date().toDateString();
+                    const userDate = new Date(u.joined_date).toDateString();
+                    return today === userDate;
+                } catch (e) {
+                    return false;
+                }
+            }).length
+        };
 
-    // SAFELY update stats cards - check if elements exist first
-    const totalUsersElement = document.getElementById('totalUsersCount');
-    const activeUsersElement = document.getElementById('activeUsers');
-    const verifiedUsersElement = document.getElementById('verifiedUsers');
-    const newUsersElement = document.getElementById('newUsersToday');
+        console.log('📊 User stats calculated:', stats);
 
-    if (totalUsersElement) totalUsersElement.textContent = stats.total;
-    if (activeUsersElement) activeUsersElement.textContent = stats.active;
-    if (verifiedUsersElement) verifiedUsersElement.textContent = stats.verified;
-    if (newUsersElement) newUsersElement.textContent = stats.newToday;
-}   
+        // SAFELY update stats cards - check if elements exist first
+        const totalUsersElement = document.getElementById('totalUsersCount');
+        const activeUsersElement = document.getElementById('activeUsers');
+        const verifiedUsersElement = document.getElementById('verifiedUsers');
+        const newUsersElement = document.getElementById('newUsersToday');
+
+        if (totalUsersElement) totalUsersElement.textContent = stats.total;
+        if (activeUsersElement) activeUsersElement.textContent = stats.active;
+        if (verifiedUsersElement) verifiedUsersElement.textContent = stats.verified;
+        if (newUsersElement) newUsersElement.textContent = stats.newToday;
+    }
 
     // Render users table with safe data handling
     renderUsersTable(users) {
@@ -373,12 +376,12 @@ updateUserStats(users) {
                 <td>${user.id || 'N/A'}</td>
                 <td>
                     <div class="d-flex align-items-center">
-                        ${avatarUrl ? 
-                            `<img src="${avatarUrl}" class="user-avatar me-2" alt="${this.safeString(user.name)}" onerror="this.style.display='none'">` :
-                            `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2 user-avatar">
+                        ${avatarUrl ?
+                    `<img src="${avatarUrl}" class="user-avatar me-2" alt="${this.safeString(user.name)}" onerror="this.style.display='none'">` :
+                    `<div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2 user-avatar">
                                 <i class="fas fa-user"></i>
                             </div>`
-                        }
+                }
                         <div>
                             <strong>${this.safeString(user.name)}</strong>
                             <br><small class="text-muted">${this.safeString(user.email)}</small>
@@ -416,10 +419,10 @@ updateUserStats(users) {
     // Load all books with filter
     async loadBooks(filter = 'all') {
         try {
-            const url = filter === 'all' 
-                ? `${this.ADMIN_API_BASE}/books.php` 
+            const url = filter === 'all'
+                ? `${this.ADMIN_API_BASE}/books.php`
                 : `${this.ADMIN_API_BASE}/books.php?filter=${filter}`;
-                    
+
             const response = await fetch(url);
             const data = await response.json();
 
@@ -437,32 +440,32 @@ updateUserStats(users) {
     }
 
     // Update book statistics
-updateBookStats(books) {
-    if (!books || !Array.isArray(books)) {
-        console.error('Invalid books data for stats:', books);
-        return;
+    updateBookStats(books) {
+        if (!books || !Array.isArray(books)) {
+            console.error('Invalid books data for stats:', books);
+            return;
+        }
+
+        const stats = {
+            total: books.length,
+            available: books.filter(b => (b.status || 'Available') === 'Available').length,
+            lent: books.filter(b => (b.status || 'Available') === 'Lent Out').length,
+            reserved: books.filter(b => (b.status || 'Available') === 'Reserved').length
+        };
+
+        console.log('📊 Book stats calculated:', stats);
+
+        // SAFELY update stats cards - check if elements exist first
+        const totalBooksElement = document.getElementById('totalBooksCount');
+        const availableBooksElement = document.getElementById('availableBooks');
+        const lentBooksElement = document.getElementById('lentBooks');
+        const reservedBooksElement = document.getElementById('reservedBooks');
+
+        if (totalBooksElement) totalBooksElement.textContent = stats.total;
+        if (availableBooksElement) availableBooksElement.textContent = stats.available;
+        if (lentBooksElement) lentBooksElement.textContent = stats.lent;
+        if (reservedBooksElement) reservedBooksElement.textContent = stats.reserved;
     }
-
-    const stats = {
-        total: books.length,
-        available: books.filter(b => (b.status || 'Available') === 'Available').length,
-        lent: books.filter(b => (b.status || 'Available') === 'Lent Out').length,
-        reserved: books.filter(b => (b.status || 'Available') === 'Reserved').length
-    };
-
-    console.log('📊 Book stats calculated:', stats);
-
-    // SAFELY update stats cards - check if elements exist first
-    const totalBooksElement = document.getElementById('totalBooksCount');
-    const availableBooksElement = document.getElementById('availableBooks');
-    const lentBooksElement = document.getElementById('lentBooks');
-    const reservedBooksElement = document.getElementById('reservedBooks');
-
-    if (totalBooksElement) totalBooksElement.textContent = stats.total;
-    if (availableBooksElement) availableBooksElement.textContent = stats.available;
-    if (lentBooksElement) lentBooksElement.textContent = stats.lent;
-    if (reservedBooksElement) reservedBooksElement.textContent = stats.reserved;
-}
 
     // Render books table with safe data handling
     renderBooksTable(books) {
@@ -499,12 +502,12 @@ updateBookStats(books) {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>
-                    ${coverUrl ? 
-                        `<img src="${coverUrl}" class="book-cover" alt="${this.safeString(book.title)}" onerror="this.style.display='none'">` :
-                        `<div class="rounded bg-light d-flex align-items-center justify-content-center book-cover">
+                    ${coverUrl ?
+                    `<img src="${coverUrl}" class="book-cover" alt="${this.safeString(book.title)}" onerror="this.style.display='none'">` :
+                    `<div class="rounded bg-light d-flex align-items-center justify-content-center book-cover">
                             <i class="fas fa-book text-muted"></i>
                         </div>`
-                    }
+                }
                 </td>
                 <td>
                     <div>
@@ -559,15 +562,15 @@ updateBookStats(books) {
         return status.charAt(0).toUpperCase() + status.slice(1).replace('_', ' ');
     }
 
-    // Enhanced dispute management system
+    // dispute management system
     async loadDisputes(filter = 'all') {
         try {
             console.log('🔄 Loading disputes with filter:', filter);
-            
-            const url = filter === 'all' 
-                ? `${this.ADMIN_API_BASE}/disputes.php` 
+
+            const url = filter === 'all'
+                ? `${this.ADMIN_API_BASE}/disputes.php`
                 : `${this.ADMIN_API_BASE}/disputes.php?filter=${filter}`;
-            
+
             const response = await fetch(url);
             const data = await response.json();
 
@@ -587,7 +590,7 @@ updateBookStats(books) {
         }
     }
 
-    // Update dispute statistics
+    // dispute statistics
     updateDisputeStats(disputes) {
         if (!disputes || !Array.isArray(disputes)) {
             console.error('Invalid disputes data for stats:', disputes);
@@ -621,12 +624,12 @@ updateBookStats(books) {
             return;
         }
 
-        const openDisputes = disputes.filter(dispute => 
+        const openDisputes = disputes.filter(dispute =>
             (dispute.status || 'open') === 'open' || (dispute.status || 'open') === 'under_review'
         ).length;
-        
+
         console.log('🔢 Updating dashboard dispute count to:', openDisputes);
-        
+
         // Update in dashboard stats card
         const openDisputesElement = document.getElementById('openDisputes');
         if (openDisputesElement) {
@@ -637,11 +640,11 @@ updateBookStats(books) {
         }
     }
 
-    // Enhanced disputes table rendering with safe data handling
+    // disputes table rendering with safe data handling
     renderDisputesTable(disputes) {
         const tbody = document.getElementById('disputesTableBody');
         if (!tbody) return;
-        
+
         tbody.innerHTML = '';
 
         if (!disputes || disputes.length === 0) {
@@ -685,9 +688,9 @@ updateBookStats(books) {
                 </td>
                 <td>
                     <span class="badge badge-priority ${priorityClass}">
-                        <i class="fas ${priority === 'urgent' ? 'fa-fire' : 
-                                       priority === 'high' ? 'fa-exclamation-circle' : 
-                                       priority === 'medium' ? 'fa-info-circle' : 'fa-arrow-down'} me-1"></i>
+                        <i class="fas ${priority === 'urgent' ? 'fa-fire' :
+                    priority === 'high' ? 'fa-exclamation-circle' :
+                        priority === 'medium' ? 'fa-info-circle' : 'fa-arrow-down'} me-1"></i>
                         ${this.formatStatus(priority)}
                     </span>
                 </td>

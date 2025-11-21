@@ -13,7 +13,6 @@ document.querySelector('.book-photo').addEventListener('mouseleave', function ()
     this.style.transform = 'scale(1)';
 });
 
-//   for best investment
 // Trigger animation on scroll
 const elements = document.querySelectorAll('.fade-in-up');
 window.addEventListener('scroll', () => {

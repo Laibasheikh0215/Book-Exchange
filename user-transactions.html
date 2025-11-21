@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,23 +13,36 @@
             background-color: #f8f9fa;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+
         .navbar {
             background-color: #f3efee;
         }
+
         .transaction-card {
             border: none;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
+
         .transaction-card:hover {
             transform: translateY(-2px);
         }
-        .status-ongoing { border-left: 4px solid #007bff; }
-        .status-completed { border-left: 4px solid #28a745; }
-        .status-cancelled { border-left: 4px solid #dc3545; }
+
+        .status-ongoing {
+            border-left: 4px solid #007bff;
+        }
+
+        .status-completed {
+            border-left: 4px solid #28a745;
+        }
+
+        .status-cancelled {
+            border-left: 4px solid #dc3545;
+        }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg px-4">
@@ -63,13 +77,16 @@
                         <div class="row mb-4">
                             <div class="col-md-8">
                                 <div class="btn-group" role="group">
-                                    <button type="button" class="btn btn-outline-primary active" onclick="filterTransactions('all')">
+                                    <button type="button" class="btn btn-outline-primary active"
+                                        onclick="filterTransactions('all')">
                                         All Transactions
                                     </button>
-                                    <button type="button" class="btn btn-outline-primary" onclick="filterTransactions('ongoing')">
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterTransactions('ongoing')">
                                         Ongoing
                                     </button>
-                                    <button type="button" class="btn btn-outline-primary" onclick="filterTransactions('completed')">
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterTransactions('completed')">
                                         Completed
                                     </button>
                                 </div>
@@ -159,7 +176,7 @@
         // Display transactions
         function displayTransactions(transactions, filter = 'all') {
             const transactionsList = document.getElementById('transactionsList');
-            
+
             if (!transactions || transactions.length === 0) {
                 transactionsList.innerHTML = `
                     <div class="alert alert-warning text-center">
@@ -193,7 +210,7 @@
                 const role = isBorrower ? 'Borrower' : 'Lender';
                 const otherUser = isBorrower ? transaction.lender_name : transaction.borrower_name;
                 const statusClass = `status-${transaction.status}`;
-                
+
                 return `
                     <div class="card transaction-card mb-3 ${statusClass}">
                         <div class="card-body">
@@ -256,7 +273,7 @@
         function showTransactionModal(transaction) {
             const isBorrower = parseInt(transaction.borrower_id) === parseInt(userData.user_id);
             const role = isBorrower ? 'Borrower' : 'Lender';
-            
+
             const modalBody = document.getElementById('transactionModalBody');
             modalBody.innerHTML = `
                 <div class="row">
@@ -306,26 +323,26 @@
                         notes: 'Transaction marked as completed by user'
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Transaction completed successfully!');
-                        loadUserTransactions();
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error completing transaction');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Transaction completed successfully!');
+                            loadUserTransactions();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error completing transaction');
+                    });
             }
         }
 
         // Filter transactions
         function filterTransactions(filter) {
             loadUserTransactions(filter);
-            
+
             // Update active button
             document.querySelectorAll('.btn-group .btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -343,10 +360,12 @@
             }
         }
 
+        // Logout function
         function logout() {
             localStorage.removeItem('user');
             window.location.href = "index.html";
         }
     </script>
 </body>
+
 </html>

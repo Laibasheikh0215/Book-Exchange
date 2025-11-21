@@ -128,10 +128,11 @@
             text-align: center;
         }
 
-        .book-info{
+        .book-info {
             padding: 10px 5px;
             text-align: center;
         }
+
         .book-info h6 {
             font-weight: 600;
             font-size: 15px;
@@ -413,60 +414,60 @@
         });
 
         // Browse books page pe SARI AVAILABLE BOOKS load karen
-// ✅ FIXED: ALL BOOKS LOAD KARNE KA FUNCTION
-async function loadAllBooks() {
-    try {
-        console.log("🚀 Fetching ALL books...");
+        // ✅ FIXED: ALL BOOKS LOAD KARNE KA FUNCTION
+        async function loadAllBooks() {
+            try {
+                console.log("🚀 Fetching ALL books...");
 
-        // ✅ PEHLE DIRECT API TRY KAREN
-        const response = await fetch('http://localhost/project/backend/api/books/get_all_books.php');
-        
-        console.log("📡 Response status:", response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+                // ✅ PEHLE DIRECT API TRY KAREN
+                const response = await fetch('http://localhost/project/backend/api/books/get_all_books.php');
+
+                console.log("📡 Response status:", response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("📚 API Response:", data);
+
+                if (data.success && data.books) {
+                    console.log(`✅ Found ${data.books.length} books`);
+                    displayBooks(data.books);
+                } else {
+                    // ✅ AGAR DIRECT API NA CHALE, TOH ORIGINAL API TRY KAREN
+                    console.log("🔄 Trying original API...");
+                    await loadFromOriginalAPI();
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading books:', error);
+                // ✅ FALLBACK: ORIGINAL API TRY KAREN
+                await loadFromOriginalAPI();
+            }
         }
 
-        const data = await response.json();
-        console.log("📚 API Response:", data);
+        // ✅ ORIGINAL API SE LOAD KARNE KA FUNCTION
+        async function loadFromOriginalAPI() {
+            try {
+                const response = await fetch('http://localhost/project/backend/api/books/read.php');
+                const data = await response.json();
 
-        if (data.success && data.books) {
-            console.log(`✅ Found ${data.books.length} books`);
-            displayBooks(data.books);
-        } else {
-            // ✅ AGAR DIRECT API NA CHALE, TOH ORIGINAL API TRY KAREN
-            console.log("🔄 Trying original API...");
-            await loadFromOriginalAPI();
+                if (data.books && Array.isArray(data.books)) {
+                    console.log(`📚 Original API: ${data.books.length} books`);
+                    displayBooks(data.books);
+                } else {
+                    throw new Error('No books found in original API');
+                }
+            } catch (error) {
+                console.error('❌ Both APIs failed:', error);
+                showErrorState();
+            }
         }
 
-    } catch (error) {
-        console.error('❌ Error loading books:', error);
-        // ✅ FALLBACK: ORIGINAL API TRY KAREN
-        await loadFromOriginalAPI();
-    }
-}
-
-// ✅ ORIGINAL API SE LOAD KARNE KA FUNCTION
-async function loadFromOriginalAPI() {
-    try {
-        const response = await fetch('http://localhost/project/backend/api/books/read.php');
-        const data = await response.json();
-        
-        if (data.books && Array.isArray(data.books)) {
-            console.log(`📚 Original API: ${data.books.length} books`);
-            displayBooks(data.books);
-        } else {
-            throw new Error('No books found in original API');
-        }
-    } catch (error) {
-        console.error('❌ Both APIs failed:', error);
-        showErrorState();
-    }
-}
-
-// ✅ ERROR STATE
-function showErrorState() {
-    document.getElementById('booksGrid').innerHTML = `
+        // ✅ ERROR STATE
+        function showErrorState() {
+            document.getElementById('booksGrid').innerHTML = `
         <div class="col-12 text-center">
             <div class="alert alert-warning">
                 <i class="fas fa-exclamation-triangle me-2"></i>
@@ -482,54 +483,8 @@ function showErrorState() {
             </div>
         </div>
     `;
-}
-
-// ✅ SAMPLE BOOKS ADD KARNE KA FUNCTION (TEMPORARY)
-async function addSampleBooks() {
-    const sampleBooks = [
-        {
-            title: "The Great Gatsby",
-            author: "F. Scott Fitzgerald",
-            genre: "Fiction",
-            condition: "Good",
-            description: "A classic American novel",
-            status: "Available"
-        },
-        {
-            title: "To Kill a Mockingbird", 
-            author: "Harper Lee",
-            genre: "Fiction",
-            condition: "Very Good",
-            description: "A powerful story of racial injustice",
-            status: "Available"
-        },
-        {
-            title: "1984",
-            author: "George Orwell",
-            genre: "Dystopian", 
-            condition: "Good",
-            description: "A dystopian social science fiction novel",
-            status: "Available"
-        },
-        {
-            title: "Pride and Prejudice",
-            author: "Jane Austen",
-            genre: "Romance",
-            condition: "Like New",
-            description: "A romantic novel of manners",
-            status: "Available"
         }
-    ];
 
-    // Display sample books temporarily
-    displayBooks(sampleBooks.map((book, index) => ({
-        id: index + 100,
-        ...book,
-        image_path: "Assets/default-book.jpg"
-    })));
-    
-    alert("Sample books loaded temporarily. These are not saved in database.");
-}
         // Search books
         async function searchBooks() {
             const searchTerm = document.getElementById('searchInput').value.trim();
@@ -584,7 +539,7 @@ async function addSampleBooks() {
                     third: book.image_path3 || 'No image'
                 });
 
-                // ✅ HOVER EFFECTS WALA CARD (Aapke Atomic Habits card jaise)
+                // HOVER EFFECTS CARD 
                 html += `
             <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
                 <div class="book-card" style="height: 375px;">
@@ -613,7 +568,7 @@ async function addSampleBooks() {
             booksGrid.innerHTML = html;
         }
 
-        // ✅ HOVER EFFECT FUNCTION (Aapke swapPic jaise)
+        //HOVER EFFECT FUNCTION (Aapke swapPic jaise)
         function swapPic(elementId, newImage) {
             const element = document.getElementById(elementId);
             if (element && newImage) {
@@ -621,7 +576,7 @@ async function addSampleBooks() {
             }
         }
 
-        // ✅ CLICK EFFECT FUNCTION - 3 Images Cycle Karega
+        //CLICK EFFECT FUNCTION - 3 Images Cycle 
         function cycleBookImage(elementId, mainImage, secondImage, thirdImage) {
             const element = document.getElementById(elementId);
             if (!element) return;
@@ -653,7 +608,7 @@ async function addSampleBooks() {
             };
         }
 
-        // ✅ SIMPLE ERROR HANDLING
+        // SIMPLE ERROR HANDLING
         function handleImageError(imgElement, bookId) {
             console.log(`❌ Image failed to load for book ${bookId}`);
 
@@ -668,8 +623,7 @@ async function addSampleBooks() {
             imgElement.onmouseout = null;
         }
 
-        // IMPROVED ERROR HANDLING FOR BASE64
-        // HANDLE CUSTOM IMAGE UPLOAD - SIMPLE VERSION
+        // CUSTOM IMAGE HANDLER FUNCTION
         function handleCustomImage(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -679,15 +633,15 @@ async function addSampleBooks() {
                 return;
             }
 
-            //  TEMPORARY PREVIEW KE LIYE BASE64
+            //  Using FileReader to read the image file
             const reader = new FileReader();
             reader.onload = function (e) {
                 const previewDataUrl = e.target.result;
 
-                // Preview mein dikhane ke liye
+                // Storing preview image for display
                 selectedImages.push(previewDataUrl);
 
-                // Actual file store karein upload ke liye
+                // Storing actual file for upload
                 customImages.push({
                     file: file,
                     previewData: previewDataUrl
@@ -701,6 +655,7 @@ async function addSampleBooks() {
             event.target.value = ''; // Reset file input
         }
 
+        // CYCLE IMAGES FUNCTION
         function cycleImages(elementId, images) {
             const element = document.getElementById(elementId);
             if (element && images.length > 1) {
@@ -716,12 +671,11 @@ async function addSampleBooks() {
         }
 
         // VIEW BOOK DETAILS FUNCTION
-       // VIEW BOOK DETAILS FUNCTION - UPDATED
-function viewBookDetails(bookId) {
-    console.log('Opening book details for ID:', bookId);
-    // Redirect to book details page with book ID
-    window.location.href = `book-details.html?id=${bookId}`;
-}
+        function viewBookDetails(bookId) {
+            console.log('Opening book details for ID:', bookId);
+            // Redirect to book details page with book ID
+            window.location.href = `book-details.html?id=${bookId}`;
+        }
 
         //  SEARCH ON ENTER KEY PRESS
         document.getElementById('searchInput').addEventListener('keypress', function (e) {
@@ -734,50 +688,50 @@ function viewBookDetails(bookId) {
         function createDefaultBookCover() {
             // Ensure default book cover exists
             const defaultCover = 'Assets/default-book-cover.jpg';
-            // Agar nahi hai toh colored SVG use karega automatically
+
         }
 
 
-        // ✅ SEND BOOK REQUEST FUNCTION
-function sendBookRequest(bookId, requestType) {
-    if (!userData || !userData.user_id) {
-        alert('Please login to send request');
-        window.location.href = 'login.html';
-        return;
-    }
+        // SEND BOOK REQUEST FUNCTION
+        function sendBookRequest(bookId, requestType) {
+            if (!userData || !userData.user_id) {
+                alert('Please login to send request');
+                window.location.href = 'login.html';
+                return;
+            }
 
-    const message = prompt(`Enter message for ${requestType} request:`);
-    if (message === null) return; // User cancelled
+            const message = prompt(`Enter message for ${requestType} request:`);
+            if (message === null) return; // User cancelled
 
-    const requestData = {
-        book_id: bookId,
-        user_id: userData.user_id,
-        request_type: requestType,
-        message: message,
-        proposed_return_date: requestType === 'Borrow' ? 
-            new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null
-    };
+            const requestData = {
+                book_id: bookId,
+                user_id: userData.user_id,
+                request_type: requestType,
+                message: message,
+                proposed_return_date: requestType === 'Borrow' ?
+                    new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] : null
+            };
 
-    fetch('http://localhost/project/backend/api/requests/create.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Request sent successfully!');
-        } else {
-            alert('Error: ' + data.message);
+            fetch('http://localhost/project/backend/api/requests/create.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Request sent successfully!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending request:', error);
+                    alert('Error sending request');
+                });
         }
-    })
-    .catch(error => {
-        console.error('Error sending request:', error);
-        alert('Error sending request');
-    });
-}
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

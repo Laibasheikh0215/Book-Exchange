@@ -72,38 +72,6 @@
             margin-top: 25px;
         }
 
-        /* .borrow-btn {
-            background-color: #f8ca30;
-            border: none;
-            font-weight: 600;
-            padding: 10px 30px;
-            border-radius: 25px;
-            transition: 0.3s;
-            margin-right: 10px;
-        }
-
-        .borrow-btn:hover {
-            background-color: #e0b420;
-            transform: translateY(-2px);
-        }
-
-        .message-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            font-weight: 600;
-            padding: 10px 30px;
-            border-radius: 25px;
-            transition: 0.3s;
-        }
-
-        .message-btn:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-        } */
-
-        /* Existing CSS ke baad yeh add karen */
-
         /* Responsive Action Buttons */
         .action-buttons {
             margin-top: 25px;
@@ -120,7 +88,6 @@
             border-radius: 25px;
             transition: 0.3s;
             margin-right: 0;
-            /* Remove margin-right */
         }
 
         .borrow-btn:hover {
@@ -371,6 +338,7 @@
                 </div>
             </div>
 
+            <!-- Book Title and owner details section -->
             <div class="col-md-8 book-details">
                 <h3 id="bookTitle">Loading...</h3>
 
@@ -386,6 +354,7 @@
                     <!-- Rating stars will be dynamically generated -->
                 </div>
 
+                <!-- Book details -->
                 <div class="book-meta">
                     <p><strong>Author:</strong> <span id="bookAuthor">Loading...</span></p>
                     <p><strong>Genre:</strong> <span id="bookGenre">Loading...</span></p>
@@ -397,10 +366,13 @@
                     </p>
                 </div>
 
+                <!--btn section  -->
                 <div class="action-buttons">
+                                    <!-- borrow request btn  -->
                     <button class="borrow-btn" onclick="requestBorrow()">
                         <i class="fas fa-hand-holding me-1"></i> Request to Borrow
                     </button>
+<!-- Message btn -->
                     <button class="message-btn" onclick="messageOwner()">
                         <i class="fas fa-comment me-1"></i> Message Owner
                     </button>
@@ -443,7 +415,7 @@
         </div>
     </section>
 
-    <!-- ✅ REQUEST MODAL - book-details.html ke footer se pehle add karein -->
+    <!-- REQUEST MODAL-->
     <div class="modal fade" id="requestModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -510,7 +482,7 @@
         </div>
     </div>
 
-    <!-- ✅ MESSAGE MODAL -->
+    <!-- MESSAGE MODAL -->
     <div class="modal fade" id="messageModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -593,7 +565,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ✅ GET BOOK ID FROM URL - YEH SABSE PEHLE
+        //GET BOOK ID FROM URL
         const urlParams = new URLSearchParams(window.location.search);
         const bookId = urlParams.get('id');
 
@@ -625,7 +597,7 @@
             initializeRequestModal();
         });
 
-        // ✅ GET CURRENT USER FUNCTION
+        // GET CURRENT USER FUNCTION
         function getCurrentUser() {
             try {
                 const userData = JSON.parse(localStorage.getItem('user')) || null;
@@ -660,7 +632,7 @@
             }
         }
 
-        // ✅ LOAD BOOK DETAILS
+        // LOAD BOOK DETAILS
         async function loadBookDetails(bookId) {
             try {
                 console.log('Loading book details for ID:', bookId);
@@ -687,7 +659,7 @@
             }
         }
 
-        // ✅ DISPLAY BOOK DETAILS
+        // DISPLAY BOOK DETAILS
         function displayBookDetails(book) {
             console.log('Displaying book:', book);
 
@@ -772,7 +744,7 @@
             };
         }
 
-        // ✅ LOAD BOOK REVIEWS
+        // LOAD BOOK REVIEWS
         async function loadBookReviews(bookId) {
             try {
                 console.log('Loading reviews for book ID:', bookId);
@@ -806,7 +778,7 @@
             }
         }
 
-        // ✅ LOAD REVIEWS FROM LOCALSTORAGE
+        // LOAD REVIEWS FROM LOCALSTORAGE
         function loadReviewsFromLocalStorage(bookId) {
             try {
                 const localReviews = JSON.parse(localStorage.getItem('local_reviews') || '[]');
@@ -820,7 +792,7 @@
             }
         }
 
-        // ✅ GET MOCK REVIEWS AS FINAL FALLBACK
+        // GET MOCK REVIEWS AS FINAL FALLBACK
         function getMockReviews(bookId) {
             const mockReviews = [
                 {
@@ -842,7 +814,7 @@
             return mockReviews;
         }
 
-        // ✅ DISPLAY REVIEWS
+        // DISPLAY REVIEWS
         function displayReviews(reviews) {
             const reviewsList = document.getElementById('reviewsList');
 
@@ -883,7 +855,7 @@
             }).join('');
         }
 
-        // ✅ INITIALIZE RATING SYSTEM
+        // INITIALIZE RATING SYSTEM
         function initializeRatingSystem() {
             const stars = document.querySelectorAll('#ratingInput i');
 
@@ -908,7 +880,7 @@
             });
         }
 
-        // ✅ SUBMIT REVIEW
+        // SUBMIT REVIEW
         async function submitReview() {
             if (!currentUserId) {
                 alert('Please login to submit a review');
@@ -1000,7 +972,7 @@
             }
         }
 
-        // ✅ FALLBACK METHOD IF API FAILS
+        // FALLBACK METHOD IF API FAILS
         async function submitReviewFallback(reviewText) {
             try {
                 // Store review in localStorage as fallback
@@ -1041,7 +1013,7 @@
             }
         }
 
-        // ✅ REQUEST BORROW FUNCTION
+        // REQUEST BORROW FUNCTION
         function requestBorrow() {
             console.log('Request borrow button clicked');
 
@@ -1060,7 +1032,7 @@
             showRequestModal();
         }
 
-        // ✅ SHOW REQUEST MODAL
+        // SHOW REQUEST MODAL
         function showRequestModal() {
             console.log('Showing request modal');
 
@@ -1087,7 +1059,7 @@
             }
         }
 
-        // ✅ LOAD USER'S BOOKS FOR SWAP
+        // LOAD USER'S BOOKS FOR SWAP
         function loadUserBooksForSwap() {
             if (!currentUserId) return;
 
@@ -1117,7 +1089,7 @@
                 });
         }
 
-        // ✅ INITIALIZE REQUEST MODAL
+        //INITIALIZE REQUEST MODAL
         function initializeRequestModal() {
             console.log('Initializing request modal...');
 
@@ -1143,8 +1115,7 @@
             console.log('Request modal initialized successfully');
         }
 
-        // ✅ FIXED SUBMIT REQUEST FUNCTION - SINGLE VERSION
-        // ✅ FIXED SUBMIT REQUEST FUNCTION - HANDLES DOUBLE JSON
+        // SUBMIT REQUEST FUNCTION
         async function submitRequest() {
             console.log('🔄 submitRequest() called - Starting...');
 
@@ -1232,13 +1203,13 @@
                 console.log('📡 Response Status:', response.status);
                 console.log('📡 Response OK:', response.ok);
 
-                // ✅ FIX: HANDLE DOUBLE JSON RESPONSE
+                // HANDLE DOUBLE JSON RESPONSE
                 const responseText = await response.text();
                 console.log('📡 Raw server response:', responseText);
 
                 let result;
 
-                // ✅ CHECK FOR DOUBLE JSON AND EXTRACT FIRST ONE
+                // CHECK FOR DOUBLE JSON AND EXTRACT FIRST ONE
                 if (responseText.includes('}{')) {
                     console.log('⚠️ Detected double JSON response, extracting first one...');
                     const firstJson = responseText.split('}{')[0] + '}';
@@ -1288,7 +1259,7 @@
             }
         }
 
-        // ✅ DEBUG FUNCTION - Add this before submitRequest
+        // DEBUG FUNCTION
         async function debugSubmitRequest() {
             console.log('🔍 DEBUG: Starting request submission debug...');
 
@@ -1378,7 +1349,7 @@
             }
         }
 
-        // ✅ TEMPORARY: Add debug button to test
+        // TEMPORARY: Add debug button to test
         function addDebugButton() {
             const debugBtn = document.createElement('button');
             debugBtn.textContent = '🐛 Debug Request';
@@ -1394,7 +1365,7 @@
         // Add debug button when page loads
         setTimeout(addDebugButton, 2000);
 
-        // ✅ MESSAGE OWNER FUNCTION
+        // MESSAGE OWNER FUNCTION
         async function messageOwner() {
             if (!currentUserId) {
                 alert('Please login to send message');
@@ -1428,7 +1399,7 @@
             }
         }
 
-        // ✅ SEND MESSAGE FUNCTION
+        //SEND MESSAGE FUNCTION
         async function sendMessage() {
             if (!currentUserId) {
                 alert('Please login to send message');
@@ -1498,7 +1469,7 @@
             }
         }
 
-        // ✅ GET BOOK OWNER ID FUNCTION
+        // GET BOOK OWNER ID FUNCTION
         async function getBookOwnerId() {
             try {
                 const response = await fetch(`http://localhost/project/backend/api/books/read.php?id=${bookId}`);
@@ -1513,7 +1484,7 @@
             }
         }
 
-        // ✅ UTILITY FUNCTIONS
+        // UTILITY FUNCTIONS
         function getStatusClass(status) {
             if (!status) return 'status-available';
 
@@ -1526,6 +1497,7 @@
             }
         }
 
+        // GENERATE STAR RATING HTML
         function generateStars(rating) {
             if (!rating) return '<i class="fa-regular fa-star"></i>'.repeat(5);
 
@@ -1549,6 +1521,7 @@
             return stars;
         }
 
+        // FORMAT DATE FUNCTION
         function formatDate(dateString) {
             try {
                 const date = new Date(dateString);
@@ -1562,6 +1535,7 @@
             }
         }
 
+        // CHANGE MAIN IMAGE FUNCTION
         function changeMainImage(src) {
             const mainImage = document.getElementById('mainBookImage');
             if (mainImage && src) {
@@ -1575,6 +1549,7 @@
             }
         }
 
+        // SHOW SUCCESS MESSAGE
         function showSuccessMessage(message) {
             const toast = document.createElement('div');
             toast.className = 'alert alert-success position-fixed top-0 end-0 m-3';
@@ -1590,6 +1565,7 @@
             }, 3000);
         }
 
+        // SHOW ERROR MESSAGE
         function showError(message) {
             document.querySelector('.book-section').innerHTML = `
         <div class="alert alert-danger text-center m-5">

@@ -171,13 +171,11 @@
     </div>
 
     <script>
-
-
-        // ✅ VARIABLES KO SABSE PEHLE INITIALIZE KAREIN
+        // Initialize selected images array (variables)
         let selectedImages = [];
         let customImages = [];
 
-        // ✅ FONT AWESOME LOAD KARNE KA BETTER TARIKA
+        // Loading Font Awesome for icons
         if (!document.querySelector('link[href*="font-awesome"]')) {
             const faLink = document.createElement('link');
             faLink.rel = 'stylesheet';
@@ -185,7 +183,7 @@
             document.head.appendChild(faLink);
         }
 
-        // ✅ SELECT IMAGE FUNCTION
+        // SELECT IMAGE FUNCTION
         function selectImage(imagePath, element) {
             console.log("Selecting image:", imagePath);
 
@@ -210,8 +208,7 @@
             }
         }
 
-        // ✅ HANDLE CUSTOM IMAGE UPLOAD
-        // ✅ HANDLE CUSTOM IMAGE UPLOAD - FIXED VERSION
+        // HANDLE CUSTOM IMAGE UPLOAD
         function handleCustomImage(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -223,7 +220,7 @@
 
             const reader = new FileReader();
             reader.onload = function (e) {
-                // ✅ SIRF BASE64 DATA URL STORE KAREIN PREVIEW KE LIYE
+                // STORE ONLY BASE64 DATA URL FOR PREVIEW PURPOSES
                 const imageDataUrl = e.target.result;
 
                 selectedImages.push(imageDataUrl);
@@ -242,7 +239,7 @@
             event.target.value = ''; // Reset file input
         }
 
-        // ✅ UPDATE SELECTED IMAGES PREVIEW
+        // UPDATE SELECTED IMAGES PREVIEW
         function updateSelectedImagesPreview() {
             const previewContainer = document.getElementById('selectedImagesPreview');
             previewContainer.innerHTML = '';
@@ -264,7 +261,7 @@
             });
         }
 
-        // ✅ REMOVE SELECTED IMAGE
+        // REMOVE SELECTED IMAGE
         function removeSelectedImage(index) {
             selectedImages.splice(index, 1);
 
@@ -281,17 +278,17 @@
             });
         }
 
-        // ✅ EXTRACT FILE NAME FROM PATH
+        // EXTRACT FILE NAME FROM PATH
         function extractFileName(imagePath) {
             if (!imagePath) return '';
 
-            // Agar base64 hai toh skip karein
+            // If it's a base64 image, return empty string
             if (imagePath.startsWith('data:image')) {
                 console.log("Base64 image found, skipping");
                 return '';
             }
 
-            // File path se sirf file name nikalain
+            // Extract file name from path
             const parts = imagePath.split('/');
             const fileName = parts[parts.length - 1];
             console.log("Extracted file name:", fileName);
@@ -299,9 +296,7 @@
             return fileName;
         }
 
-        // ✅ FORM SUBMISSION
-        // ✅ FORM SUBMISSION - PROPER FILE UPLOAD
-        // ✅ FORM SUBMISSION - UPDATED
+        // FORM SUBMISSION
         document.getElementById("addBookForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
@@ -316,10 +311,10 @@
             console.log("Selected Images:", selectedImages);
             console.log("Custom Images:", customImages);
 
-            // ✅ FORM DATA BANAYEIN
+            // PREPARE FORM DATA
             const formData = new FormData();
 
-            // Book details add karein
+            // Add form fields
             formData.append('title', document.getElementById('title').value);
             formData.append('author', document.getElementById('author').value);
             formData.append('user_id', userData.user_id);
@@ -328,12 +323,12 @@
             formData.append('condition', document.getElementById('condition').value);
             formData.append('description', document.getElementById('description').value);
 
-            // ✅ CUSTOM IMAGES UPLOAD KAREIN
+            // CUSTOM IMAGES KE LIYE FILES APPEND KAREIN
             customImages.forEach((customImage, index) => {
                 formData.append(`image${index + 1}`, customImage.file);
             });
 
-            // ✅ PREDEFINED IMAGES KE LIYE CHECK KAREIN
+            // Sending predefined images (if any)
             selectedImages.forEach((imageData, index) => {
                 // Agar predefined image hai (base64 nahi hai)
                 if (imageData.startsWith('Assets/')) {

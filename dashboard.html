@@ -9,7 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Your CSS remains unchanged */
         body {
             background-color: #f8f9fa;
             font-family: Arial, sans-serif;
@@ -149,7 +148,7 @@
             background-color: #17a2b8;
         }
 
-        /* ✅ REQUESTS STYLING */
+        /* REQUESTS STYLING */
         .request-card {
             border-left: 4px solid #007bff;
             transition: all 0.3s ease;
@@ -286,7 +285,7 @@
             opacity: 0.5;
         }
 
-        /* ✅ NOTIFICATION STYLES */
+        /* NOTIFICATION STYLES */
         .notification-item {
             transition: all 0.2s ease;
             cursor: pointer;
@@ -318,7 +317,7 @@
             color: #17a2b8 !important;
         }
 
-        /* ✅ MESSAGE STYLING */
+        /* MESSAGE STYLING */
         .message-bubble {
             transition: all 0.3s ease;
         }
@@ -400,7 +399,7 @@
         }
 
 
-        /* ✅ NOTIFICATION TOAST STYLES */
+        /* NOTIFICATION TOAST STYLES */
         @keyframes slideInRight {
             from {
                 transform: translateX(100%);
@@ -465,7 +464,7 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- ✅ SIDEBAR -->
+            <!-- SIDEBAR -->
             <div class="col-md-3 col-lg-2 sidebar">
                 <div class="user-info">
                     <div class="user-avatar bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
@@ -489,9 +488,6 @@
                     <a class="nav-link" href="#" onclick="showTransactions()">
                         <i class="fas fa-exchange-alt me-2"></i>Transactions
                     </a>
-                    <a class="nav-link" href="browse-book.html">
-                        <i class="fas fa-search me-2"></i>Browse Books
-                    </a>
                     <a class="nav-link" href="#" onclick="addBook()">
                         <i class="fas fa-plus me-2"></i>Add Book
                     </a>
@@ -514,7 +510,7 @@
                 </nav>
             </div>
 
-            <!-- ✅ MAIN CONTENT -->
+            <!-- MAIN CONTENT -->
             <div class="col-md-9 col-lg-10 ml-sm-auto px-4">
                 <!-- Dashboard Header -->
                 <div class="dashboard-header text-center">
@@ -565,8 +561,7 @@
                                     </button>
                                 </div>
                                 <div class="d-flex gap-2 mt-3">
-                                    <button class="btn btn-primary" onclick="addBook()">Add New Book</button>
-                                    <button class="btn btn-outline-primary" onclick="searchbook()">Browse Books</button>
+                                    <button class="btn btn-outline-primary" onclick="addBook()">Add New Book</button>
                                     <button class="btn btn-outline-primary" onclick="viewRequests()">View
                                         Requests</button>
                                 </div>
@@ -606,66 +601,64 @@
         </div>
     </div>
 
-    <!-- ✅ REQUESTS INTERFACE -->
-    <div id="requestsInterface" class="container-fluid" style="display: none;">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-handshake me-2"></i>Book Requests
-                        </h5>
-                        <div>
-                            <button class="btn btn-sm btn-light me-2" onclick="refreshRequests()">
-                                <i class="fas fa-sync-alt"></i> Refresh
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <!-- Requests Tabs -->
-                        <ul class="nav nav-tabs mb-3" id="requestsTabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="incoming-tab" data-bs-toggle="tab" href="#incoming">
-                                    Incoming Requests <span class="badge bg-danger ms-1" id="incomingCount">0</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing">
-                                    Outgoing Requests <span class="badge bg-info ms-1" id="outgoingCount">0</span>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <div class="tab-content" id="requestsTabContent">
-                            <!-- Incoming Requests -->
-                            <div class="tab-pane fade show active" id="incoming">
-                                <div id="incomingRequestsList">
-                                    <div class="empty-state">
-                                        <i class="fas fa-inbox"></i>
-                                        <p>No incoming requests</p>
-                                        <small>Requests for your books will appear here</small>
-                                    </div>
-                                </div>
+    <!--PROFILE MODAL -->
+    <div class="modal fade" id="profileModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="profileForm">
+                        <div class="text-center mb-4">
+                            <div class="profile-pic-preview bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
+                                id="profilePreview">
+                                <span id="profilePreviewText">U</span>
                             </div>
-
-                            <!-- Outgoing Requests -->
-                            <div class="tab-pane fade" id="outgoing">
-                                <div id="outgoingRequestsList">
-                                    <div class="empty-state">
-                                        <i class="fas fa-paper-plane"></i>
-                                        <p>No outgoing requests</p>
-                                        <small>Your requests to other users will appear here</small>
-                                    </div>
-                                </div>
+                            <div class="upload-btn-wrapper mt-2">
+                                <button class="btn btn-outline-primary btn-sm" type="button">
+                                    <i class="fas fa-camera me-1"></i> Change Photo
+                                </button>
+                                <input type="file" id="profilePicture" accept="image/*"
+                                    onchange="previewProfileImage(this)">
                             </div>
                         </div>
-                    </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="profileName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="profileEmail" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" class="form-control" id="profileCity">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" id="profileAddress">
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Bio</label>
+                                <textarea class="form-control" id="profileBio" rows="3"
+                                    placeholder="Tell us about yourself..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ✅ MESSAGES INTERFACE -->
+    <!-- MESSAGES INTERFACE -->
     <div id="messagesInterface" class="container-fluid" style="display: none;">
         <div class="row">
             <div class="col-12">
@@ -749,7 +742,66 @@
         </div>
     </div>
 
-    <!-- ✅ NOTIFICATIONS INTERFACE -->
+    <!-- REQUESTS INTERFACE -->
+    <div id="requestsInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-handshake me-2"></i>Book Requests
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2" onclick="refreshRequests()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Requests Tabs -->
+                        <ul class="nav nav-tabs mb-3" id="requestsTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="incoming-tab" data-bs-toggle="tab" href="#incoming">
+                                    Incoming Requests <span class="badge bg-danger ms-1" id="incomingCount">0</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="outgoing-tab" data-bs-toggle="tab" href="#outgoing">
+                                    Outgoing Requests <span class="badge bg-info ms-1" id="outgoingCount">0</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="requestsTabContent">
+                            <!-- Incoming Requests -->
+                            <div class="tab-pane fade show active" id="incoming">
+                                <div id="incomingRequestsList">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No incoming requests</p>
+                                        <small>Requests for your books will appear here</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Outgoing Requests -->
+                            <div class="tab-pane fade" id="outgoing">
+                                <div id="outgoingRequestsList">
+                                    <div class="empty-state">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <p>No outgoing requests</p>
+                                        <small>Your requests to other users will appear here</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS INTERFACE -->
     <div id="notificationsInterface" class="container-fluid" style="display: none;">
         <div class="row">
             <div class="col-12">
@@ -802,64 +854,7 @@
         </div>
     </div>
 
-    <!-- ✅ PROFILE MODAL -->
-    <div class="modal fade" id="profileModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Profile</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="profileForm">
-                        <div class="text-center mb-4">
-                            <div class="profile-pic-preview bg-primary text-white d-flex align-items-center justify-content-center mx-auto"
-                                id="profilePreview">
-                                <span id="profilePreviewText">U</span>
-                            </div>
-                            <div class="upload-btn-wrapper mt-2">
-                                <button class="btn btn-outline-primary btn-sm" type="button">
-                                    <i class="fas fa-camera me-1"></i> Change Photo
-                                </button>
-                                <input type="file" id="profilePicture" accept="image/*"
-                                    onchange="previewProfileImage(this)">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Full Name *</label>
-                                <input type="text" class="form-control" id="profileName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="profileEmail" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">City</label>
-                                <input type="text" class="form-control" id="profileCity">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Address</label>
-                                <input type="text" class="form-control" id="profileAddress">
-                            </div>
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Bio</label>
-                                <textarea class="form-control" id="profileBio" rows="3"
-                                    placeholder="Tell us about yourself..."></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ UPDATED FILE DISPUTE MODAL -->
+    <!--FILE DISPUTE MODAL -->
     <div class="modal fade" id="fileDisputeModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -876,7 +871,7 @@
                             Select a book from your listings to automatically fill dispute details.
                         </div>
 
-                        <!-- ✅ BOOK SELECTION SECTION -->
+                        <!-- BOOK SELECTION SECTION -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">Select Your Book *</label>
                             <div id="userBooksList"
@@ -921,18 +916,17 @@
                                 </select>
                             </div>
 
-                            <!-- ✅ AUTO-FILLED USER DETAILS -->
-                            <!-- ✅ AUTO-FILLED USER DETAILS -->
-<div class="col-md-6 mb-3">
-    <label class="form-label">Dispute Against User</label>
-    <div class="p-2 border rounded bg-light">
-        <div id="selectedUserInfo" class="text-muted">
-            Select a book to see user details
-        </div>
-        <!-- ✅ YEH HIDDEN INPUT FIELD ZAROOR HO -->
-        <input type="hidden" id="respondentIdInput" value="">
-    </div>
-</div>
+                            <!-- AUTO-FILLED USER DETAILS -->
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Dispute Against User</label>
+                                <div class="p-2 border rounded bg-light">
+                                    <div id="selectedUserInfo" class="text-muted">
+                                        Select a book to see user details
+                                    </div>
+                                    <!-- HIDDEN INPUT FIELD-->
+                                    <input type="hidden" id="respondentIdInput" value="">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -1019,10 +1013,11 @@
             </div>
         </div>
     </div>
-    <!-- ✅ NOTIFICATION POLLER -->
+
+    <!-- NOTIFICATION POLLER -->
     <script src="assets/js/notification_poller.js"></script>
     <script>
-        // ✅ GLOBAL VARIABLES - ADD AT THE VERY TOP
+        // GLOBAL VARIABLES - ADD AT THE VERY TOP
         let messageCheckInterval = null;
         let currentConversation = null;
         let messagePollingInterval = null;
@@ -1038,7 +1033,7 @@
             initializeDashboard();
         }
 
-        // ✅ COMPLETE INITIALIZE DASHBOARD
+        // COMPLETE INITIALIZE DASHBOARD
         function initializeDashboard() {
             console.log('🚀 Initializing dashboard...');
 
@@ -1046,7 +1041,7 @@
             document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
             updateSidebarInfo();
 
-            // ✅ START NOTIFICATION POLLING
+            // START NOTIFICATION POLLING
             if (userData && userData.user_id) {
                 notificationPoller.start(userData.user_id);
             }
@@ -1069,7 +1064,7 @@
             console.log('✅ Dashboard fully initialized');
         }
 
-        // ✅ LOAD USER'S ACTUAL BOOKS FROM DATABASE
+        // LOAD USER'S ACTUAL BOOKS FROM DATABASE
         function loadUserBooks() {
             const booksCountElement = document.getElementById('booksCount');
             const recentBooksDiv = document.getElementById('recentBooks');
@@ -1100,7 +1095,7 @@
                 });
         }
 
-        // ✅ DISPLAY ONLY USER'S UPLOADED BOOKS
+        // DISPLAY ONLY USER'S UPLOADED BOOKS
         function displayUserBooks(books) {
             const recentBooksDiv = document.getElementById('recentBooks');
 
@@ -1139,12 +1134,12 @@
             }
         }
 
-        // ✅ INITIALIZE MODALS
+        // INITIALIZE MODALS
         function initializeModals() {
             console.log('Initializing modals...');
         }
 
-        // ✅ SHOW REQUESTS FUNCTION
+        // SHOW REQUESTS FUNCTION
         function showRequests() {
             stopAllPolling();
             document.querySelector('.dashboard-header').style.display = 'none';
@@ -1155,7 +1150,7 @@
             loadRequests();
         }
 
-        // ✅ UPDATE REQUESTS COUNT
+        // UPDATE REQUESTS COUNT
         function updateRequestsCount() {
             if (!userData || !userData.user_id) return;
 
@@ -1185,7 +1180,7 @@
                 });
         }
 
-        // ✅ LOAD RECENT REQUESTS FOR DASHBOARD
+        // LOAD RECENT REQUESTS FOR DASHBOARD
         function loadRecentRequests() {
             if (!userData || !userData.user_id) return;
 
@@ -1205,7 +1200,7 @@
                 });
         }
 
-        // ✅ DISPLAY RECENT REQUESTS IN DASHBOARD
+        // DISPLAY RECENT REQUESTS IN DASHBOARD
         function displayRecentRequests(requests) {
             const recentRequestsDiv = document.getElementById('recentRequests');
 
@@ -1258,20 +1253,22 @@
             `;
         }
 
-        // ✅ REQUEST ACTIONS HANDLERS
+        //REQUEST ACTIONS HANDLERS
         async function handleAcceptRequest(requestId, userId) {
             await updateRequestStatus(requestId, 'accepted', userId);
         }
 
+        // REQUEST ACTIONS HANDLERS
         async function handleRejectRequest(requestId, userId) {
             await updateRequestStatus(requestId, 'rejected', userId);
         }
 
+        // REQUEST ACTIONS HANDLERS
         async function handleCancelRequest(requestId, userId) {
             await updateRequestStatus(requestId, 'cancelled', userId);
         }
 
-        // ✅ DEBUG VERSION: Add this temporary function to see the actual API response
+        //Add this temporary function to see the actual API response
         async function updateRequestStatus(requestId, status, userId) {
             let button;
 
@@ -1279,7 +1276,7 @@
                 console.log('🔄 DEBUG: Starting updateRequestStatus');
                 console.log('📋 Parameters:', { requestId, status, userId });
 
-                // ✅ FIX: Map frontend status to backend status
+                // Map frontend status to backend status
                 const statusMap = {
                     'accepted': 'Approved',
                     'rejected': 'Rejected',
@@ -1300,7 +1297,7 @@
                     button.disabled = true;
                 }
 
-                // ✅ FIX: Ensure all required data is sent with proper types
+                //Ensure all required data is sent with proper types
                 const requestData = {
                     request_id: parseInt(requestId),
                     status: backendStatus,
@@ -1309,7 +1306,7 @@
 
                 console.log('📤 Sending to API:', requestData);
 
-                // ✅ DEBUG: Log the exact fetch call
+                // DEBUG: Log the exact fetch call
                 const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
                     method: 'POST',
                     headers: {
@@ -1321,7 +1318,7 @@
                 console.log('📡 Response status:', response.status);
                 console.log('📡 Response ok:', response.ok);
 
-                // ✅ DEBUG: Get the raw response text first
+                // DEBUG: Get the raw response text first
                 const responseText = await response.text();
                 console.log('📡 Raw response:', responseText);
 
@@ -1356,7 +1353,7 @@
             }
         }
 
-        // ✅ FIXED: REAL-TIME Request status update
+        // REAL-TIME Request status update
         async function updateRequestStatus(requestId, status, userId) {
             debugRequestData(requestId, status, userId);
             let button;
@@ -1364,7 +1361,7 @@
             try {
                 console.log('🔄 Updating request:', { requestId, status, userId });
 
-                // ✅ FIX: Map frontend status to backend status
+                // Map frontend status to backend status
                 const statusMap = {
                     'accepted': 'Approved',
                     'rejected': 'Rejected',
@@ -1377,7 +1374,7 @@
                     return;
                 }
 
-                // ✅ FIX: Get button reference safely
+                // Get button reference safely
                 button = event.target.closest('button');
                 if (button) {
                     const originalText = button.innerHTML;
@@ -1385,7 +1382,7 @@
                     button.disabled = true;
                 }
 
-                // ✅ FIX: Ensure all required data is sent
+                // Ensure all required data is sent
                 const requestData = {
                     request_id: parseInt(requestId),
                     status: backendStatus,
@@ -1421,7 +1418,7 @@
                 console.error('❌ Error:', error);
                 showToast('Error: ' + error.message, 'error');
 
-                // ✅ FIX: Reset button safely
+                // Reset button safely
                 if (button) {
                     button.innerHTML = button.textContent || 'Action';
                     button.disabled = false;
@@ -1435,7 +1432,7 @@
             sendBookRequest(bookId, ownerId, 'Borrow', message || '');
         }
 
-        // ✅ REAL-TIME: Update ALL UI locations for a request
+        //REAL-TIME: Update ALL UI locations for a request
         function updateAllRequestUIs(requestId, newStatus) {
             console.log('🎨 Updating ALL UIs for request:', requestId, '→', newStatus);
 
@@ -1452,7 +1449,7 @@
             updateActiveRequestUI(requestId, newStatus);
         }
 
-        // ✅ FIXED: Update request cards in lists - PROPERLY REMOVE BUTTONS
+        // Update request cards in lists - PROPERLY REMOVE BUTTONS
         function updateRequestCardUI(requestId, newStatus, listId) {
             const list = document.getElementById(listId);
             if (!list) return;
@@ -1472,7 +1469,7 @@
                     // Update data-status attribute
                     card.setAttribute('data-status', newStatus);
 
-                    // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+                    // PROPERLY REMOVE ACTION BUTTONS
                     const actionButtons = card.querySelector('.action-buttons');
                     if (actionButtons) {
                         // If status is not pending, remove action buttons completely
@@ -1489,7 +1486,7 @@
             });
         }
 
-        // ✅ Update recent requests in dashboard
+        //Update recent requests in dashboard
         function updateRecentRequestUI(requestId, newStatus) {
             const recentItems = document.querySelectorAll('#recentRequests .border-bottom');
             recentItems.forEach(item => {
@@ -1515,7 +1512,7 @@
             });
         }
 
-        // ✅ Update active request details if open
+        // Update active request details if open
         function updateActiveRequestUI(requestId, newStatus) {
             // If request details modal is open, update it too
             const activeModal = document.querySelector('.modal.show');
@@ -1528,7 +1525,7 @@
             }
         }
 
-        // ✅ LOAD REQUESTS FUNCTION
+        // LOAD REQUESTS FUNCTION
         function loadRequests() {
             if (!userData || !userData.user_id) {
                 alert('Please login first');
@@ -1539,7 +1536,7 @@
             loadOutgoingRequests();
         }
 
-        // ✅ LOAD INCOMING REQUESTS
+        // LOAD INCOMING REQUESTS
         function loadIncomingRequests() {
             const incomingList = document.getElementById('incomingRequestsList');
             incomingList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading incoming requests...</div>';
@@ -1565,7 +1562,7 @@
                 });
         }
 
-        // ✅ LOAD OUTGOING REQUESTS
+        // LOAD OUTGOING REQUESTS
         function loadOutgoingRequests() {
             const outgoingList = document.getElementById('outgoingRequestsList');
             outgoingList.innerHTML = '<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div> Loading outgoing requests...</div>';
@@ -1591,8 +1588,7 @@
                 });
         }
 
-        // ✅ FIXED: Display incoming requests with proper buttons
-        // ✅ FIXED: Display incoming requests with proper conditional buttons
+        //Display incoming requests with proper conditional buttons
         function displayIncomingRequests(requests) {
             const incomingList = document.getElementById('incomingRequestsList');
 
@@ -1670,7 +1666,7 @@
             }).join('');
         }
 
-        // ✅ DEBUG: Check what data is being sent
+        // Check what data is being sent
         function debugRequestData(requestId, status, userId) {
             console.log('🔍 DEBUG Request Data:');
             console.log('Request ID:', requestId, 'Type:', typeof requestId);
@@ -1682,7 +1678,7 @@
             console.log('Outgoing list exists:', !!document.getElementById('outgoingRequestsList'));
         }
 
-        // ✅ FIXED: Display outgoing requests
+        // Display outgoing requests
         function displayOutgoingRequests(requests) {
             const outgoingList = document.getElementById('outgoingRequestsList');
 
@@ -1742,7 +1738,7 @@
             `).join('');
         }
 
-        // ✅ SEND BOOK REQUEST FUNCTION
+        // SEND BOOK REQUEST FUNCTION
         function sendBookRequest(bookId, ownerId, requestType = 'Borrow', message = '') {
             if (!userData || !userData.user_id) {
                 alert('Please login to send a request');
@@ -1791,14 +1787,14 @@
         }
 
 
-        // ✅ REFRESH REQUESTS
+        // REFRESH REQUESTS
         function refreshRequests() {
             console.log('Refreshing requests...');
             loadRequests();
             showToast('Requests refreshed!', 'success');
         }
 
-        // ✅ NOTIFICATIONS FUNCTIONS
+        // NOTIFICATIONS FUNCTIONS
         function showNotifications() {
             stopAllPolling();
             console.log('📢 Showing notifications interface');
@@ -2003,7 +1999,7 @@
             loadNotifications(filter);
         }
 
-        // ✅ NOTIFICATION STYLING HELPER FUNCTIONS
+        // NOTIFICATION STYLING HELPER FUNCTIONS
         function getNotificationIcon(type) {
             const icons = {
                 'Request': 'fa-handshake',
@@ -2036,6 +2032,7 @@
             return classes[type] || 'bg-secondary';
         }
 
+        // Get notification border color
         function getNotificationBorderColor(type) {
             const colors = {
                 'Request': '#007bff',
@@ -2096,7 +2093,7 @@
                 });
         }
 
-        // ✅ MARK ALL NOTIFICATIONS AS READ
+        // MARK ALL NOTIFICATIONS AS READ
         function markAllNotificationsAsRead() {
             if (!userData || !userData.user_id) return;
 
@@ -2138,7 +2135,7 @@
                 });
         }
 
-        // ✅ UPDATE UNREAD NOTIFICATIONS COUNT
+        // UPDATE UNREAD NOTIFICATIONS COUNT
         function updateUnreadNotificationsCount() {
             if (!userData || !userData.user_id) return;
 
@@ -2185,7 +2182,7 @@
                 });
         }
 
-        // ✅ IMPROVED CREATE NOTIFICATION FUNCTION
+        // CREATE NOTIFICATION FUNCTION
         function createNotification(userId, title, message, type = 'System', relatedId = null) {
             const notificationData = {
                 user_id: parseInt(userId),
@@ -2219,7 +2216,7 @@
                 });
         }
 
-        // ✅ REFRESH NOTIFICATIONS
+        // REFRESH NOTIFICATIONS
         function refreshNotifications() {
             console.log('🔄 Refreshing notifications...');
             loadNotifications();
@@ -2227,7 +2224,7 @@
             showToast('Notifications refreshed!', 'success');
         }
 
-        // ✅ AUTO-CHECK SYSTEMS
+        //AUTO-CHECK SYSTEMS
         function setupAutoCheckers() {
             console.log('🔄 Setting up auto-check systems...');
 
@@ -2248,7 +2245,7 @@
             }, 15000); // 15 seconds
         }
 
-        // ✅ MESSAGES FUNCTIONS
+        // MESSAGES FUNCTIONS
         function showMessages() {
             console.log('💬 Showing messages interface');
 
@@ -2265,17 +2262,17 @@
             document.getElementById('messagesInterface').style.display = 'block';
             setActiveNavLink('messages');
 
-            // ✅ IMPORTANT: Refresh all message data
+            // IMPORTANT: Refresh all message data
             loadConversations();
             updateUnreadMessagesCount(); // Count update karein
 
-            // ✅ Restart polling for badge updates
+            // Restart polling for badge updates
             startMessagePolling();
 
             console.log('✅ Messages interface loaded');
         }
 
-        // ✅ FIXED: Load conversations with better error handling
+        // Load conversations with better error handling
         function loadConversations() {
             if (!userData || !userData.user_id) {
                 console.error('User not logged in');
@@ -2386,7 +2383,7 @@
             }).join('');
         }
 
-        // ✅ FIXED: Select conversation WITHOUT calling undefined function
+        // Select conversation WITHOUT calling undefined function
         function selectConversation(otherUserId, otherUserName) {
             console.log('💬 Selecting conversation with:', otherUserId, otherUserName);
 
@@ -2415,7 +2412,7 @@
             console.log('✅ Conversation loaded without auto-polling');
         }
 
-        // ✅ MANUAL REFRESH: User clicks to refresh messages
+        //MANUAL REFRESH: User clicks to refresh messages
         function refreshCurrentMessages() {
             if (!window.currentConversation) {
                 alert('Please select a conversation first');
@@ -2497,13 +2494,12 @@
         }
 
         // Display messages
-        // ✅ IMPROVED: Display messages with better styling
         function displayMessages(messages) {
             const messagesContainer = document.getElementById('messagesContainer');
 
             console.log('🖥️ Displaying messages:', messages);
 
-            // ✅ SAFETY CHECK: Ensure messages is always an array
+            // SAFETY CHECK: Ensure messages is always an array
             if (!messages || !Array.isArray(messages)) {
                 console.warn('⚠️ messages is not an array, converting to empty array');
                 messages = [];
@@ -2588,7 +2584,7 @@
             sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
             sendBtn.disabled = true;
 
-            // ✅ IMMEDIATE UI UPDATE - Add message to chat immediately
+            // Add message to chat immediately
             const messagesContainer = document.getElementById('messagesContainer');
             const messageTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -2614,7 +2610,7 @@
             // Scroll to bottom
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-            // ✅ Send to server
+            // Send to server
             const messageData = {
                 sender_id: userData.user_id,
                 receiver_id: window.currentConversation.userId,
@@ -2656,7 +2652,7 @@
                 });
         }
 
-        // ✅ FIXED: Handle enter key
+        // Handle enter key
         function handleMessageKeypress(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); // Prevent new line
@@ -2664,7 +2660,7 @@
             }
         }
 
-        // ✅ ADD THIS FUNCTION FOR MESSAGE POLLING
+        //ADD THIS FUNCTION FOR MESSAGE POLLING
         function startMessagePolling() {
             console.log('🔔 Starting message polling for badge updates');
 
@@ -2711,7 +2707,7 @@
                 });
         }
 
-        // ✅ FIXED: Update unread messages count
+        // Update unread messages count
         function updateUnreadMessagesCount() {
             if (!userData || !userData.user_id) return;
 
@@ -2781,7 +2777,7 @@
             showToast('Messages refreshed!', 'success');
         }
 
-        // ✅ IMPROVED: STOP ALL POLLING
+        //STOP ALL POLLING
         function stopAllPolling() {
             try {
                 // Stop notification polling
@@ -2802,11 +2798,12 @@
             }
         }
 
-        // ✅ UTILITY FUNCTIONS
+        // UTILITY FUNCTIONS
         function loadDashboardStats() {
             // Simple stats loading
         }
 
+        // UPDATE SIDEBAR USER INFO
         function updateSidebarInfo() {
             document.getElementById('sidebarUserName').textContent = userData.name || 'User Name';
             document.getElementById('sidebarUserEmail').textContent = userData.email || 'user@email.com';
@@ -2814,6 +2811,7 @@
             document.getElementById('sidebarAvatarText').textContent = initial;
         }
 
+        // SET ACTIVE NAV LINK
         function setActiveNavLink(activeItem) {
             document.querySelectorAll('.sidebar .nav-link').forEach(link => {
                 link.classList.remove('active');
@@ -2831,7 +2829,7 @@
             }
         }
 
-        // ✅ STOP POLLING when leaving messages page
+        // STOP POLLING when leaving messages page
         function showDashboard() {
             // Stop all polling first
             stopAllPolling();
@@ -2844,36 +2842,44 @@
             setActiveNavLink('dashboard');
         }
 
+        // SHOW PROFILE
         function showProfile() {
             setActiveNavLink('profile');
         }
 
+        // SHOW MY BOOKS
         function showMyBooks() {
             window.location.href = "my-books.html";
         }
 
+        // SHOW TRANSACTIONS
         function showTransactions() {
             window.location.href = "user-transactions.html";
         }
 
+        // LOGOUT FUNCTION
         function logout() {
             localStorage.removeItem('user');
             localStorage.removeItem('userProfile');
             window.location.href = "index.html";
         }
 
+        // NAVIGATION FUNCTIONS
         function addBook() {
             window.location.href = "add-book.html";
         }
 
+        // BROWSE BOOKS FUNCTION
         function searchbook() {
             window.location.href = "browse-book.html";
         }
 
+        // VIEW REQUESTS FUNCTION
         function viewRequests() {
             showRequests();
         }
 
+        // REFRESH DASHBOARD FUNCTION
         function refreshDashboard() {
             console.log("Refreshing dashboard...");
             const refreshBtn = event.target;
@@ -2893,7 +2899,7 @@
             }, 2000);
         }
 
-        // ✅ STATUS BADGE HELPER FUNCTIONS
+        // STATUS BADGE HELPER FUNCTIONS
         function getStatusBadgeClass(status) {
             switch (status?.toLowerCase()) {
                 case 'pending': return 'bg-warning';
@@ -2905,6 +2911,7 @@
             }
         }
 
+        // REQUEST STATUS BADGE HELPER
         function getRequestStatusBadge(status) {
             switch (status) {
                 case 'Pending': return 'bg-warning';
@@ -2916,6 +2923,7 @@
             }
         }
 
+        // TOAST NOTIFICATION FUNCTION
         function showToast(message, type) {
             const toast = document.createElement('div');
             toast.className = `alert alert-${type} position-fixed top-0 end-0 m-3`;
@@ -2925,6 +2933,7 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
+        // TIME FORMATTER FUNCTION
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -2937,7 +2946,7 @@
             }
         }
 
-        // ✅ Time ago formatter
+        // Time ago formatter
         function formatTimeAgo(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -2955,7 +2964,7 @@
             return date.toLocaleDateString();
         }
 
-        // ✅ SIMPLIFIED fileDispute function
+        //fileDispute function
         function fileDispute(transactionId = null, respondentId = null, respondentName = null) {
             console.log('📝 Opening dispute form');
 
@@ -3013,8 +3022,8 @@
             }, 600);
         }
 
-        
-        // ✅ LOAD USER'S BOOKS FOR DISPUTE
+
+        //LOAD USER'S BOOKS FOR DISPUTE
         function loadUserBooksForDispute() {
             if (!userData || !userData.user_id) return;
 
@@ -3047,7 +3056,7 @@
                 });
         }
 
-        // ✅ DISPLAY USER'S BOOKS FOR SELECTION
+        // DISPLAY USER'S BOOKS FOR SELECTION
         function displayUserBooksForDispute(books) {
             const booksList = document.getElementById('userBooksList');
 
@@ -3081,7 +3090,7 @@
             }
         }
 
-        // ✅ SELECT BOOK FOR DISPUTE - FIND OTHER USER AUTOMATICALLY
+        // SELECT BOOK FOR DISPUTE - FIND OTHER USER AUTOMATICALLY
         function selectBookForDispute(bookId, bookTitle, bookAuthor) {
             console.log('📚 Selected book for dispute:', { bookId, bookTitle, bookAuthor });
 
@@ -3117,7 +3126,7 @@
             document.getElementById('disputeDescription').focus();
         }
 
-        // ✅ FIXED submitDispute function
+        // submitDispute function
         function submitDispute() {
             console.log('🔄 Starting dispute submission...');
 
@@ -3150,7 +3159,7 @@
                 return;
             }
 
-            // ✅ IMPORTANT: Respondent ID ab automatically handle hoga backend mein
+            // Prepare dispute data
             const disputeData = {
                 title: title,
                 description: description,
@@ -3444,7 +3453,7 @@
             showToast('Disputes refreshed!', 'success');
         }
 
-        // ✅ INITIALIZE ON DASHBOARD LOAD
+        // INITIALIZE ON DASHBOARD LOAD
         document.addEventListener('DOMContentLoaded', function () {
             if (userData && userData.user_id) {
                 updateRequestsCount();

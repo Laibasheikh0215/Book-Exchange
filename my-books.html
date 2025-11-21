@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Books - Book Exchange</title>
-        <link rel="website icon" type="png" href="Assets/logo icon.png" />
+    <link rel="website icon" type="png" href="Assets/logo icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .book-card {
             transition: transform 0.3s ease;
         }
+
         .book-card:hover {
             transform: translateY(-3px);
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -57,6 +60,7 @@
     </div>
 
     <script>
+        // Check if user is logged in
         const userData = JSON.parse(localStorage.getItem('user')) || null;
 
         if (!userData || !userData.loggedIn) {
@@ -66,24 +70,23 @@
             loadMyBooks();
         }
 
-        // My Books page - sirf user ki apni books
+        // Load user's books from API
+        async function loadMyBooks() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('user')) || null;
 
-async function loadMyBooks() {
-    try {
-        const userData = JSON.parse(localStorage.getItem('user')) || null;
-        
-        if (!userData || !userData.user_id) {
-            window.location.href = "login.html";
-            return;
-        }
+                if (!userData || !userData.user_id) {
+                    window.location.href = "login.html";
+                    return;
+                }
 
-        const response = await fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`);
-        const data = await response.json();
+                const response = await fetch(`http://localhost/project/backend/api/books/read.php?user_id=${userData.user_id}`);
+                const data = await response.json();
 
-        if (data.books && data.books.length > 0) {
-            displayMyBooks(data.books);
-        } else {
-            document.getElementById('booksList').innerHTML = `
+                if (data.books && data.books.length > 0) {
+                    displayMyBooks(data.books);
+                } else {
+                    document.getElementById('booksList').innerHTML = `
                 <div class="text-center text-muted py-5">
                     <i class="fas fa-book fa-3x mb-3"></i>
                     <h4>You haven't added any books yet</h4>
@@ -91,10 +94,10 @@ async function loadMyBooks() {
                     <a href="add-book.html" class="btn btn-primary">Add Your First Book</a>
                 </div>
             `;
-        }
-    } catch (error) {
-        console.error('Error loading my books:', error);
-        document.getElementById('booksList').innerHTML = `
+                }
+            } catch (error) {
+                console.error('Error loading my books:', error);
+                document.getElementById('booksList').innerHTML = `
             <div class="col-12 text-center">
                 <div class="alert alert-danger">
                     <i class="fas fa-exclamation-triangle me-2"></i>
@@ -102,13 +105,14 @@ async function loadMyBooks() {
                 </div>
             </div>
         `;
-    }
-}
+            }
+        }
 
+        // Display user's books
         function displayMyBooks(books) {
             const booksList = document.getElementById('booksList');
             document.getElementById('booksCount').textContent = `${books.length} books`;
-            
+
             if (books.length === 0) {
                 booksList.innerHTML = `
                     <div class="col-12 text-center">
@@ -170,20 +174,21 @@ async function loadMyBooks() {
             booksList.innerHTML = html;
         }
 
-       function editBook(bookId) {
-    // Check if user is logged in
-    const userData = JSON.parse(localStorage.getItem('user')) || null;
-    
-    if (!userData || !userData.loggedIn) {
-        alert("Please login first");
-        window.location.href = "login.html";
-        return;
-    }
+        // Edit     Book Functions
+        function editBook(bookId) {
+            // Check if user is logged in
+            const userData = JSON.parse(localStorage.getItem('user')) || null;
 
-    // Redirect to edit page with book ID
-    window.location.href = `edit-book.html?id=${bookId}`;
-}
+            if (!userData || !userData.loggedIn) {
+                alert("Please login first");
+                window.location.href = "login.html";
+                return;
+            }
 
+            // Redirect to edit page with book ID
+            window.location.href = `edit-book.html?id=${bookId}`;
+        }
+        // Delete Book Function
         function deleteBook(bookId) {
             if (confirm('Are you sure you want to delete this book?')) {
                 fetch('http://localhost/book-exchange/backend/api/books/delete.php', {
@@ -196,23 +201,24 @@ async function loadMyBooks() {
                         user_id: userData.user_id
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message && data.message.includes("deleted")) {
-                        alert('Book deleted successfully!');
-                        loadMyBooks(); // Reload the list
-                    } else {
-                        alert('Error: ' + (data.message || 'Failed to delete book'));
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting the book.');
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message && data.message.includes("deleted")) {
+                            alert('Book deleted successfully!');
+                            loadMyBooks(); // Reload the list
+                        } else {
+                            alert('Error: ' + (data.message || 'Failed to delete book'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the book.');
+                    });
             }
         }
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
