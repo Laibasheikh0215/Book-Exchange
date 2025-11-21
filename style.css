@@ -26,13 +26,6 @@ body {
     text-decoration: underline;
 }
 
-.search-box {
-    border: none;
-    border-radius: 20px;
-    padding: 5px 10px;
-    outline: none;
-}
-
 .social-icons img {
     width: 30px;
     height: 30px;

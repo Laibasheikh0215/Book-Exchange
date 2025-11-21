@@ -23,10 +23,17 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav mx-3">
-                <li class="nav-item"><a href="#" class="nav-link">Browse Book</a></li>
+                <li class="nav-item"><a href="browser-book.html" class="nav-link">Browse Book</a></li>
                 <li class="nav-item"><a href="About-us.html" class="nav-link">About Us</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
-                <li class="nav-item"><a href="login.html" class="nav-link">Log In</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Log In
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="login.html">User Login</a></li>
+                        <li><a class="dropdown-item" href="admin-login.html">Admin Login</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item"><a href="register.html" class="nav-link">Register / Sign Up</a></li>
             </ul>
             <form class="ms-auto d-flex align-items-center">
@@ -86,7 +93,7 @@
                     <div class="book-title">Think & Grow Rich</div>
                     <div class="book-author">By Napoleon Hill</div>
                     <div class="star-rating">⭐⭐⭐⭐☆</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <button class="borrow-btn"><a href="browser-book.html"  style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -99,7 +106,7 @@
                     <div class="book-title">Atomic Habits</div>
                     <div class="book-author">By James Clear</div>
                     <div class="star-rating">⭐⭐⭐⭐⭐</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <button class="borrow-btn"><a href="browser-book.html"  style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -112,7 +119,7 @@
                     <div class="book-title">To Kill a Mocking bird</div>
                     <div class="book-author">By Harper Lee</div>
                     <div class="star-rating">⭐⭐⭐⭐☆</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <button class="borrow-btn"><a href="browser-book.html"  style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -125,7 +132,7 @@
                     <div class="book-title">The Phsycology of Money</div>
                     <div class="book-author">By Morgan Housel</div>
                     <div class="star-rating">⭐⭐⭐⭐⭐</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <button class="borrow-btn"><a href="browser-book.html"  style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -138,7 +145,7 @@
                     <div class="book-title">It's End with Us</div>
                     <div class="book-author">By Colleen Hoover</div>
                     <div class="star-rating">⭐⭐⭐⭐☆</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <button class="borrow-btn"><a href="browser-book.html"  style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -150,8 +157,8 @@
                         onmouseout="swapPic('before6', 'Assets/Art of bieng alone (2).png')">
                     <div class="book-title">The Art of Being of Alone</div>
                     <div class="book-author">By Renuka Gavrani</div>
-                    <div class="star-rating">⭐⭐⭐⭐⭐</div>
-                    <button class="borrow-btn">Borrow Now</button>
+                    <div class="star-rating"></div>
+                    <button class="borrow-btn"><a href="browser-book.html" style="text-decoration: none; color:#c8c5c5;">Borrow Now</a></button>
                 </div>
             </div>
 
@@ -300,7 +307,7 @@
 
                 <!-- Services -->
                 <div class="col-md-2 footer-links">
-                    <div class="footer-title">User Action</div>
+                    <div class="footer-title" style="font-weight: 600;">User Action</div>
                     <p><span class="footer-user-actions">Register / Login</span><br>
                         <span class="footer-user-actions">Add a Book</span><br>
                         <span class="footer-user-actions">Search Books</span><br>
@@ -311,14 +318,14 @@
 
                 <!-- About -->
                 <div class="col-md-2 footer-links">
-                    <div class="footer-title">About</div>
+                    <div class="footer-title" style="font-weight: 600;">About</div>
                     <a href="About-us.html" style="color: #000; text-decoration: none;"
                         onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">About Us</a>
                 </div>
 
                 <!-- Policies -->
                 <div class="col-md-2 footer-links">
-                    <div class="footer-title">Policies</div>
+                    <div class="footer-title" style="font-weight: 600;">Policies</div>
                     <a href="terms-and-conditions.html" style="color: #000; text-decoration: none;"
                         onmouseover="this.style.color='#f1c40f';" onmouseout="this.style.color='#000';">Terms &
                         Conditions</a>
@@ -326,7 +333,7 @@
 
                 <!-- Get in Touch -->
                 <div class="col-md-3 footer-links">
-                    <div class="footer-title">Got In Touch</div>
+                    <div class="footer-title" style="font-weight: 600;">Got In Touch</div>
                     <a href="mailto:bookcrossing@gmail.com" style="color: #000; text-decoration: none;"
                         onmouseover="this.style.color='#f1c40f';"
                         onmouseout="this.style.color='#000';">bookcrossing@gmail.com</a>
