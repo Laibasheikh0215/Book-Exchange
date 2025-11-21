@@ -115,6 +115,15 @@
                                         placeholder="Fiction, Mystery, etc.">
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">Price (PKR) *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₨</span>
+                                        <input type="number" class="form-control" id="price" min="0" step="0.01"
+                                            placeholder="0.00" required>
+                                    </div>
+                                    <small class="text-muted">Set price as 0 for free exchange</small>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Condition *</label>
                                     <select class="form-select" id="condition" required>
                                         <option value="">Select Condition</option>
@@ -320,6 +329,7 @@
             formData.append('user_id', userData.user_id);
             formData.append('isbn', document.getElementById('isbn').value);
             formData.append('genre', document.getElementById('genre').value);
+            formData.append('price', document.getElementById('price').value);
             formData.append('condition', document.getElementById('condition').value);
             formData.append('description', document.getElementById('description').value);
 

@@ -75,6 +75,7 @@ try {
     $author = $_POST['author'] ?? '';
     $isbn = $_POST['isbn'] ?? '';
     $genre = $_POST['genre'] ?? '';
+    $price = $_POST['price'] ?? '0.00'; // ✅ YEH NAYA PRICE FIELD
     $condition = $_POST['condition'] ?? '';
     $status = $_POST['status'] ?? '';
     $description = $_POST['description'] ?? '';
@@ -82,6 +83,12 @@ try {
     // Validate required fields
     if (empty($title) || empty($author) || empty($condition)) {
         throw new Exception("Title, author, and condition are required");
+    }
+
+    // Validate price
+    $price = floatval($price);
+    if ($price < 0) {
+        throw new Exception("Price cannot be negative");
     }
 
     // Build update query
@@ -99,6 +106,10 @@ try {
 
     $update_fields[] = "genre = :genre";
     $params[':genre'] = $genre;
+
+    // ✅ YEH NAYA PRICE FIELD ADD KAREN
+    $update_fields[] = "price = :price";
+    $params[':price'] = $price;
 
     $update_fields[] = "`condition` = :condition";
     $params[':condition'] = $condition;
@@ -136,7 +147,8 @@ try {
     if ($stmt->execute($params)) {
         echo json_encode([
             "success" => true,
-            "message" => "Book updated successfully"
+            "message" => "Book updated successfully",
+            "price" => $price // ✅ Optional: Return price in response
         ]);
     } else {
         throw new Exception("Failed to update book");

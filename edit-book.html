@@ -106,7 +106,7 @@
             <div class="col-md-10">
                 <div class="card p-4">
                     <h2 class="text-center mb-4">Edit Book</h2>
-                    
+
                     <!-- Loading Spinner -->
                     <div id="loadingSpinner" class="text-center">
                         <div class="spinner-border text-warning" role="status">
@@ -118,7 +118,7 @@
                     <!-- Edit Form -->
                     <form id="editBookForm" style="display: none;">
                         <input type="hidden" id="book_id">
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -137,7 +137,17 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label class="form-label">Genre</label>
-                                    <input type="text" class="form-control" id="genre" placeholder="Fiction, Mystery, etc.">
+                                    <input type="text" class="form-control" id="genre"
+                                        placeholder="Fiction, Mystery, etc.">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Price (PKR) *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₨</span>
+                                        <input type="number" class="form-control" id="price" min="0" step="0.01"
+                                            placeholder="0.00" required>
+                                    </div>
+                                    <small class="text-muted">Set price as 0 for free exchange</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Condition *</label>
@@ -174,14 +184,15 @@
                         <div class="mb-4">
                             <label class="form-label">Update Images (Choose up to 3 new images - optional)</label>
                             <div class="image-selection-container" id="imageSelectionContainer">
-                                <div class="image-option custom-image-upload" onclick="document.getElementById('customImageInput').click()">
+                                <div class="image-option custom-image-upload"
+                                    onclick="document.getElementById('customImageInput').click()">
                                     <i class="fas fa-plus mb-2"></i>
                                     <small class="text-center">Upload New Images</small>
-                                    <input type="file" id="customImageInput" accept="image/*" style="display: none;" 
-                                           onchange="handleCustomImage(event)" multiple>
+                                    <input type="file" id="customImageInput" accept="image/*" style="display: none;"
+                                        onchange="handleCustomImage(event)" multiple>
                                 </div>
                             </div>
-                            
+
                             <!-- New Selected Images Preview -->
                             <div class="mt-3">
                                 <label class="form-label">New Selected Images:</label>
@@ -193,7 +204,8 @@
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <textarea class="form-control" id="description" rows="3" placeholder="Describe the book's content and condition..."></textarea>
+                            <textarea class="form-control" id="description" rows="3"
+                                placeholder="Describe the book's content and condition..."></textarea>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -229,7 +241,7 @@
         }
 
         // Load book data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (!bookId) {
                 showError("No book ID provided");
                 return;
@@ -245,7 +257,7 @@
 
                 if (data.books && data.books.length > 0) {
                     currentBookData = data.books[0];
-                    
+
                     // Check if user owns this book
                     if (currentBookData.user_id != userData.user_id) {
                         showError("You can only edit your own books");
@@ -254,7 +266,7 @@
 
                     // Populate form with current data
                     populateForm(currentBookData);
-                    
+
                     // Show form, hide spinner
                     document.getElementById('loadingSpinner').style.display = 'none';
                     document.getElementById('editBookForm').style.display = 'block';
@@ -274,6 +286,7 @@
             document.getElementById('author').value = book.author;
             document.getElementById('isbn').value = book.isbn || '';
             document.getElementById('genre').value = book.genre || '';
+            document.getElementById('price').value = book.price || '0';
             document.getElementById('condition').value = book.condition;
             document.getElementById('status').value = book.status;
             document.getElementById('description').value = book.description || '';
@@ -323,9 +336,9 @@
 
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const imageDataUrl = e.target.result;
-                    
+
                     selectedImages.push(imageDataUrl);
                     customImages.push({
                         file: file,
@@ -382,13 +395,14 @@
 
             try {
                 const formData = new FormData();
-                
+
                 // Add book details
                 formData.append('id', document.getElementById('book_id').value);
                 formData.append('title', document.getElementById('title').value);
                 formData.append('author', document.getElementById('author').value);
                 formData.append('isbn', document.getElementById('isbn').value);
                 formData.append('genre', document.getElementById('genre').value);
+                formData.append('price', document.getElementById('price').value);
                 formData.append('condition', document.getElementById('condition').value);
                 formData.append('status', document.getElementById('status').value);
                 formData.append('description', document.getElementById('description').value);

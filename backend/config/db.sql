@@ -239,3 +239,6 @@ CREATE TABLE transaction_history (
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Books table mein price column add karein
+ALTER TABLE books ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00 AFTER `condition`;

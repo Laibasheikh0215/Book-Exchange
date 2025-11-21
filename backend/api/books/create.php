@@ -143,4 +143,13 @@ try {
         "message" => $e->getMessage()
     ]);
 }
+
+$price = isset($_POST['price']) ? floatval($_POST['price']) : 0.00;
+
+$query = "INSERT INTO books 
+          SET title=:title, author=:author, user_id=:user_id, isbn=:isbn, 
+              genre=:genre, price=:price, `condition`=:condition, description=:description";
+
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(":price", $price);
 ?>

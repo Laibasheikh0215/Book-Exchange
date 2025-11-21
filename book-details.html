@@ -64,6 +64,26 @@
             border: 2px solid #f8ca30;
         }
 
+        .free-exchange-text {
+            color: #f8ca30 !important;
+        }
+
+        .review-btn {
+            background-color: #f8ca30;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .review-btn:hover {
+            background-color: #e0b420;
+            transform: translateY(-2px);
+            color: white;
+        }
+
         .rating i {
             color: gold;
         }
@@ -83,6 +103,7 @@
         .borrow-btn {
             background-color: #f8ca30;
             border: none;
+            color: white;
             font-weight: 600;
             padding: 10px 30px;
             border-radius: 25px;
@@ -96,7 +117,7 @@
         }
 
         .message-btn {
-            background-color: #007bff;
+            background-color: #f8ca30;
             color: white;
             border: none;
             font-weight: 600;
@@ -106,7 +127,7 @@
         }
 
         .message-btn:hover {
-            background-color: #0056b3;
+            background-color: #e0b420;
             transform: translateY(-2px);
         }
 
@@ -359,6 +380,9 @@
                     <p><strong>Author:</strong> <span id="bookAuthor">Loading...</span></p>
                     <p><strong>Genre:</strong> <span id="bookGenre">Loading...</span></p>
                     <p><strong>Condition:</strong> <span id="bookCondition">Loading...</span></p>
+                    <p><strong>Price:</strong>
+                        <span id="bookPrice" class="fw-bold text-success">Loading...</span>
+                    </p>
                     <p><strong>ISBN:</strong> <span id="bookISBN">Loading...</span></p>
                     <p><strong>Description:</strong> <span id="bookDescription">Loading...</span></p>
                     <p><strong>Availability Status:</strong>
@@ -368,11 +392,11 @@
 
                 <!--btn section  -->
                 <div class="action-buttons">
-                                    <!-- borrow request btn  -->
+                    <!-- borrow request btn  -->
                     <button class="borrow-btn" onclick="requestBorrow()">
                         <i class="fas fa-hand-holding me-1"></i> Request to Borrow
                     </button>
-<!-- Message btn -->
+                    <!-- Message btn -->
                     <button class="message-btn" onclick="messageOwner()">
                         <i class="fas fa-comment me-1"></i> Message Owner
                     </button>
@@ -397,7 +421,7 @@
                         <i class="fa-solid fa-star" data-rating="4"></i>
                         <i class="fa-solid fa-star" data-rating="5"></i>
                     </div>
-                    <button class="btn btn-warning btn-sm fw-semibold" onclick="submitReview()">
+                    <button class="btn review-btn btn-sm fw-semibold" onclick="submitReview()">
                         <i class="fas fa-paper-plane me-1"></i> Submit Review
                     </button>
                 </div>
@@ -668,6 +692,14 @@
             document.getElementById('bookAuthor').textContent = book.author || 'Unknown Author';
             document.getElementById('bookGenre').textContent = book.genre || 'Not specified';
             document.getElementById('bookCondition').textContent = book.condition || 'Not specified';
+            const price = book.price || 0;
+            if (price > 0) {
+                document.getElementById('bookPrice').textContent = '₨' + parseFloat(price).toFixed(2);
+                document.getElementById('bookPrice').className = 'fw-bold text-success';
+            } else {
+                document.getElementById('bookPrice').textContent = 'Free Exchange';
+                document.getElementById('bookPrice').className = 'fw-bold free-exchange-text';
+            }
             document.getElementById('bookISBN').textContent = book.isbn || 'Not specified';
             document.getElementById('bookDescription').textContent = book.description || 'No description available';
 
