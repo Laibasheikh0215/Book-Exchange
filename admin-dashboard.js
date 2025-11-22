@@ -748,6 +748,112 @@ class AdminDashboard {
         });
     }
 
+    // ==================== TRANSACTION MANAGEMENT ====================
+    
+    // Load transactions for admin
+    async loadTransactions(filter = 'all') {
+        try {
+            console.log('🔄 Loading admin transactions...');
+
+            const response = await fetch('http://localhost/project/backend/api/transactions/all_transactions.php');
+            const data = await response.json();
+
+            console.log('📋 Transactions data received:', data);
+
+            if (data.success) {
+                this.renderTransactionsTable(data.transactions);
+                this.updateTransactionStats(data.transactions);
+            } else {
+                this.showToast('Error loading transactions', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading transactions:', error);
+            this.showToast('Error loading transactions', 'error');
+        }
+    }
+
+    // Render transactions table
+    renderTransactionsTable(transactions) {
+        const tbody = document.getElementById('transactionsTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+
+        if (!transactions || transactions.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="text-center py-4">
+                        <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                        <h5>No Transactions Found</h5>
+                        <p class="text-muted">No transactions have been made yet.</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = transactions.map(transaction => {
+            const statusClass = `status-${transaction.status}`;
+            const amountDisplay = transaction.amount > 0 ?
+                `₨${parseFloat(transaction.amount).toFixed(2)}` : 'Free';
+
+            return `
+                <tr>
+                    <td>${transaction.id}</td>
+                    <td>
+                        <div>
+                            <strong>${transaction.book_title}</strong><br>
+                            <small class="text-muted">ID: ${transaction.book_id}</small>
+                        </div>
+                    </td>
+                    <td>${transaction.borrower_name}</td>
+                    <td>${transaction.lender_name}</td>
+                    <td>${amountDisplay}</td>
+                    <td>
+                        <span class="badge status-badge ${statusClass}">
+                            ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        </span>
+                    </td>
+                    <td>${transaction.payment_method || 'N/A'}</td>
+                    <td>${new Date(transaction.transaction_date).toLocaleDateString()}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="adminDashboard.viewTransaction(${transaction.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // Update transaction statistics
+    updateTransactionStats(transactions) {
+        if (!transactions || !Array.isArray(transactions)) return;
+
+        const stats = {
+            total: transactions.length,
+            completed: transactions.filter(t => t.status === 'completed').length,
+            pending: transactions.filter(t => t.status === 'pending').length,
+            totalRevenue: transactions.filter(t => t.status === 'completed')
+                .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0)
+        };
+
+        // Update stats cards if they exist
+        if (document.getElementById('totalTransactionsCount')) {
+            document.getElementById('totalTransactionsCount').textContent = stats.total;
+            document.getElementById('completedTransactions').textContent = stats.completed;
+            document.getElementById('ongoingTransactions').textContent = stats.pending;
+        }
+    }
+
+    // View transaction details
+    viewTransaction(transactionId) {
+        this.showToast(`Viewing transaction ID: ${transactionId} - Feature coming soon`, 'info');
+    }
+
     // Export functions
     async exportUsers() {
         this.showToast('Exporting users data...', 'info');

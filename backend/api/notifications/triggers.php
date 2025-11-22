@@ -71,4 +71,20 @@ function notifyNewMessage($db, $receiver_id, $sender_name, $message_preview) {
         null
     );
 }
+
+// Request accepted - notify requester with transaction link
+function notifyRequestAcceptedWithTransaction($db, $request_id, $requester_id, $owner_name, $book_title, $book_price) {
+    $message = $book_price > 0 ? 
+        "{$owner_name} accepted your request for '{$book_title}'. Please complete the payment to proceed." :
+        "{$owner_name} accepted your request for '{$book_title}'. Book is available for free exchange.";
+    
+    return sendNotification(
+        $db,
+        $requester_id,
+        "Request Accepted!",
+        $message,
+        'Request',
+        $request_id
+    );
+}
 ?>

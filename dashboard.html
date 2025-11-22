@@ -486,6 +486,7 @@
                     </a>
                     <a class="nav-link" href="#" onclick="showTransactions()">
                         <i class="fas fa-exchange-alt me-2"></i>Transactions
+                        <span class="badge bg-success ms-1" id="transactionsBadge">0</span>
                     </a>
                     <a class="nav-link" href="#" onclick="addBook()">
                         <i class="fas fa-plus me-2"></i>Add Book
@@ -652,6 +653,168 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSACTION MODAL -->
+    <div class="modal fade" id="transactionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-credit-card me-2"></i>Complete Transaction
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="transactionForm">
+                        <input type="hidden" id="transactionRequestId">
+                        <input type="hidden" id="transactionBookId">
+                        <input type="hidden" id="transactionAmount">
+
+                        <!-- Transaction Summary -->
+                        <div class="alert alert-info">
+                            <h6>Transaction Summary</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Book:</strong> <span id="transactionBookTitle"></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Owner:</strong> <span id="transactionOwnerName"></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Amount:</strong> <span id="transactionAmountDisplay"
+                                        class="fw-bold text-success"></span>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Type:</strong> <span id="transactionType"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method *</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">Select Payment Method</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="debit_card">Debit Card</option>
+                                <option value="jazzcash">JazzCash</option>
+                                <option value="easypaisa">EasyPaisa</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                                <option value="cash">Cash on Delivery</option>
+                            </select>
+                        </div>
+
+                        <!-- Payment Details -->
+                        <div id="paymentDetails">
+                            <div class="row" id="cardFields">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Card Number</label>
+                                    <input type="text" class="form-control" id="cardNumber"
+                                        placeholder="1234 5678 9012 3456">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123">
+                                </div>
+                            </div>
+
+                            <!-- Mobile Payment Fields -->
+                            <div id="mobilePaymentFields" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Mobile Number</label>
+                                        <input type="text" class="form-control" id="mobileNumber"
+                                            placeholder="03XX-XXXXXXX">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Transaction PIN</label>
+                                        <input type="password" class="form-control" id="transactionPin"
+                                            placeholder="XXXX">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Conditions -->
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="termsAgreement" required>
+                            <label class="form-check-label" for="termsAgreement">
+                                I agree to the terms and conditions
+                            </label>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <small>By completing this transaction, you agree to return the book by the due date.</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="processPayment()" id="payNowBtn">
+                        <i class="fas fa-lock me-1"></i> Pay Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRANSACTIONS INTERFACE -->
+    <div id="transactionsInterface" class="container-fluid" style="display: none;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exchange-alt me-2"></i>My Transactions
+                        </h5>
+                        <div>
+                            <button class="btn btn-sm btn-light me-2" onclick="refreshTransactions()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Transaction Filters -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary active"
+                                        onclick="filterTransactions('all')">
+                                        All Transactions
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterTransactions('completed')">
+                                        Completed
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterTransactions('pending')">
+                                        Pending
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary"
+                                        onclick="filterTransactions('failed')">
+                                        Failed
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transactions List -->
+                        <div id="userTransactionsList">
+                            <div class="text-center p-4">
+                                <div class="spinner-border text-success"></div>
+                                <p class="mt-2">Loading your transactions...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1040,21 +1203,23 @@
             document.getElementById('userWelcome').textContent = `Welcome, ${userData.name}!`;
             updateSidebarInfo();
 
-            // START NOTIFICATION POLLING
-            if (userData && userData.user_id) {
-                notificationPoller.start(userData.user_id);
-            }
-
             // Load all data
             loadUserBooks();
             loadDashboardStats();
             updateRequestsCount();
             loadRecentRequests();
-            updateDisputesBadge();
 
+            // Setup notification system
             setTimeout(() => {
                 updateUnreadNotificationsCount();
-            }, 2000);
+                loadNotifications();
+
+                // Setup click handlers
+                setTimeout(() => {
+                    setupNotificationClickHandlers();
+                }, 1000);
+
+            }, 1000);
 
             initializeModals();
             setupAutoCheckers();
@@ -1062,7 +1227,6 @@
 
             console.log('✅ Dashboard fully initialized');
         }
-
         // LOAD USER'S ACTUAL BOOKS FROM DATABASE
         function loadUserBooks() {
             const booksCountElement = document.getElementById('booksCount');
@@ -1250,6 +1414,98 @@
                     </button>
                 </div>
             `;
+
+        }
+
+        // SIMPLE REQUEST ACCEPT FUNCTION
+        async function handleAcceptRequest(requestId, userId) {
+            try {
+                console.log('🔄 Accepting request:', requestId);
+
+                if (!confirm('Are you sure you want to accept this request?')) {
+                    return;
+                }
+
+                // Get button reference
+                const button = event.target.closest('button');
+                if (button) {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+                    button.disabled = true;
+                }
+
+                // Simple request data
+                const requestData = {
+                    request_id: parseInt(requestId),
+                    status: 'Approved',
+                    user_id: parseInt(userId)
+                };
+
+                console.log('📤 Sending to API:', requestData);
+
+                const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+
+                const responseText = await response.text();
+                console.log('📡 Raw response:', responseText);
+
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('❌ JSON Parse Error:', parseError);
+                    throw new Error('Server response error');
+                }
+
+                if (result.success) {
+                    console.log('✅ Request accepted successfully');
+                    showToast('Request accepted successfully!', 'success');
+
+                    // UI update karen
+                    updateRequestUI(requestId, 'Approved');
+                    updateRequestsCount();
+
+                } else {
+                    throw new Error(result.message || 'Failed to accept request');
+                }
+
+            } catch (error) {
+                console.error('❌ Error accepting request:', error);
+                showToast('Error: ' + error.message, 'error');
+
+                // Button reset karen
+                const button = event.target.closest('button');
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-check me-1"></i> Accept';
+                    button.disabled = false;
+                }
+            }
+        }
+
+        // SIMPLE UI UPDATE FUNCTION
+        function updateRequestUI(requestId, newStatus) {
+            // Status update karen sabhi jagah
+            const statusElements = document.querySelectorAll(`[data-request-id="${requestId}"] .request-status`);
+            statusElements.forEach(element => {
+                element.textContent = newStatus;
+                element.className = `request-status status-${newStatus.toLowerCase()}`;
+            });
+
+            // Action buttons hide karen
+            const actionButtons = document.querySelectorAll(`[data-request-id="${requestId}"] .action-buttons`);
+            actionButtons.forEach(buttons => {
+                buttons.innerHTML = `
+            <span class="text-success">
+                <i class="fas fa-check-circle me-1"></i>
+                Request Accepted
+            </span>
+        `;
+            });
         }
 
         //REQUEST ACTIONS HANDLERS
@@ -1827,24 +2083,40 @@
 
             // Show loading
             notificationsList.innerHTML = `
-                <div class="text-center p-4">
-                    <div class="spinner-border text-primary"></div>
-                    <p class="mt-2">Loading your notifications...</p>
-                </div>
-            `;
+        <div class="text-center p-4">
+            <div class="spinner-border text-primary"></div>
+            <p class="mt-2">Loading your notifications...</p>
+        </div>
+    `;
 
             console.log('🔍 Loading notifications for user:', userData.user_id);
 
-            // Use simple API
+            // Use simple API with error handling
             fetch(`http://localhost/project/backend/api/notifications/simple_get.php?user_id=${userData.user_id}`)
                 .then(response => {
-                    console.log('📡 API Response status:', response.status);
+                    console.log('📡 API Response status:', response.status, response.statusText);
+
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
-                    return response.json();
+
+                    return response.text(); // Get as text first
                 })
-                .then(data => {
+                .then(responseText => {
+                    console.log('📄 Raw notifications response:', responseText);
+
+                    // Try to parse JSON safely
+                    let data;
+                    try {
+                        data = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ JSON Parse Error:', parseError);
+                        // If JSON parsing fails, show empty notifications
+                        console.log('ℹ️ No notifications found due to parse error');
+                        displayNotifications([], filter);
+                        return;
+                    }
+
                     console.log('✅ Notifications data received:', data);
 
                     if (data.success && data.notifications && data.notifications.length > 0) {
@@ -1858,21 +2130,16 @@
                 .catch(error => {
                     console.error('❌ Error loading notifications:', error);
                     notificationsList.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <strong>Error loading notifications</strong><br>
-                            <small>${error.message}</small>
-                            <div class="mt-2">
-                                <button class="btn btn-sm btn-warning" onclick="loadNotifications()">
-                                    <i class="fas fa-redo"></i> Retry
-                                </button>
-                            </div>
-                        </div>
-                    `;
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Error loading notifications</strong><br>
+                    <small>${error.message}</small>
+                </div>
+            `;
                 });
         }
 
-        // Display notifications with filtering
+        // Display notifications with clickable items
         function displayNotifications(notifications, filter = 'all') {
             const notificationsList = document.getElementById('notificationsList');
 
@@ -1902,27 +2169,27 @@
                 let message = '';
                 if (notifications.length === 0) {
                     message = `
-                        <div class="text-center text-muted p-5">
-                            <i class="fas fa-bell-slash fa-4x mb-3"></i>
-                            <h4>No notifications yet</h4>
-                            <p class="text-muted">When you receive notifications, they will appear here.</p>
-                        </div>
-                    `;
+                <div class="text-center text-muted p-5">
+                    <i class="fas fa-bell-slash fa-4x mb-3"></i>
+                    <h4>No notifications yet</h4>
+                    <p class="text-muted">When you receive notifications, they will appear here.</p>
+                </div>
+            `;
                 } else {
                     message = `
-                        <div class="text-center text-muted p-4">
-                            <i class="fas fa-filter fa-3x mb-3"></i>
-                            <h5>No ${filter === 'unread' ? 'unread' : filter} notifications</h5>
-                            <p>Try changing the filter to see all notifications.</p>
-                        </div>
-                    `;
+                <div class="text-center text-muted p-4">
+                    <i class="fas fa-filter fa-3x mb-3"></i>
+                    <h5>No ${filter === 'unread' ? 'unread' : filter} notifications</h5>
+                    <p>Try changing the filter to see all notifications.</p>
+                </div>
+            `;
                 }
 
                 notificationsList.innerHTML = message;
                 return;
             }
 
-            // Display notifications
+            // Display notifications WITH PROPER CLICK HANDLERS
             try {
                 notificationsList.innerHTML = filteredNotifications.map(notif => {
                     // Safely handle notification data
@@ -1932,56 +2199,114 @@
                     const type = notif.type || 'System';
                     const isRead = Boolean(notif.is_read);
                     const createdAt = notif.created_at || new Date().toISOString();
+                    const relatedId = notif.related_id || null;
 
                     const icon = getNotificationIcon(type);
                     const iconColor = getNotificationIconColor(type);
                     const timeAgo = formatTimeAgo(createdAt);
 
                     return `
-                        <div class="notification-item border-bottom p-3 ${!isRead ? 'bg-light' : ''}" 
-                             onclick="markNotificationAsRead(${notifId})"
-                             style="cursor: pointer; transition: all 0.3s ease; border-left: 4px solid ${getNotificationBorderColor(type)}">
-                            <div class="d-flex align-items-start">
-                                <div class="me-3 ${iconColor}">
-                                    <i class="${icon} fa-2x"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h6 class="mb-0 ${!isRead ? 'text-dark fw-bold' : 'text-muted'}">
-                                            ${title}
-                                        </h6>
-                                        <small class="text-muted">${timeAgo}</small>
-                                    </div>
-                                    <p class="mb-2 text-dark">${message}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge ${getNotificationBadgeClass(type)}">
-                                            <i class="fas ${getNotificationIcon(type)} me-1"></i>${type}
-                                        </span>
-                                        ${!isRead ? `
-                                            <span class="badge bg-danger">
-                                                <i class="fas fa-circle me-1"></i>New
-                                            </span>
-                                        ` : ''}
-                                    </div>
-                                </div>
+                <div class="notification-item border-bottom p-3 ${!isRead ? 'bg-light' : ''}" 
+                     data-notification-id="${notifId}"
+                     data-related-id="${relatedId}"
+                     style="cursor: pointer; transition: all 0.3s ease; border-left: 4px solid ${getNotificationBorderColor(type)}">
+                    <div class="d-flex align-items-start">
+                        <div class="me-3 ${iconColor}">
+                            <i class="${icon} fa-2x"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="mb-0 ${!isRead ? 'text-dark fw-bold' : 'text-muted'}">
+                                    ${title}
+                                </h6>
+                                <small class="text-muted">${timeAgo}</small>
+                            </div>
+                            <p class="mb-2 text-dark">${message}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge ${getNotificationBadgeClass(type)}">
+                                    <i class="fas ${getNotificationIcon(type)} me-1"></i>${type}
+                                </span>
+                                ${!isRead ? `
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-circle me-1"></i>New
+                                    </span>
+                                ` : ''}
                             </div>
                         </div>
-                    `;
+                    </div>
+                </div>
+            `;
                 }).join('');
 
-                console.log('✅ Notifications displayed successfully');
+                console.log('✅ Notifications displayed with proper click handlers');
+
+                // Setup click handlers immediately
+                setupNotificationClickHandlers();
 
             } catch (error) {
                 console.error('❌ Error in displayNotifications:', error);
                 notificationsList.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Error displaying notifications
-                        <br><small>${error.message}</small>
-                    </div>
-                `;
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Error displaying notifications: ${error.message}
+            </div>
+        `;
             }
         }
+
+        // Debug function to test notification click
+        function testNotificationClick() {
+            console.log('🧪 Testing notification click...');
+
+            // Manually create a test notification
+            const testNotification = {
+                id: 999,
+                title: "Request Accepted!",
+                message: "John accepted your request for 'Sample Book'",
+                type: "Request",
+                is_read: false,
+                related_id: 1, // Test request ID
+                created_at: new Date().toISOString()
+            };
+
+            // Add test notification to list
+            const notificationsList = document.getElementById('notificationsList');
+            if (notificationsList) {
+                notificationsList.innerHTML = `
+            <div class="notification-item border-bottom p-3 bg-light" 
+                 data-notification-id="999"
+                 data-related-id="1"
+                 style="cursor: pointer; border-left: 4px solid #007bff">
+                <div class="d-flex align-items-start">
+                    <div class="me-3 text-primary">
+                        <i class="fas fa-handshake fa-2x"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0 text-dark fw-bold">Request Accepted!</h6>
+                            <small class="text-muted">Just now</small>
+                        </div>
+                        <p class="mb-2 text-dark">John accepted your request for 'Sample Book'</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary">
+                                <i class="fas fa-handshake me-1"></i>Request
+                            </span>
+                            <span class="badge bg-danger">
+                                <i class="fas fa-circle me-1"></i>New
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+                console.log('✅ Test notification added. Click it to test!');
+
+                // Add click handler
+                addClickToNotifications();
+            }
+        }
+
 
         // Filter notifications
         function filterNotifications(filter) {
@@ -2223,23 +2548,28 @@
             showToast('Notifications refreshed!', 'success');
         }
 
-        //AUTO-CHECK SYSTEMS
+        // ENHANCED AUTO-CHECK SYSTEMS
         function setupAutoCheckers() {
-            console.log('🔄 Setting up auto-check systems...');
+            console.log('🔄 Setting up enhanced auto-check systems...');
 
             // Update notification counts every 30 seconds
             setInterval(() => {
                 if (userData && userData.user_id) {
                     updateUnreadNotificationsCount();
-                    updateUnreadMessagesCount(); // ✅ Yeh add karein
+                    updateUnreadMessagesCount();
+
+                    // If notifications interface is open, refresh the list
+                    if (document.getElementById('notificationsInterface').style.display !== 'none') {
+                        loadNotifications();
+                    }
                 }
             }, 30000); // 30 seconds
 
-            // Checks Messages daily  
+            // Check messages every 15 seconds  
             setInterval(() => {
                 if (userData && userData.user_id && document.getElementById('messagesInterface').style.display !== 'none') {
                     updateUnreadMessagesCount();
-                    loadConversations(); // ✅ Conversations list bhi refresh ho
+                    loadConversations();
                 }
             }, 15000); // 15 seconds
         }
@@ -3459,6 +3789,704 @@
                 loadRecentRequests();
             }
         });
+
+        // ==================== TRANSACTION SYSTEM ====================
+
+        // Show transactions interface
+        function showTransactions() {
+            stopAllPolling();
+            document.querySelector('.dashboard-header').style.display = 'none';
+            document.querySelector('.container-fluid > .row:last-child').style.display = 'none';
+            document.getElementById('requestsInterface').style.display = 'none';
+            document.getElementById('notificationsInterface').style.display = 'none';
+            document.getElementById('messagesInterface').style.display = 'none';
+
+            document.getElementById('transactionsInterface').style.display = 'block';
+            setActiveNavLink('transactions');
+
+            loadUserTransactions();
+        }
+
+        // Load user transactions
+        function loadUserTransactions(filter = 'all') {
+            if (!userData || !userData.user_id) return;
+
+            const transactionsList = document.getElementById('userTransactionsList');
+            transactionsList.innerHTML = '<div class="text-center p-4"><div class="spinner-border text-success"></div><p class="mt-2">Loading transactions...</p></div>';
+
+            fetch(`http://localhost/project/backend/api/transactions/user_transactions.php?user_id=${userData.user_id}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayUserTransactions(data.transactions, filter);
+                        updateTransactionsBadge(data.transactions);
+                    } else {
+                        throw new Error(data.message || 'Failed to load transactions');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading transactions:', error);
+                    transactionsList.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading transactions: ${error.message}
+                </div>
+            `;
+                });
+        }
+
+        // Display user transactions
+        function displayUserTransactions(transactions, filter = 'all') {
+            const transactionsList = document.getElementById('userTransactionsList');
+
+            if (!transactions || transactions.length === 0) {
+                transactionsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                <h5>No Transactions Yet</h5>
+                <p class="text-muted">Your transactions will appear here once you start exchanging books.</p>
+            </div>
+        `;
+                return;
+            }
+
+            // Apply filter
+            let filteredTransactions = transactions;
+            if (filter !== 'all') {
+                filteredTransactions = transactions.filter(t => t.status === filter);
+            }
+
+            if (filteredTransactions.length === 0) {
+                transactionsList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-filter fa-3x text-muted mb-3"></i>
+                <h5>No ${filter} transactions</h5>
+                <p>Try changing the filter to see all transactions.</p>
+            </div>
+        `;
+                return;
+            }
+
+            transactionsList.innerHTML = filteredTransactions.map(transaction => {
+                const isBorrower = parseInt(transaction.borrower_id) === parseInt(userData.user_id);
+                const role = isBorrower ? 'Borrower' : 'Lender';
+                const otherUser = isBorrower ? transaction.lender_name : transaction.borrower_name;
+                const action = isBorrower ? 'Borrowed from' : 'Lent to';
+
+                const statusClass = `status-${transaction.status}`;
+                const amountDisplay = transaction.amount > 0 ?
+                    `<span class="fw-bold text-success">₨${parseFloat(transaction.amount).toFixed(2)}</span>` :
+                    '<span class="fw-bold text-info">Free Exchange</span>';
+
+                return `
+            <div class="card mb-3 transaction-card" data-status="${transaction.status}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center mb-2">
+                                <h6 class="mb-0 me-2">${transaction.book_title}</h6>
+                                <span class="badge bg-primary">${role}</span>
+                            </div>
+                            <p class="text-muted mb-2">
+                                ${action} <strong>${otherUser}</strong> • 
+                                ${transaction.request_type} • 
+                                ${amountDisplay}
+                            </p>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="badge ${statusClass}">
+                                    ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                                </span>
+                                <span class="badge bg-light text-dark">${transaction.payment_method || 'N/A'}</span>
+                                <span class="badge bg-secondary">#${transaction.id}</span>
+                            </div>
+                            <small class="text-muted">
+                                <strong>Date:</strong> ${new Date(transaction.transaction_date).toLocaleDateString()} • 
+                                <strong>Request ID:</strong> ${transaction.request_id}
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            ${transaction.status === 'completed' ? `
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Completed
+                                </span>
+                            ` : transaction.status === 'pending' ? `
+                                <button class="btn btn-sm btn-warning" onclick="completePendingTransaction(${transaction.id})">
+                                    Complete Payment
+                                </button>
+                            ` : `
+                                <span class="badge bg-danger">${transaction.status}</span>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // Update transactions badge
+        function updateTransactionsBadge(transactions) {
+            if (!transactions) return;
+
+            const pendingCount = transactions.filter(t => t.status === 'pending').length;
+            const badge = document.getElementById('transactionsBadge');
+
+            if (badge) {
+                badge.textContent = pendingCount;
+                if (pendingCount > 0) {
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
+        // Filter transactions
+        function filterTransactions(filter) {
+            console.log('Filtering transactions:', filter);
+
+            document.querySelectorAll('#transactionsInterface .btn-group .btn').forEach(btn => {
+                btn.classList.remove('active', 'btn-primary');
+                btn.classList.add('btn-outline-primary');
+            });
+            event.target.classList.remove('btn-outline-primary');
+            event.target.classList.add('active', 'btn-primary');
+
+            loadUserTransactions(filter);
+        }
+
+        // Refresh transactions
+        function refreshTransactions() {
+            console.log('Refreshing transactions...');
+            loadUserTransactions();
+            showToast('Transactions refreshed!', 'success');
+        }
+
+        // ==================== TRANSACTION MODAL FUNCTIONS ====================
+
+        // Open transaction modal when notification is clicked
+        function openTransactionModal(requestId) {
+            console.log('Opening transaction modal for request:', requestId);
+
+            if (!userData || !userData.user_id) {
+                alert('Please login first');
+                return;
+            }
+
+            // Get request details
+            fetch(`http://localhost/project/backend/api/requests/get_request.php?id=${requestId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.request) {
+                        const request = data.request;
+
+                        // Check if user is the requester
+                        if (parseInt(request.requester_id) !== parseInt(userData.user_id)) {
+                            alert('You can only complete transactions for your own requests');
+                            return;
+                        }
+
+                        // Set form values
+                        document.getElementById('transactionRequestId').value = requestId;
+                        document.getElementById('transactionBookId').value = request.book_id;
+                        document.getElementById('transactionAmount').value = request.book_price || 0;
+
+                        document.getElementById('transactionBookTitle').textContent = request.book_title;
+                        document.getElementById('transactionOwnerName').textContent = request.owner_name;
+                        document.getElementById('transactionAmountDisplay').textContent = request.book_price > 0 ?
+                            '₨' + parseFloat(request.book_price).toFixed(2) : 'Free';
+                        document.getElementById('transactionType').textContent = request.request_type;
+
+                        // Show/hide payment details based on amount
+                        if (request.book_price > 0) {
+                            document.getElementById('paymentDetails').style.display = 'block';
+                            document.getElementById('payNowBtn').innerHTML = '<i class="fas fa-lock me-1"></i> Pay Now';
+                        } else {
+                            document.getElementById('paymentDetails').style.display = 'none';
+                            document.getElementById('payNowBtn').innerHTML = '<i class="fas fa-check me-1"></i> Confirm Exchange';
+                        }
+
+                        // Reset form
+                        document.getElementById('paymentMethod').value = '';
+                        document.getElementById('termsAgreement').checked = false;
+                        document.getElementById('cardFields').style.display = 'none';
+                        document.getElementById('mobilePaymentFields').style.display = 'none';
+
+                        // Show modal
+                        const transactionModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+                        transactionModal.show();
+
+                    } else {
+                        throw new Error(data.message || 'Request not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading request details:', error);
+                    alert('Error loading request details: ' + error.message);
+                });
+        }
+
+        // Add this function to handle request details loading
+        // FIXED: loadRequestDetails function that returns a Promise
+        function loadRequestDetails(requestId) {
+            return new Promise((resolve, reject) => {
+                if (!userData || !userData.user_id) {
+                    reject(new Error('User not logged in'));
+                    return;
+                }
+
+                console.log('Loading request details for:', requestId);
+
+                fetch(`http://localhost/project/backend/api/requests/get_request.php?id=${requestId}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Request not found');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success && data.request) {
+                            console.log('Request details loaded:', data.request);
+                            resolve(data.request);
+                        } else {
+                            reject(new Error(data.message || 'Failed to load request details'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading request details:', error);
+                        reject(error);
+                    });
+            });
+        }
+
+        // Payment method change handler
+        document.addEventListener('DOMContentLoaded', function () {
+            const paymentMethod = document.getElementById('paymentMethod');
+            if (paymentMethod) {
+                paymentMethod.addEventListener('change', function () {
+                    const method = this.value;
+                    const mobilePaymentFields = document.getElementById('mobilePaymentFields');
+                    const cardFields = document.getElementById('cardFields');
+
+                    if (method === 'jazzcash' || method === 'easypaisa') {
+                        mobilePaymentFields.style.display = 'block';
+                        cardFields.style.display = 'none';
+                    } else if (method === 'credit_card' || method === 'debit_card') {
+                        mobilePaymentFields.style.display = 'none';
+                        cardFields.style.display = 'block';
+                    } else {
+                        mobilePaymentFields.style.display = 'none';
+                        cardFields.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Process payment function
+        async function processPayment() {
+            const requestId = document.getElementById('transactionRequestId').value;
+            const bookId = document.getElementById('transactionBookId').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            if (!paymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+
+            if (!document.getElementById('termsAgreement').checked) {
+                alert('Please agree to the terms and conditions');
+                return;
+            }
+
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (!userData) {
+                alert('Please login first');
+                return;
+            }
+
+            // Show loading
+            const payBtn = document.getElementById('payNowBtn');
+            const originalText = payBtn.innerHTML;
+            payBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+            payBtn.disabled = true;
+
+            try {
+                // Create transaction data
+                const transactionData = {
+                    request_id: parseInt(requestId),
+                    book_id: parseInt(bookId),
+                    borrower_id: parseInt(userData.user_id),
+                    payment_method: paymentMethod,
+                    status: 'completed'
+                };
+
+                // Add amount only if it's greater than 0
+                if (amount > 0) {
+                    transactionData.amount = amount;
+                }
+
+                console.log('Processing transaction:', transactionData);
+
+                // Send to backend
+                const response = await fetch('http://localhost/project/backend/api/transactions/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(transactionData)
+                });
+
+                const result = await response.json();
+                console.log('Transaction response:', result);
+
+                if (result.success) {
+                    // Show success alert
+                    showPaymentSuccessAlert(requestId, amount);
+
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('transactionModal'));
+                    modal.hide();
+
+                    // Refresh data
+                    setTimeout(() => {
+                        loadUserTransactions();
+                        updateRequestsCount();
+                        loadRecentRequests();
+                    }, 2000);
+
+                } else {
+                    throw new Error(result.message || 'Payment failed');
+                }
+
+            } catch (error) {
+                console.error('Payment error:', error);
+                alert('Payment failed: ' + error.message);
+            } finally {
+                payBtn.innerHTML = originalText;
+                payBtn.disabled = false;
+            }
+        }
+
+        // Show payment success alert
+        function showPaymentSuccessAlert(requestId, amount) {
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertBox.style.zIndex = '1060';
+            alertBox.innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+            <h5>Payment Successful! 🎉</h5>
+            <p class="mb-2">Transaction completed successfully</p>
+            ${amount > 0 ? `<p class="fw-bold">Amount Paid: ₨${amount.toFixed(2)}</p>` : '<p class="fw-bold">Free Exchange Confirmed</p>'}
+            <p>Transaction ID: #${requestId}</p>
+            <button class="btn btn-sm btn-outline-success" onclick="this.parentElement.parentElement.remove()">
+                OK
+            </button>
+        </div>
+    `;
+            document.body.appendChild(alertBox);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertBox.parentElement) {
+                    alertBox.remove();
+                }
+            }, 5000);
+        }
+
+        // Complete pending transaction
+        function completePendingTransaction(transactionId) {
+            alert('Please contact support to complete this pending transaction.');
+        }
+
+        // Notification click handler for transactions
+        function handleTransactionNotification(notification) {
+            if (notification.type === 'Request' && notification.title.includes('Accepted')) {
+                openTransactionModal(notification.related_id);
+            }
+        }
+
+        // Initialize transaction system
+        function initializeTransactionSystem() {
+            console.log('Initializing transaction system...');
+
+            // Add click handlers to notifications
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.notification-item')) {
+                    const notificationElement = e.target.closest('.notification-item');
+                    const notificationId = notificationElement.getAttribute('data-notification-id');
+
+                    // Check if it's a request acceptance notification
+                    const titleElement = notificationElement.querySelector('h6');
+                    if (titleElement && titleElement.textContent.includes('Accepted')) {
+                        const relatedId = notificationElement.getAttribute('data-related-id');
+                        if (relatedId) {
+                            openTransactionModal(relatedId);
+                        }
+                    }
+                }
+            });
+        }
+
+        // SIMPLE NOTIFICATION CLICK HANDLER
+        function setupNotificationClickHandlers() {
+            console.log('🔔 Setting up notification click handlers...');
+
+            const notificationsList = document.getElementById('notificationsList');
+            if (!notificationsList) return;
+
+            // Event delegation use karen
+            notificationsList.addEventListener('click', function (e) {
+                const notificationItem = e.target.closest('.notification-item');
+                if (!notificationItem) return;
+
+                const title = notificationItem.querySelector('h6')?.textContent || '';
+
+                console.log('📢 Notification clicked:', title);
+
+                // Agar notification "Accepted" hai toh transaction modal open karen
+                if (title.includes('Accepted')) {
+                    console.log('🎯 Opening transaction modal');
+                    openSimpleTransactionModal();
+                } else {
+                    // Dusri notifications ke liye simple message
+                    showToast('Notification clicked: ' + title, 'info');
+                }
+            });
+        }
+
+        // SIMPLE TRANSACTION MODAL
+        function openSimpleTransactionModal() {
+            console.log('💳 Opening simple transaction modal');
+
+            // Simple form banayen
+            const modalHTML = `
+        <div class="modal fade" id="simpleTransactionModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-credit-card me-2"></i>Complete Payment
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Please fill your payment details to complete the book exchange.
+                        </div>
+                        
+                        <form id="simpleTransactionForm">
+                            <div class="mb-3">
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="customerName" required 
+                                       placeholder="Enter your full name">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Payment Method *</label>
+                                <select class="form-select" id="simplePaymentMethod" required>
+                                    <option value="">Select Payment Method</option>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="debit_card">Debit Card</option>
+                                    <option value="jazzcash">JazzCash</option>
+                                    <option value="easypaisa">EasyPaisa</option>
+                                    <option value="cash">Cash on Delivery</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Amount to Pay</label>
+                                <input type="text" class="form-control" value="₨500" readonly 
+                                       style="background-color: #f8f9fa; font-weight: bold;">
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="simpleTerms" required>
+                                <label class="form-check-label" for="simpleTerms">
+                                    I agree to return the book within 14 days
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" onclick="processSimplePayment()">
+                            <i class="fas fa-lock me-1"></i> Complete Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            // Modal add karen page mein
+            if (!document.getElementById('simpleTransactionModal')) {
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            }
+
+            // Modal show karen
+            const modal = new bootstrap.Modal(document.getElementById('simpleTransactionModal'));
+            modal.show();
+        }
+
+        // SIMPLE PAYMENT PROCESSING
+        function processSimplePayment() {
+            const name = document.getElementById('customerName').value.trim();
+            const paymentMethod = document.getElementById('simplePaymentMethod').value;
+            const termsChecked = document.getElementById('simpleTerms').checked;
+
+            // Validation
+            if (!name) {
+                showToast('Please enter your name', 'error');
+                return;
+            }
+
+            if (!paymentMethod) {
+                showToast('Please select payment method', 'error');
+                return;
+            }
+
+            if (!termsChecked) {
+                showToast('Please agree to the terms', 'error');
+                return;
+            }
+
+            // Show loading
+            const payBtn = document.querySelector('#simpleTransactionModal .btn-success');
+            const originalText = payBtn.innerHTML;
+            payBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+            payBtn.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                // Success alert show karen
+                showSuccessAlert();
+
+                // Modal close karen
+                const modal = bootstrap.Modal.getInstance(document.getElementById('simpleTransactionModal'));
+                modal.hide();
+
+                // Button reset karen
+                payBtn.innerHTML = originalText;
+                payBtn.disabled = false;
+            }, 2000);
+        }
+
+        // SUCCESS ALERT FUNCTION
+        function showSuccessAlert() {
+            // Simple success alert
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+            alertBox.style.zIndex = '1060';
+            alertBox.innerHTML = `
+        <div class="text-center">
+            <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+            <h5>Payment Successful! 🎉</h5>
+            <p class="mb-2">Your book exchange has been confirmed</p>
+            <p class="fw-bold">You will receive the book within 3-5 days</p>
+            <button class="btn btn-sm btn-outline-success" onclick="this.parentElement.parentElement.remove()">
+                OK
+            </button>
+        </div>
+    `;
+            document.body.appendChild(alertBox);
+
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertBox.parentElement) {
+                    alertBox.remove();
+                }
+            }, 5000);
+        }
+
+        // showRequestDetails function with proper async handling
+        function showRequestDetails(requestId) {
+            console.log('Showing details for request:', requestId);
+
+            loadRequestDetails(requestId)
+                .then(request => {
+                    if (request) {
+                        // Show request in a modal or navigate to requests page
+                        showRequests();
+                        // You can highlight the specific request
+                        highlightRequestInList(requestId);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading request details:', error);
+                    showToast('Error loading request details: ' + error.message, 'error');
+                });
+        }
+
+        // SIMPLIFIED VERSION - Direct navigation to requests
+        function showRequestDetails(requestId) {
+            console.log('Navigating to request:', requestId);
+
+            // Navigate directly to requests page
+            showRequests();
+
+            // Highlight the request after a short delay to ensure the page is loaded
+            setTimeout(() => {
+                highlightRequestInList(requestId);
+            }, 500);
+
+            // Optional: Mark notification as read if needed
+            // This would require passing notificationId as well
+        }
+        // HIGHLIGHT REQUEST IN LIST
+        function highlightRequestInList(requestId) {
+            const requestElement = document.querySelector(`[data-request-id="${requestId}"]`);
+            if (requestElement) {
+                requestElement.style.backgroundColor = '#fff3cd';
+                requestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Remove highlight after 3 seconds
+                setTimeout(() => {
+                    requestElement.style.backgroundColor = '';
+                }, 3000);
+            }
+        }
+
+        // Alternative: Direct click handlers for each notification
+        function addClickToNotifications() {
+            // Jab notifications load hote hain, unko clickable banayein
+            const notifications = document.querySelectorAll('.notification-item');
+            notifications.forEach(notification => {
+                notification.style.cursor = 'pointer';
+                notification.addEventListener('click', function () {
+                    const title = this.querySelector('h6')?.textContent || '';
+                    const relatedId = this.getAttribute('data-related-id');
+
+                    console.log('🎯 Notification clicked:', { title, relatedId });
+
+                    if (title.includes('Accepted') && relatedId) {
+                        openTransactionModal(relatedId);
+                    }
+                });
+            });
+        }
+
+        // CSS for transaction status
+        const style = document.createElement('style');
+        style.textContent = `
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-failed { background: #f8d7da; color: #721c24; }
+    .status-cancelled { background: #e2e3e5; color: #383d41; }
+    
+    .transaction-card { border-left: 4px solid #28a745; transition: all 0.3s ease; }
+    .transaction-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    
+    .transaction-card[data-status="pending"] { border-left-color: #ffc107; }
+    .transaction-card[data-status="failed"] { border-left-color: #dc3545; }
+    .transaction-card[data-status="cancelled"] { border-left-color: #6c757d; }
+`;
+        document.head.appendChild(style);
+
+        // Initialize when dashboard loads
+        setTimeout(initializeTransactionSystem, 1000);
     </script>
 
     <!-- Bootstrap JS -->

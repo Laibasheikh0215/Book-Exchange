@@ -242,3 +242,36 @@ CREATE TABLE transaction_history (
 
 -- Books table mein price column add karein
 ALTER TABLE books ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00 AFTER `condition`;
+
+-- Books table mein price column add karen (if not exists)
+ALTER TABLE books ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00 AFTER `condition`;
+
+-- Transactions table
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    book_id INT NOT NULL,
+    borrower_id INT NOT NULL,
+    lender_id INT NOT NULL,
+    request_id INT NOT NULL,
+    amount DECIMAL(10,2) DEFAULT 0.00,
+    status ENUM('pending', 'completed', 'failed', 'cancelled') DEFAULT 'pending',
+    payment_method VARCHAR(50),
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
+    FOREIGN KEY (borrower_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (lender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (request_id) REFERENCES book_requests(id) ON DELETE CASCADE
+);
+
+-- Transaction history table
+CREATE TABLE IF NOT EXISTS transaction_history (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    transaction_id INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
+);
