@@ -18,10 +18,7 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- For adding user_id column
-ALTER TABLE users ADD COLUMN user_id VARCHAR(100) AFTER id;
-
--- Books table (FIXED: condition is a reserved keyword, so we wrap it in backticks)
+-- Books table 
 CREATE TABLE books (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -30,6 +27,7 @@ CREATE TABLE books (
     isbn VARCHAR(20),
     genre VARCHAR(100),
     `condition` ENUM('New', 'Like New', 'Very Good', 'Good', 'Fair', 'Poor') DEFAULT 'Good',
+    price DECIMAL(10,2) DEFAULT 0.00,
     description TEXT,
     status ENUM('Available', 'Lent Out', 'Reserved') DEFAULT 'Available',
     image_path VARCHAR(255),
@@ -45,7 +43,7 @@ CREATE TABLE book_requests (
     book_id INT NOT NULL,
     requester_id INT NOT NULL,
     owner_id INT NOT NULL,
-    status ENUM('Pending', 'Approved', 'Rejected', 'Completed') DEFAULT 'Pending',
+    status ENUM('Pending', 'Approved', 'Rejected', 'Completed', 'Cancelled') DEFAULT 'Pending',
     request_type ENUM('Borrow', 'Swap') NOT NULL,
     message TEXT,
     proposed_return_date DATE,
@@ -117,38 +115,6 @@ CREATE TABLE disputes (
     FOREIGN KEY (assigned_admin_id) REFERENCES admin_users(id) ON DELETE SET NULL
 );
 
--- Platform policies table
-CREATE TABLE platform_policies (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    category ENUM('general', 'privacy', 'terms', 'community', 'transaction') DEFAULT 'general',
-    version VARCHAR(20) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_by INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES admin_users(id)
-);
-
--- Admin logs table
-CREATE TABLE admin_logs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    admin_id INT NOT NULL,
-    action VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    ip_address VARCHAR(45),
-    user_agent TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (admin_id) REFERENCES admin_users(id) ON DELETE CASCADE
-);
-
--- Insert default admin user (password: admin123)
-INSERT INTO admin_users (username, email, password, role) VALUES 
-('admin', 'admin@bookexchange.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'super_admin');
-
-
-
 -- Reviews table for books
 CREATE TABLE IF NOT EXISTS book_reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -163,7 +129,7 @@ CREATE TABLE IF NOT EXISTS book_reviews (
     UNIQUE KEY unique_review (book_id, user_id)
 );
 
--- Messages table add karen
+-- Messages table 
 CREATE TABLE messages (
     id INT PRIMARY KEY AUTO_INCREMENT,
     sender_id INT NOT NULL,
@@ -175,50 +141,6 @@ CREATE TABLE messages (
     FOREIGN KEY (receiver_id) REFERENCES users(id)
 );
 
--- Conversations table (optional but recommended)
-CREATE TABLE conversations (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user1_id INT NOT NULL,
-    user2_id INT NOT NULL,
-    last_message TEXT,
-    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_conversation (user1_id, user2_id)
-);
-
--- 1. Messages table create karen with correct columns
-CREATE TABLE IF NOT EXISTS messages (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    sender_id INT NOT NULL,
-    receiver_id INT NOT NULL,
-    message_text TEXT NOT NULL,
-    is_read TINYINT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id),
-    FOREIGN KEY (receiver_id) REFERENCES users(id)
-);
-
--- 2. Conversations table create karen
-CREATE TABLE IF NOT EXISTS conversations (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user1_id INT NOT NULL,
-    user2_id INT NOT NULL,
-    last_message TEXT,
-    last_message_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_conversation (user1_id, user2_id),
-    FOREIGN KEY (user1_id) REFERENCES users(id),
-    FOREIGN KEY (user2_id) REFERENCES users(id)
-);
-
--- Add Cancelled status to book_requests table
-ALTER TABLE book_requests 
-MODIFY COLUMN status ENUM('Pending', 'Approved', 'Rejected', 'Completed', 'Cancelled') DEFAULT 'Pending';
-
--- Create index for better performance
-CREATE INDEX idx_requests_owner ON book_requests(owner_id, status);
-CREATE INDEX idx_requests_requester ON book_requests(requester_id, status);
-CREATE INDEX idx_requests_book ON book_requests(book_id);
-
--- YEH QUERY RUN KARO:
 CREATE TABLE transactions (
     id INT PRIMARY KEY AUTO_INCREMENT,
     book_id INT NOT NULL,
@@ -238,40 +160,4 @@ CREATE TABLE transaction_history (
     status VARCHAR(50) NOT NULL,
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Books table mein price column add karein
-ALTER TABLE books ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00 AFTER `condition`;
-
--- Books table mein price column add karen (if not exists)
-ALTER TABLE books ADD COLUMN price DECIMAL(10,2) DEFAULT 0.00 AFTER `condition`;
-
--- Transactions table
-CREATE TABLE IF NOT EXISTS transactions (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    book_id INT NOT NULL,
-    borrower_id INT NOT NULL,
-    lender_id INT NOT NULL,
-    request_id INT NOT NULL,
-    amount DECIMAL(10,2) DEFAULT 0.00,
-    status ENUM('pending', 'completed', 'failed', 'cancelled') DEFAULT 'pending',
-    payment_method VARCHAR(50),
-    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    completed_at TIMESTAMP NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (book_id) REFERENCES books(id) ON DELETE CASCADE,
-    FOREIGN KEY (borrower_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (lender_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (request_id) REFERENCES book_requests(id) ON DELETE CASCADE
-);
-
--- Transaction history table
-CREATE TABLE IF NOT EXISTS transaction_history (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    transaction_id INT NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    notes TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
 );
