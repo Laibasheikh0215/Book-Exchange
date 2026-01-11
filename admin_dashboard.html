@@ -570,70 +570,73 @@
             </div>
 
             <!-- Transactions Management Section -->
-            <div id="transactions-section" class="content-section" style="display: none;">
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <h2><i class="fas fa-exchange-alt me-2"></i>Manage Transactions</h2>
-                        <p class="text-muted">Monitor all book exchange transactions</p>
-                    </div>
-                </div>
+             <!-- Transactions Management Section -->
+<div id="transactions-section" class="content-section" style="display: none;">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-exchange-alt me-2"></i>Manage Transactions</h2>
+            <p class="text-muted">Monitor all book exchange transactions</p>
+        </div>
+    </div>
 
-                <!-- Transaction Statistics -->
-                <div class="row mb-4">
-                    <div class="col-xl-2 col-md-4 mb-3">
-                        <div class="card stat-card">
-                            <div class="card-body text-center">
-                                <h3 id="totalTransactionsCount">0</h3>
-                                <p class="text-muted mb-0">Total</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4 mb-3">
-                        <div class="card stat-card">
-                            <div class="card-body text-center">
-                                <h3 id="ongoingTransactions">0</h3>
-                                <p class="text-muted mb-0">Ongoing</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-md-4 mb-3">
-                        <div class="card stat-card">
-                            <div class="card-body text-center">
-                                <h3 id="completedTransactions">0</h3>
-                                <p class="text-muted mb-0">Completed</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Transactions Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">All Transactions</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Book</th>
-                                        <th>Borrower</th>
-                                        <th>Lender</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Start Date</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transactionsTableBody">
-                                    <!-- Transactions will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+    <!-- Transaction Filters -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="btn-group btn-group-sm" role="group">
+                <button type="button" class="btn btn-outline-primary active" data-filter="all">
+                    All Transactions
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-filter="completed">
+                    Completed
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-filter="pending">
+                    Pending
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-filter="failed">
+                    Failed
+                </button>
+                <button type="button" class="btn btn-outline-primary" onclick="adminDashboard.exportTransactions()">
+                    <i class="fas fa-download"></i> Export
+                </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                All Transactions (<span id="transactionsCount">0</span>)
+            </h5>
+            <div>
+                <button class="btn btn-sm btn-outline-primary" onclick="adminDashboard.loadTransactions()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Book Details</th>
+                            <th>Users</th>
+                            <th>Financial</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Dates</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Disputes Management Section -->
             <div id="disputes-section" class="content-section" style="display: none;">

@@ -1,5 +1,4 @@
-<!-- for Admin  -->
- <?php
+<?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
@@ -9,7 +8,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 try {
-    $query = "SELECT t.*, b.title as book_title, b.image_path, 
+    $query = "SELECT t.*, b.title as book_title, b.image_path as book_cover, 
                      u.name as lender_name, u2.name as borrower_name,
                      br.request_type
               FROM transactions t 
@@ -23,6 +22,13 @@ try {
     $stmt->execute();
 
     $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Debug: Check if we got data
+    if (empty($transactions)) {
+        error_log("No transactions found in database");
+    } else {
+        error_log("Found " . count($transactions) . " transactions");
+    }
 
     echo json_encode([
         "success" => true,

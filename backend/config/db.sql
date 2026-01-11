@@ -161,3 +161,28 @@ CREATE TABLE transaction_history (
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Add to your existing transactions table
+ALTER TABLE transactions 
+ADD COLUMN amount DECIMAL(10,2) DEFAULT 0.00,
+ADD COLUMN payment_method ENUM('cash', 'bank_transfer', 'easypaisa', 'jazzcash', 'free') DEFAULT 'cash',
+ADD COLUMN payment_status ENUM('pending', 'paid', 'refunded') DEFAULT 'pending',
+ADD COLUMN completed_at DATETIME NULL;
+
+CREATE TABLE transaction_payments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    transaction_id INT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    transaction_ref VARCHAR(100),
+    sender_account VARCHAR(100),
+    receiver_account VARCHAR(100),
+    proof_image VARCHAR(255),
+    status ENUM('pending', 'verified', 'rejected') DEFAULT 'pending',
+    verified_by INT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
+    FOREIGN KEY (verified_by) REFERENCES admin_users(id) ON DELETE SET NULL
+);

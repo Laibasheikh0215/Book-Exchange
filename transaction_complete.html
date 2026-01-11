@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Transaction - Book Exchange</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .transaction-card {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .book-cover-large {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+        .payment-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-option:hover {
+            border-color: #007bff;
+            background-color: #f8f9fa;
+        }
+        .payment-option.selected {
+            border-color: #007bff;
+            background-color: #e7f3ff;
+        }
+        .payment-method-details {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .btn-complete {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="transaction-card">
+            <h2 class="text-center mb-4">Complete Transaction</h2>
+            
+            <div id="transactionInfo">
+                <div class="text-center mb-4">
+                    <img id="bookCover" src="" alt="Book Cover" class="book-cover-large">
+                    <h3 id="bookTitle" class="mt-3"></h3>
+                    <p class="text-muted" id="bookAuthor"></p>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Borrower Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Name:</strong> <span id="borrowerName"></span></p>
+                                <p class="mb-1"><strong>Email:</strong> <span id="borrowerEmail"></span></p>
+                                <p class="mb-0"><strong>Request Type:</strong> <span id="requestType"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">Transaction Details</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-1"><strong>Book Price:</strong> Rs. <span id="bookPrice"></span></p>
+                                <p class="mb-1"><strong>Status:</strong> <span class="badge bg-success">Request Approved</span></p>
+                                <p class="mb-0"><strong>Proposed Return:</strong> <span id="returnDate"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            
+            <h4 class="mb-3">Select Payment Method</h4>
+            
+            <div id="paymentOptions">
+                <div class="payment-option" data-method="free" onclick="selectPayment('free')">
+                    <div class="d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="free" id="freeOption">
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">Free Exchange</h6>
+                            <p class="text-muted mb-0">No payment required. Book is exchanged for free.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" data-method="cash" onclick="selectPayment('cash')">
+                    <div class="d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="cash" id="cashOption">
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">Cash Payment</h6>
+                            <p class="text-muted mb-0">Payment will be made in person when collecting the book.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" data-method="easypaisa" onclick="selectPayment('easypaisa')">
+                    <div class="d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="easypaisa" id="easypaisaOption">
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">Easypaisa</h6>
+                            <p class="text-muted mb-0">Send payment via Easypaisa mobile account.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" data-method="jazzcash" onclick="selectPayment('jazzcash')">
+                    <div class="d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="jazzcash" id="jazzcashOption">
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">JazzCash</h6>
+                            <p class="text-muted mb-0">Send payment via JazzCash mobile account.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="payment-option" data-method="bank_transfer" onclick="selectPayment('bank_transfer')">
+                    <div class="d-flex align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="paymentMethod" value="bank_transfer" id="bankOption">
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="mb-1">Bank Transfer</h6>
+                            <p class="text-muted mb-0">Transfer payment to bank account.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="paymentDetails" class="payment-method-details">
+                <h5 class="mb-3" id="paymentTitle"></h5>
+                <div id="paymentForm"></div>
+            </div>
+            
+            <div class="mt-4">
+                <button class="btn btn-primary btn-complete" onclick="completeTransaction()" disabled id="completeBtn">
+                    <i class="fas fa-check-circle me-2"></i>Complete Transaction
+                </button>
+                <button class="btn btn-outline-secondary mt-2 w-100" onclick="goBack()">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Requests
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentRequestId = null;
+        let transactionData = null;
+        let selectedPaymentMethod = null;
+        
+        // Load transaction data from URL parameters
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentRequestId = urlParams.get('request_id');
+            
+            if (!currentRequestId) {
+                alert('No request specified');
+                window.location.href = 'my_requests.html';
+                return;
+            }
+            
+            loadTransactionData();
+        };
+        
+        function loadTransactionData() {
+            fetch(`http://localhost/project/backend/api/requests/get_request.php?id=${currentRequestId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        transactionData = data.request;
+                        displayTransactionInfo();
+                    } else {
+                        alert('Failed to load transaction data');
+                        window.location.href = 'my_requests.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading transaction data');
+                });
+        }
+        
+        function displayTransactionInfo() {
+            if (!transactionData) return;
+            
+            document.getElementById('bookTitle').textContent = transactionData.book_title;
+            document.getElementById('bookAuthor').textContent = transactionData.book_author || '';
+            document.getElementById('bookPrice').textContent = transactionData.book_price || '0';
+            document.getElementById('borrowerName').textContent = transactionData.requester_name;
+            document.getElementById('borrowerEmail').textContent = transactionData.requester_email;
+            document.getElementById('requestType').textContent = transactionData.request_type;
+            document.getElementById('returnDate').textContent = transactionData.proposed_return_date || 'Not specified';
+            
+            if (transactionData.book_cover) {
+                document.getElementById('bookCover').src = transactionData.book_cover;
+            }
+            
+            // Auto-select free option if book price is 0
+            if (transactionData.book_price == 0) {
+                selectPayment('free');
+            }
+        }
+        
+        function selectPayment(method) {
+            // Update UI
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+                const radio = option.querySelector('.form-check-input');
+                radio.checked = false;
+            });
+            
+            const selectedOption = document.querySelector(`[data-method="${method}"]`);
+            selectedOption.classList.add('selected');
+            selectedOption.querySelector('.form-check-input').checked = true;
+            
+            selectedPaymentMethod = method;
+            
+            // Enable complete button
+            document.getElementById('completeBtn').disabled = false;
+            
+            // Show payment details form
+            const paymentDetails = document.getElementById('paymentDetails');
+            const paymentTitle = document.getElementById('paymentTitle');
+            const paymentForm = document.getElementById('paymentForm');
+            
+            paymentDetails.style.display = 'block';
+            
+            switch(method) {
+                case 'free':
+                    paymentTitle.textContent = 'Free Exchange';
+                    paymentForm.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            No payment required. The book will be exchanged for free.
+                        </div>
+                    `;
+                    break;
+                    
+                case 'cash':
+                    paymentTitle.textContent = 'Cash Payment Details';
+                    paymentForm.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Agreed Amount (PKR)</label>
+                            <input type="number" class="form-control" id="cashAmount" 
+                                   value="${transactionData.book_price || 0}" min="0" step="100">
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Cash will be exchanged in person when the book is collected.
+                        </div>
+                    `;
+                    break;
+                    
+                case 'easypaisa':
+                    paymentTitle.textContent = 'Easypaisa Payment Details';
+                    paymentForm.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Amount (PKR)</label>
+                            <input type="number" class="form-control" id="easypaisaAmount" 
+                                   value="${transactionData.book_price || 0}" min="0" step="100">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Transaction ID/Reference</label>
+                            <input type="text" class="form-control" id="easypaisaRef" 
+                                   placeholder="Enter transaction reference number">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sender Mobile Number</label>
+                            <input type="text" class="form-control" id="easypaisaSender" 
+                                   placeholder="03XX-XXXXXXX">
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Ask the borrower to send payment to your Easypaisa account.
+                        </div>
+                    `;
+                    break;
+                    
+                case 'jazzcash':
+                    paymentTitle.textContent = 'JazzCash Payment Details';
+                    paymentForm.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Amount (PKR)</label>
+                            <input type="number" class="form-control" id="jazzcashAmount" 
+                                   value="${transactionData.book_price || 0}" min="0" step="100">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Transaction ID/Reference</label>
+                            <input type="text" class="form-control" id="jazzcashRef" 
+                                   placeholder="Enter transaction reference number">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sender Mobile Number</label>
+                            <input type="text" class="form-control" id="jazzcashSender" 
+                                   placeholder="03XX-XXXXXXX">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'bank_transfer':
+                    paymentTitle.textContent = 'Bank Transfer Details';
+                    paymentForm.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Amount (PKR)</label>
+                            <input type="number" class="form-control" id="bankAmount" 
+                                   value="${transactionData.book_price || 0}" min="0" step="100">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Transaction Reference</label>
+                            <input type="text" class="form-control" id="bankRef" 
+                                   placeholder="Bank transaction reference">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sender Account Number</label>
+                            <input type="text" class="form-control" id="bankSender" 
+                                   placeholder="Sender's account number">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Receiver Account Number</label>
+                            <input type="text" class="form-control" id="bankReceiver" 
+                                   placeholder="Your account number">
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        function completeTransaction() {
+            if (!selectedPaymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Get payment details
+            let amount = 0;
+            let transactionRef = '';
+            let senderAccount = '';
+            let receiverAccount = '';
+            
+            switch(selectedPaymentMethod) {
+                case 'free':
+                    amount = 0;
+                    break;
+                case 'cash':
+                    amount = document.getElementById('cashAmount').value || 0;
+                    break;
+                case 'easypaisa':
+                    amount = document.getElementById('easypaisaAmount').value || 0;
+                    transactionRef = document.getElementById('easypaisaRef').value || '';
+                    senderAccount = document.getElementById('easypaisaSender').value || '';
+                    break;
+                case 'jazzcash':
+                    amount = document.getElementById('jazzcashAmount').value || 0;
+                    transactionRef = document.getElementById('jazzcashRef').value || '';
+                    senderAccount = document.getElementById('jazzcashSender').value || '';
+                    break;
+                case 'bank_transfer':
+                    amount = document.getElementById('bankAmount').value || 0;
+                    transactionRef = document.getElementById('bankRef').value || '';
+                    senderAccount = document.getElementById('bankSender').value || '';
+                    receiverAccount = document.getElementById('bankReceiver').value || '';
+                    break;
+            }
+            
+            // Get current user ID from localStorage or session
+            const userData = JSON.parse(localStorage.getItem('user')) || {};
+            const ownerId = userData.id;
+            
+            if (!ownerId) {
+                alert('Please login to complete transaction');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Prepare transaction data
+            const transactionData = {
+                request_id: currentRequestId,
+                owner_id: ownerId,
+                amount: parseFloat(amount),
+                payment_method: selectedPaymentMethod,
+                payment_status: selectedPaymentMethod === 'free' ? 'paid' : 'pending',
+                status: 'completed',
+                transaction_ref: transactionRef,
+                sender_account: senderAccount,
+                receiver_account: receiverAccount,
+                payment_notes: `Payment completed via ${selectedPaymentMethod}`
+            };
+            
+            // Disable button and show loading
+            const completeBtn = document.getElementById('completeBtn');
+            completeBtn.disabled = true;
+            completeBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+            
+            // Send transaction completion request
+            fetch('http://localhost/project/backend/api/transactions/complete.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(transactionData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showSuccessMessage(data);
+                    
+                    // Update local storage
+                    updateUserNotifications();
+                    
+                } else {
+                    alert('Error: ' + data.message);
+                    completeBtn.disabled = false;
+                    completeBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Complete Transaction';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error completing transaction');
+                completeBtn.disabled = false;
+                completeBtn.innerHTML = '<i class="fas fa-check-circle me-2"></i>Complete Transaction';
+            });
+        }
+        
+        function showSuccessMessage(data) {
+            const transactionCard = document.querySelector('.transaction-card');
+            transactionCard.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h2 class="text-success mb-3">Transaction Completed!</h2>
+                    <p class="mb-3">Transaction ID: <strong>#${data.transaction_id}</strong></p>
+                    <p class="mb-4">Amount: <strong>Rs. ${data.amount}</strong></p>
+                    <div class="alert alert-success">
+                        <i class="fas fa-info-circle me-2"></i>
+                        The borrower has been notified. Transaction details have been saved.
+                    </div>
+                    <div class="mt-4">
+                        <button class="btn btn-primary me-2" onclick="viewTransaction(${data.transaction_id})">
+                            <i class="fas fa-eye me-2"></i>View Transaction
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="goToDashboard()">
+                            <i class="fas fa-home me-2"></i>Go to Dashboard
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function viewTransaction(transactionId) {
+            // Redirect to transaction view page or show modal
+            alert(`Transaction ID: ${transactionId} - Feature coming soon`);
+        }
+        
+        function goToDashboard() {
+            window.location.href = 'dashboard.html';
+        }
+        
+        function goBack() {
+            window.history.back();
+        }
+        
+        function updateUserNotifications() {
+            // Update notification count in localStorage
+            const userData = JSON.parse(localStorage.getItem('user')) || {};
+            const notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+            
+            notifications.push({
+                id: Date.now(),
+                title: 'Transaction Completed',
+                message: `Transaction #${currentRequestId} has been completed successfully.`,
+                type: 'success',
+                timestamp: new Date().toISOString()
+            });
+            
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+2026-01-02 19:43:50 - === NEW REQUEST ===
+2026-01-02 19:43:50 - Request method: POST
+2026-01-02 19:43:50 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-02 19:43:50 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-02 19:43:50 - Checking email: noshabarahseed@example.com
+2026-01-02 19:43:50 - Email found in database
+2026-01-02 19:43:50 - Password matches
+2026-01-02 19:43:50 - === REQUEST COMPLETED ===
+2026-01-02 19:46:23 - === NEW REQUEST ===
+2026-01-02 19:46:23 - Request method: POST
+2026-01-02 19:46:23 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-02 19:46:23 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-02 19:46:23 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-02 19:46:23 - Email found in database
+2026-01-02 19:46:23 - Password matches
+2026-01-02 19:46:23 - === REQUEST COMPLETED ===
+2026-01-02 19:48:40 - === NEW REQUEST ===
+2026-01-02 19:48:40 - Request method: POST
+2026-01-02 19:48:40 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-02 19:48:40 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-02 19:48:40 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-02 19:48:40 - Email found in database
+2026-01-02 19:48:40 - Password matches
+2026-01-02 19:48:40 - === REQUEST COMPLETED ===
+2026-01-08 19:11:26 - === NEW REQUEST ===
+2026-01-08 19:11:26 - Request method: POST
+2026-01-08 19:11:26 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-08 19:11:26 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-08 19:11:26 - Checking email: noshabarahseed@example.com
+2026-01-08 19:11:26 - Email found in database
+2026-01-08 19:11:26 - Password matches
+2026-01-08 19:11:26 - === REQUEST COMPLETED ===
+2026-01-11 17:06:00 - === NEW REQUEST ===
+2026-01-11 17:06:00 - Request method: POST
+2026-01-11 17:06:00 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-11 17:06:00 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-11 17:06:00 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-11 17:06:00 - Email found in database
+2026-01-11 17:06:00 - Password matches
+2026-01-11 17:06:00 - === REQUEST COMPLETED ===
+2026-01-11 20:07:31 - === NEW REQUEST ===
+2026-01-11 20:07:31 - Request method: POST
+2026-01-11 20:07:31 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-11 20:07:31 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-11 20:07:31 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-11 20:07:31 - Email found in database
+2026-01-11 20:07:31 - Password matches
+2026-01-11 20:07:31 - === REQUEST COMPLETED ===
+2026-01-11 20:07:47 - === NEW REQUEST ===
+2026-01-11 20:07:47 - Request method: POST
+2026-01-11 20:07:47 - Raw input: {"email":"test@example.com","password":"password"}
+2026-01-11 20:07:47 - JSON parsed: stdClass Object
+(
+    [email] => test@example.com
+    [password] => password
+)
+
+2026-01-11 20:07:47 - Checking email: test@example.com
+2026-01-11 20:07:47 - Email found in database
+2026-01-11 20:07:47 - Password matches
+2026-01-11 20:07:47 - === REQUEST COMPLETED ===
+2026-01-11 20:15:14 - === NEW REQUEST ===
+2026-01-11 20:15:14 - Request method: POST
+2026-01-11 20:15:14 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-11 20:15:14 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-11 20:15:14 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-11 20:15:14 - Email found in database
+2026-01-11 20:15:14 - Password matches
+2026-01-11 20:15:14 - === REQUEST COMPLETED ===
+2026-01-11 20:16:42 - === NEW REQUEST ===
+2026-01-11 20:16:42 - Request method: POST
+2026-01-11 20:16:42 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-11 20:16:42 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-11 20:16:42 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-11 20:16:42 - Email found in database
+2026-01-11 20:16:42 - Password matches
+2026-01-11 20:16:42 - === REQUEST COMPLETED ===
+2026-01-11 21:36:49 - === NEW REQUEST ===
+2026-01-11 21:36:49 - Request method: POST
+2026-01-11 21:36:49 - Raw input: {"email":"test@example.com","password":"password"}
+2026-01-11 21:36:49 - JSON parsed: stdClass Object
+(
+    [email] => test@example.com
+    [password] => password
+)
+
+2026-01-11 21:36:49 - Checking email: test@example.com
+2026-01-11 21:36:49 - Email found in database
+2026-01-11 21:36:50 - Password matches
+2026-01-11 21:36:50 - === REQUEST COMPLETED ===
+2026-01-11 21:39:03 - === NEW REQUEST ===
+2026-01-11 21:39:03 - Request method: POST
+2026-01-11 21:39:03 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-11 21:39:03 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-11 21:39:03 - Checking email: noshabarahseed@example.com
+2026-01-11 21:39:03 - Email found in database
+2026-01-11 21:39:03 - Password matches
+2026-01-11 21:39:03 - === REQUEST COMPLETED ===
+2026-01-11 21:40:17 - === NEW REQUEST ===
+2026-01-11 21:40:17 - Request method: POST
+2026-01-11 21:40:17 - Raw input: {"email":"test@example.com","password":"password"}
+2026-01-11 21:40:17 - JSON parsed: stdClass Object
+(
+    [email] => test@example.com
+    [password] => password
+)
+
+2026-01-11 21:40:17 - Checking email: test@example.com
+2026-01-11 21:40:17 - Email found in database
+2026-01-11 21:40:17 - Password matches
+2026-01-11 21:40:17 - === REQUEST COMPLETED ===

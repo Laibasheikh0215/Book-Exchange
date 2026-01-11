@@ -748,107 +748,6 @@ class AdminDashboard {
         });
     }
 
-    // ==================== TRANSACTION MANAGEMENT ====================
-    
-    // Load transactions for admin
-    async loadTransactions(filter = 'all') {
-        try {
-            console.log('🔄 Loading admin transactions...');
-
-            const response = await fetch('http://localhost/project/backend/api/transactions/all_transactions.php');
-            const data = await response.json();
-
-            console.log('📋 Transactions data received:', data);
-
-            if (data.success) {
-                this.renderTransactionsTable(data.transactions);
-                this.updateTransactionStats(data.transactions);
-            } else {
-                this.showToast('Error loading transactions', 'error');
-            }
-        } catch (error) {
-            console.error('Error loading transactions:', error);
-            this.showToast('Error loading transactions', 'error');
-        }
-    }
-
-    // Render transactions table
-    renderTransactionsTable(transactions) {
-        const tbody = document.getElementById('transactionsTableBody');
-        if (!tbody) return;
-
-        tbody.innerHTML = '';
-
-        if (!transactions || transactions.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="text-center py-4">
-                        <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
-                        <h5>No Transactions Found</h5>
-                        <p class="text-muted">No transactions have been made yet.</p>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = transactions.map(transaction => {
-            const statusClass = `status-${transaction.status}`;
-            const amountDisplay = transaction.amount > 0 ?
-                `₨${parseFloat(transaction.amount).toFixed(2)}` : 'Free';
-
-            return `
-                <tr>
-                    <td>${transaction.id}</td>
-                    <td>
-                        <div>
-                            <strong>${transaction.book_title}</strong><br>
-                            <small class="text-muted">ID: ${transaction.book_id}</small>
-                        </div>
-                    </td>
-                    <td>${transaction.borrower_name}</td>
-                    <td>${transaction.lender_name}</td>
-                    <td>${amountDisplay}</td>
-                    <td>
-                        <span class="badge status-badge ${statusClass}">
-                            ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
-                        </span>
-                    </td>
-                    <td>${transaction.payment_method || 'N/A'}</td>
-                    <td>${new Date(transaction.transaction_date).toLocaleDateString()}</td>
-                    <td>
-                        <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-primary" 
-                                    onclick="adminDashboard.viewTransaction(${transaction.id})">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    // Update transaction statistics
-    updateTransactionStats(transactions) {
-        if (!transactions || !Array.isArray(transactions)) return;
-
-        const stats = {
-            total: transactions.length,
-            completed: transactions.filter(t => t.status === 'completed').length,
-            pending: transactions.filter(t => t.status === 'pending').length,
-            totalRevenue: transactions.filter(t => t.status === 'completed')
-                .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0)
-        };
-
-        // Update stats cards if they exist
-        if (document.getElementById('totalTransactionsCount')) {
-            document.getElementById('totalTransactionsCount').textContent = stats.total;
-            document.getElementById('completedTransactions').textContent = stats.completed;
-            document.getElementById('ongoingTransactions').textContent = stats.pending;
-        }
-    }
-
     // View transaction details
     viewTransaction(transactionId) {
         this.showToast(`Viewing transaction ID: ${transactionId} - Feature coming soon`, 'info');
@@ -939,6 +838,200 @@ class AdminDashboard {
                 this.showToast('Error deleting book', 'error');
             }
         }
+    }
+
+        // ==================== TRANSACTION MANAGEMENT ====================
+
+    // Load transactions for admin
+    async loadTransactions(filter = 'all') {
+        try {
+            console.log('🔄 Loading admin transactions...');
+            
+            const tbody = document.getElementById('transactionsTableBody');
+            tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><div class="spinner-border"></div><p class="mt-2">Loading transactions...</p></td></tr>';
+
+            const apiUrl = 'http://localhost/project/backend/api/transactions/all_transactions.php';
+            console.log('🌐 Fetching from:', apiUrl);
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('📋 Transactions data received:', data);
+
+            if (data.success) {
+                let transactions = data.transactions || [];
+                console.log(`📊 Found ${transactions.length} transactions`);
+                
+                // Apply filter if needed
+                if (filter !== 'all') {
+                    transactions = transactions.filter(t => t.status === filter);
+                    console.log(`📊 Filtered to ${transactions.length} transactions with status: ${filter}`);
+                }
+                
+                // Format data to match expected structure
+                transactions = transactions.map(t => ({
+                    ...t,
+                    book_cover: t.image_path || t.book_cover || '', // Handle different field names
+                    payment_method: t.payment_method || 'Cash',
+                    amount: parseFloat(t.amount || 0)
+                }));
+                
+                this.renderTransactionsTable(transactions);
+                this.updateTransactionStats(transactions);
+                
+                // Update count
+                const countElement = document.getElementById('transactionsCount');
+                if (countElement) {
+                    countElement.textContent = transactions.length;
+                }
+                
+            } else {
+                const errorMsg = 'Error loading transactions: ' + (data.message || 'Unknown error');
+                console.error('❌', errorMsg);
+                this.showToast(errorMsg, 'error');
+                this.renderNoTransactions();
+            }
+        } catch (error) {
+            console.error('❌ Error loading transactions:', error);
+            this.showToast('Error loading transactions: ' + error.message, 'error');
+            this.renderNoTransactions();
+        }
+    }
+
+    // Render transactions table
+    renderTransactionsTable(transactions) {
+        const tbody = document.getElementById('transactionsTableBody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+
+        if (!transactions || transactions.length === 0) {
+            this.renderNoTransactions();
+            return;
+        }
+
+        transactions.sort((a, b) => new Date(b.created_at || b.transaction_date) - new Date(a.created_at || a.transaction_date));
+
+        transactions.forEach(transaction => {
+            const status = transaction.status || 'pending';
+            const statusClass = `status-${status}`;
+            const amount = parseFloat(transaction.amount || 0);
+            const amountDisplay = amount > 0 ? `₨${amount.toFixed(2)}` : '<span class="text-muted">Free</span>';
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>#${transaction.id}</strong></td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        ${transaction.book_cover ? 
+                            `<img src="${transaction.book_cover}" class="book-cover me-2" alt="${transaction.book_title}">` : 
+                            `<div class="book-cover bg-light d-flex align-items-center justify-content-center me-2">
+                                <i class="fas fa-book text-muted"></i>
+                            </div>`
+                        }
+                        <div>
+                            <strong>${this.safeString(transaction.book_title)}</strong><br>
+                            <small class="text-muted">Book ID: ${transaction.book_id}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <small><strong>Borrower:</strong> ${this.safeString(transaction.borrower_name)}</small><br>
+                        <small><strong>Lender:</strong> ${this.safeString(transaction.lender_name)}</small>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <strong class="fs-5">${amountDisplay}</strong><br>
+                        <small class="text-muted">${transaction.request_type || 'Borrow'}</small>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge bg-light text-dark">${transaction.payment_method || 'Cash'}</span>
+                </td>
+                <td>
+                    <span class="badge status-badge ${statusClass}">
+                        ${status.charAt(0).toUpperCase() + status.slice(1)}
+                    </span>
+                </td>
+                <td>
+                    <small>${new Date(transaction.created_at || transaction.transaction_date).toLocaleDateString()}</small>
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-primary" 
+                                onclick="adminDashboard.viewTransactionDetails(${transaction.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Show no transactions message
+    renderNoTransactions() {
+        const tbody = document.getElementById('transactionsTableBody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center py-4">
+                    <i class="fas fa-exchange-alt fa-3x text-muted mb-3"></i>
+                    <h5>No Transactions Found</h5>
+                    <p class="text-muted">No transactions have been made yet.</p>
+                </td>
+            </tr>
+        `;
+    }
+
+    // Update transaction statistics
+    updateTransactionStats(transactions) {
+        if (!transactions || !Array.isArray(transactions)) return;
+
+        const stats = {
+            total: transactions.length,
+            completed: transactions.filter(t => t.status === 'completed').length,
+            pending: transactions.filter(t => t.status === 'pending').length
+        };
+
+        if (document.getElementById('totalTransactions')) {
+            document.getElementById('totalTransactions').textContent = stats.total;
+        }
+        
+        if (document.getElementById('totalTransactionsCount')) {
+            document.getElementById('totalTransactionsCount').textContent = stats.total;
+            document.getElementById('completedTransactions').textContent = stats.completed;
+            document.getElementById('ongoingTransactions').textContent = stats.pending;
+        }
+    }
+
+    // View transaction details
+    async viewTransactionDetails(transactionId) {
+        try {
+            const response = await fetch(`http://localhost/project/backend/api/transactions/get.php?id=${transactionId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showTransactionModal(data.transaction);
+            } else {
+                this.showToast('Error loading transaction details', 'error');
+            }
+        } catch (error) {
+            console.error('Error loading transaction details:', error);
+            this.showToast('Error loading transaction details', 'error');
+        }
+    }
+
+    // Export transactions
+    exportTransactions() {
+        window.open('http://localhost/project/backend/api/transactions/export.php', '_blank');
     }
 
     showToast(message, type = 'info') {

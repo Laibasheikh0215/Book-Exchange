@@ -1,165 +1,100 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Methods: PUT");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../../config/database.php';
 include_once '../../models/Request.php';
+include_once '../../models/Notification.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
 $request = new Request($db);
 
-// ✅ DEBUG: Log incoming data
-$input = file_get_contents("php://input");
-error_log("📥 Received data: " . $input);
-$data = json_decode($input);
+$data = json_decode(file_get_contents("php://input"));
 
-// ✅ DEBUG: Log parsed data
-error_log("📥 Parsed data: " . print_r($data, true));
-
-if(
-    !empty($data->request_id) &&
-    !empty($data->status) &&
-    !empty($data->user_id)
-) {
-    error_log("✅ Data validation passed");
+if (!empty($data->id) && !empty($data->status)) {
+    $request->id = $data->id;
     
-    $request->id = $data->request_id;
+    // Get current request details
+    $current_request = $request->getRequestById($data->id);
     
-    // First get the request to verify ownership
-    $current_request = $request->getRequestById();
-    
-    if(!$current_request) {
+    if (!$current_request) {
         http_response_code(404);
-        echo json_encode(array(
-            "success" => false,
-            "message" => "Request not found."
-        ));
-        error_log("❌ Request not found: " . $data->request_id);
-        return;
+        echo json_encode(["message" => "Request not found", "success" => false]);
+        exit();
     }
     
-    error_log("✅ Request found: " . print_r($current_request, true));
+    // Update status
+    $request->status = $data->status;
     
-    // Check if user has permission to update this request
-    $can_update = false;
-    $new_status = ucfirst($data->status);
-    
-    // ✅ FIX: Allow both 'Approved' and 'Accepted' status for owners
-    if($current_request['owner_id'] == $data->user_id) {
-        // Owner can accept/reject incoming requests
-        if(in_array($new_status, ['Approved', 'Accepted', 'Rejected'])) {
-            $can_update = true;
-            // Normalize status to 'Approved'
-            if($new_status == 'Accepted') {
-                $new_status = 'Approved';
-            }
-        }
-        error_log("👤 User is owner, can_update: " . ($can_update ? 'YES' : 'NO'));
-    }
-    
-    if($current_request['requester_id'] == $data->user_id) {
-        // Requester can cancel their own requests
-        if(in_array($new_status, ['Cancelled', 'Canceled'])) {
-            $can_update = true;
-            // Normalize status to 'Cancelled'
-            if($new_status == 'Canceled') {
-                $new_status = 'Cancelled';
-            }
-        }
-        error_log("👤 User is requester, can_update: " . ($can_update ? 'YES' : 'NO'));
-    }
-    
-    if(!$can_update) {
-        http_response_code(403);
-        echo json_encode(array(
-            "success" => false,
-            "message" => "You don't have permission to update this request.",
-            "debug" => [
-                "user_id" => $data->user_id,
-                "owner_id" => $current_request['owner_id'],
-                "requester_id" => $current_request['requester_id'],
-                "requested_status" => $new_status
-            ]
-        ));
-        error_log("❌ Permission denied for user: " . $data->user_id);
-        return;
-    }
-    
-    $request->status = $new_status;
-    
-    if($request->update()) {
-        error_log("✅ Database update successful");
-        
-        // If request is approved, update book status
-        if($new_status == 'Approved') {
-            $request->book_id = $current_request['book_id'];
-            $request->updateBookStatus('Reserved');
-        }
-        
-        http_response_code(200);
-        echo json_encode(array(
+    if ($request->update()) {
+        $response = [
             "success" => true,
-            "message" => "Request {$new_status} successfully."
-        ));
+            "message" => "Request updated successfully"
+        ];
+        
+        // If status changed to 'Approved', prepare transaction data
+        if ($data->status === 'Approved') {
+            $response['needs_transaction'] = true;
+            $response['transaction_data'] = [
+                'request_id' => $data->id,
+                'book_id' => $current_request['book_id'],
+                'book_title' => $current_request['book_title'],
+                'book_price' => $current_request['price'],
+                'borrower_id' => $current_request['requester_id'],
+                'borrower_name' => $current_request['requester_name'],
+                'owner_id' => $current_request['owner_id'],
+                'owner_name' => $current_request['owner_name']
+            ];
+            
+            // Update book status to reserved
+            $update_book = "UPDATE books SET status = 'Reserved' WHERE id = :book_id";
+            $stmt = $db->prepare($update_book);
+            $stmt->bindParam(":book_id", $current_request['book_id']);
+            $stmt->execute();
+        }
+        
+        // Send notification
+        $notification = new Notification($db);
+        
+        if ($data->status === 'Approved') {
+            $title = "Request Approved!";
+            $message = "Your request for '{$current_request['book_title']}' has been approved by the owner.";
+            
+            // Notify borrower
+            $notification->user_id = $current_request['requester_id'];
+            $notification->title = $title;
+            $notification->message = $message;
+            $notification->type = "Request";
+            $notification->related_id = $data->id;
+            $notification->create();
+            
+            $response['message'] .= " Transaction can now be completed.";
+            
+        } elseif ($data->status === 'Rejected') {
+            $title = "Request Declined";
+            $message = "Your request for '{$current_request['book_title']}' has been declined by the owner.";
+            
+            // Notify borrower
+            $notification->user_id = $current_request['requester_id'];
+            $notification->title = $title;
+            $notification->message = $message;
+            $notification->type = "Request";
+            $notification->related_id = $data->id;
+            $notification->create();
+        }
+        
+        echo json_encode($response);
+        
     } else {
         http_response_code(503);
-        echo json_encode(array(
-            "success" => false,
-            "message" => "Unable to update request in database."
-        ));
-        error_log("❌ Database update failed");
+        echo json_encode(["message" => "Unable to update request", "success" => false]);
     }
 } else {
     http_response_code(400);
-    echo json_encode(array(
-        "success" => false,
-        "message" => "Unable to update request. Data is incomplete.",
-        "debug_received" => $data,
-        "required_fields" => [
-            "request_id" => isset($data->request_id) ? $data->request_id : "MISSING",
-            "status" => isset($data->status) ? $data->status : "MISSING", 
-            "user_id" => isset($data->user_id) ? $data->user_id : "MISSING"
-        ]
-    ));
-    error_log("❌ Incomplete data received");
-}
-if($request->update()) {
-    // ✅ SEND NOTIFICATION TO REQUESTER
-    $notification_user_id = ($new_status == 'Approved' || $new_status == 'Rejected') 
-        ? $current_request['requester_id'] 
-        : $current_request['owner_id'];
-    
-    $message = $new_status == 'Approved' ? "Your request was approved!" : "Your request was declined";
-    
-    $notification_data = [
-        'user_id' => $notification_user_id,
-        'title' => 'Request Update',
-        'message' => $message,
-        'type' => 'Request',
-        'related_id' => $data->request_id
-    ];
-    
-    // Call notification API
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost/project/backend/api/notifications/create.php");
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($notification_data));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json'
-    ]);
-    curl_exec($ch);
-    curl_close($ch);
-    
-    http_response_code(200);
-    echo json_encode(array(
-        "success" => true,
-        "message" => "Request {$new_status} successfully."
-    ));
+    echo json_encode(["message" => "Unable to update request. Data is incomplete.", "success" => false]);
 }
 ?>
