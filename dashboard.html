@@ -1802,7 +1802,7 @@
                 </div>
             `;
       }
-      // ✅ NAYA: Load Incoming Requests Function - YEH ADD KAREIN
+      // Load Incoming Requests Function
       function loadIncomingRequests() {
         if (!userData || !userData.user_id) {
           console.error("User not logged in");
@@ -1840,7 +1840,7 @@
           });
       }
 
-      // ✅ NAYA: Load Outgoing Requests Function - YEH BHI ADD KAREIN
+      // Load Outgoing Requests Function
       function loadOutgoingRequests() {
         if (!userData || !userData.user_id) {
           console.error("User not logged in");
@@ -1878,7 +1878,7 @@
           });
       }
 
-      // ✅ NAYA: Load Requests Function (jo error de raha tha)
+      //Load Requests Function 
       function loadRequests() {
         console.log("🔄 Loading all requests...");
 
@@ -1892,7 +1892,7 @@
         loadOutgoingRequests();
       }
 
-      // ✅ NAYA: Display Incoming Requests Function
+      //Display Incoming Requests Function
       function displayIncomingRequests(requests) {
         const incomingList = document.getElementById("incomingRequestsList");
 
@@ -2135,7 +2135,7 @@
       // if (result.success) {
       //     console.log('✅ Request accepted successfully');
 
-      // ✅ NAYA: Transaction modal show karein
+      // Transaction modal show karein
       // setTimeout(() => {
       //     showTransactionModal(requestId, requestDetails);
       // }, 500);
@@ -2444,7 +2444,7 @@
               statusElement.className = `request-status status-${newStatus.toLowerCase()}`;
             }
 
-            // ✅ FIX: PROPERLY REMOVE ACTION BUTTONS
+            // PROPERLY REMOVE ACTION BUTTONS
             const actionButtons = item.querySelector(".action-buttons");
             if (actionButtons && newStatus.toLowerCase() !== "pending") {
               actionButtons.innerHTML = `
@@ -2483,7 +2483,6 @@
       }
 
       // LOAD INCOMING REQUESTS
-      // EXISTING displayIncomingRequests function mein changes
       function displayIncomingRequests(requests) {
         const incomingList = document.getElementById("incomingRequestsList");
 
@@ -5801,55 +5800,64 @@
       }
 
       // ✅ NAYA: Transaction Complete Function
- // ✅ SIMPLE: Complete Transaction (Without API Call)
-async function completeTransaction(requestId) {
-    try {
-        const paymentMethod = document.getElementById('txnPaymentMethod').value;
-        const notes = document.getElementById('txnNotes').value || '';
-        
-        if (!paymentMethod) {
-            showToast('Please select payment method', 'error');
+      // ✅ SIMPLE: Complete Transaction (Without API Call)
+      async function completeTransaction(requestId) {
+        try {
+          const paymentMethod =
+            document.getElementById("txnPaymentMethod").value;
+          const notes = document.getElementById("txnNotes").value || "";
+
+          if (!paymentMethod) {
+            showToast("Please select payment method", "error");
             return;
-        }
-        
-        // Show loading
-        const completeBtn = document.querySelector('#transactionModal .btn-success');
-        const originalText = completeBtn.innerHTML;
-        completeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
-        completeBtn.disabled = true;
-        
-        // Simulate API call (2 seconds delay)
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // Success
-        showToast(`✅ Transaction #${requestId} completed successfully!`, 'success');
-        
-        // Close modal
-        const modalElement = document.getElementById('transactionModal');
-        if (modalElement) {
+          }
+
+          // Show loading
+          const completeBtn = document.querySelector(
+            "#transactionModal .btn-success"
+          );
+          const originalText = completeBtn.innerHTML;
+          completeBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Processing...';
+          completeBtn.disabled = true;
+
+          // Simulate API call (2 seconds delay)
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // Success
+          showToast(
+            `✅ Transaction #${requestId} completed successfully!`,
+            "success"
+          );
+
+          // Close modal
+          const modalElement = document.getElementById("transactionModal");
+          if (modalElement) {
             const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) modal.hide();
             setTimeout(() => {
-                modalElement.remove();
+              modalElement.remove();
             }, 300);
-        }
-        
-        // Update request status locally
-        updateRequestUI(requestId, 'Completed');
-        
-    } catch (error) {
-        console.error('❌ Error:', error);
-        showToast('Error completing transaction', 'error');
-        
-        // Reset button
-        const completeBtn = document.querySelector('#transactionModal .btn-success');
-        if (completeBtn) {
-            completeBtn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Complete';
+          }
+
+          // Update request status locally
+          updateRequestUI(requestId, "Completed");
+        } catch (error) {
+          console.error("❌ Error:", error);
+          showToast("Error completing transaction", "error");
+
+          // Reset button
+          const completeBtn = document.querySelector(
+            "#transactionModal .btn-success"
+          );
+          if (completeBtn) {
+            completeBtn.innerHTML =
+              '<i class="fas fa-check-circle me-1"></i> Complete';
             completeBtn.disabled = false;
+          }
         }
-    }
-}
-  
+      }
+
       // Transaction Success Alert
       function showTransactionSuccess(transactionId, amount) {
         const alertBox = document.createElement("div");
@@ -6319,166 +6327,190 @@ async function completeTransaction(requestId) {
           });
       }
 
-   // ✅ FIXED: Local Transaction Completion (Without API Call)
-async function completeTransaction(requestId) {
-    console.log('🔄 Completing transaction locally for request:', requestId);
-    
-    try {
-        // 1. Get form values
-        const paymentMethod = document.getElementById('txnPaymentMethod').value;
-        const notes = document.getElementById('txnNotes').value || '';
-        
-        // 2. Validation
-        if (!paymentMethod) {
-            showToast('Please select payment method', 'error');
+      // ✅ FIXED: Local Transaction Completion (Without API Call)
+      async function completeTransaction(requestId) {
+        console.log(
+          "🔄 Completing transaction locally for request:",
+          requestId
+        );
+
+        try {
+          // 1. Get form values
+          const paymentMethod =
+            document.getElementById("txnPaymentMethod").value;
+          const notes = document.getElementById("txnNotes").value || "";
+
+          // 2. Validation
+          if (!paymentMethod) {
+            showToast("Please select payment method", "error");
             return;
-        }
-        
-        // 3. Show loading
-        const completeBtn = document.querySelector('#transactionModal .btn-success');
-        if (completeBtn) {
-            completeBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processing...';
+          }
+
+          // 3. Show loading
+          const completeBtn = document.querySelector(
+            "#transactionModal .btn-success"
+          );
+          if (completeBtn) {
+            completeBtn.innerHTML =
+              '<span class="spinner-border spinner-border-sm"></span> Processing...';
             completeBtn.disabled = true;
-        }
-        
-        // 4. Simulate processing (2 seconds)
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // 5. Show success message
-        showToast(`✅ Transaction #${requestId} completed successfully!`, 'success');
-        
-        // 6. Close modal properly
-        const modalElement = document.getElementById('transactionModal');
-        if (modalElement) {
+          }
+
+          // 4. Simulate processing (2 seconds)
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+
+          // 5. Show success message
+          showToast(
+            `✅ Transaction #${requestId} completed successfully!`,
+            "success"
+          );
+
+          // 6. Close modal properly
+          const modalElement = document.getElementById("transactionModal");
+          if (modalElement) {
             const modal = bootstrap.Modal.getInstance(modalElement);
             if (modal) {
-                modal.hide();
+              modal.hide();
             }
-            
+
             // Remove modal after hide animation
             setTimeout(() => {
-                if (modalElement.parentElement) {
-                    modalElement.remove();
-                }
+              if (modalElement.parentElement) {
+                modalElement.remove();
+              }
             }, 300);
-        }
-        
-        // 7. Update request status in UI
-        updateRequestStatusUI(requestId, 'Completed');
-        
-        // 8. Update transaction badge count
-        updateTransactionsCount();
-        
-    } catch (error) {
-        console.error('❌ Error in transaction:', error);
-        showToast('Error completing transaction', 'error');
-        
-        // Reset button
-        const completeBtn = document.querySelector('#transactionModal .btn-success');
-        if (completeBtn) {
-            completeBtn.innerHTML = '<i class="fas fa-check-circle me-1"></i> Complete';
-            completeBtn.disabled = false;
-        }
-    }
-}
+          }
 
-// ✅ Helper function to update request status in UI
-function updateRequestStatusUI(requestId, status) {
-    console.log(`🎨 Updating UI for request ${requestId} to ${status}`);
-    
-    // 1. Find request card
-    const requestCard = document.querySelector(`[data-request-id="${requestId}"]`);
-    if (!requestCard) {
-        console.log('Request card not found, refreshing requests list...');
-        // Refresh the whole list
-        if (document.getElementById('incomingRequestsList')) {
-            loadIncomingRequests();
+          // 7. Update request status in UI
+          updateRequestStatusUI(requestId, "Completed");
+
+          // 8. Update transaction badge count
+          updateTransactionsCount();
+        } catch (error) {
+          console.error("❌ Error in transaction:", error);
+          showToast("Error completing transaction", "error");
+
+          // Reset button
+          const completeBtn = document.querySelector(
+            "#transactionModal .btn-success"
+          );
+          if (completeBtn) {
+            completeBtn.innerHTML =
+              '<i class="fas fa-check-circle me-1"></i> Complete';
+            completeBtn.disabled = false;
+          }
         }
-        return;
-    }
-    
-    // 2. Update status badge
-    const statusBadge = requestCard.querySelector('.badge');
-    if (statusBadge) {
-        statusBadge.textContent = status;
-        statusBadge.className = `badge ${getStatusClass(status)}`;
-    }
-    
-    // 3. Update action buttons area
-    const actionButtons = requestCard.querySelector('.action-buttons');
-    if (actionButtons) {
-        actionButtons.innerHTML = `
+      }
+
+      // ✅ Helper function to update request status in UI
+      function updateRequestStatusUI(requestId, status) {
+        console.log(`🎨 Updating UI for request ${requestId} to ${status}`);
+
+        // 1. Find request card
+        const requestCard = document.querySelector(
+          `[data-request-id="${requestId}"]`
+        );
+        if (!requestCard) {
+          console.log("Request card not found, refreshing requests list...");
+          // Refresh the whole list
+          if (document.getElementById("incomingRequestsList")) {
+            loadIncomingRequests();
+          }
+          return;
+        }
+
+        // 2. Update status badge
+        const statusBadge = requestCard.querySelector(".badge");
+        if (statusBadge) {
+          statusBadge.textContent = status;
+          statusBadge.className = `badge ${getStatusClass(status)}`;
+        }
+
+        // 3. Update action buttons area
+        const actionButtons = requestCard.querySelector(".action-buttons");
+        if (actionButtons) {
+          actionButtons.innerHTML = `
             <span class="text-success">
                 <i class="fas fa-check-circle me-1"></i>
                 Transaction Completed
             </span>
         `;
-    }
-    
-    // 4. Update data-status attribute
-    requestCard.setAttribute('data-status', status);
-    
-    // 5. Also update in recent requests on dashboard
-    updateRecentRequestStatus(requestId, status);
-}
+        }
 
-// ✅ Get status class for badge
-function getStatusClass(status) {
-    switch(status.toLowerCase()) {
-        case 'completed': return 'bg-success';
-        case 'pending': return 'bg-warning text-dark';
-        case 'approved': return 'bg-primary';
-        case 'rejected': return 'bg-danger';
-        default: return 'bg-secondary';
-    }
-}
+        // 4. Update data-status attribute
+        requestCard.setAttribute("data-status", status);
 
-// ✅ Update recent request status on dashboard
-function updateRecentRequestStatus(requestId, status) {
-    const recentItem = document.querySelector(`.recent-request-${requestId}`);
-    if (recentItem) {
-        const statusSpan = recentItem.querySelector('.request-status');
-        if (statusSpan) {
+        // 5. Also update in recent requests on dashboard
+        updateRecentRequestStatus(requestId, status);
+      }
+
+      // ✅ Get status class for badge
+      function getStatusClass(status) {
+        switch (status.toLowerCase()) {
+          case "completed":
+            return "bg-success";
+          case "pending":
+            return "bg-warning text-dark";
+          case "approved":
+            return "bg-primary";
+          case "rejected":
+            return "bg-danger";
+          default:
+            return "bg-secondary";
+        }
+      }
+
+      // ✅ Update recent request status on dashboard
+      function updateRecentRequestStatus(requestId, status) {
+        const recentItem = document.querySelector(
+          `.recent-request-${requestId}`
+        );
+        if (recentItem) {
+          const statusSpan = recentItem.querySelector(".request-status");
+          if (statusSpan) {
             statusSpan.textContent = status;
             statusSpan.className = `request-status status-${status.toLowerCase()}`;
-        }
-        
-        // Remove action buttons
-        const actionButtons = recentItem.querySelector('.action-buttons');
-        if (actionButtons) {
-            actionButtons.innerHTML = '<span class="text-muted">Completed</span>';
-        }
-    }
-}
+          }
 
-// ✅ Update transactions count
-function updateTransactionsCount() {
-    // Increment completed transactions count
-    const completedElement = document.querySelector('.card.text-center:nth-child(4) h3');
-    if (completedElement) {
-        const currentCount = parseInt(completedElement.textContent) || 0;
-        completedElement.textContent = currentCount + 1;
-        
-        // Add animation
-        completedElement.classList.add('text-success');
-        setTimeout(() => {
-            completedElement.classList.remove('text-success');
-        }, 2000);
-    }
-}
+          // Remove action buttons
+          const actionButtons = recentItem.querySelector(".action-buttons");
+          if (actionButtons) {
+            actionButtons.innerHTML =
+              '<span class="text-muted">Completed</span>';
+          }
+        }
+      }
 
-// ✅ FIXED: Simple Transaction Modal
-function showSimpleTransactionModal(requestId) {
-    console.log('💳 Opening transaction modal for request:', requestId);
-    
-    // Remove existing modal if any
-    const existingModal = document.getElementById('transactionModal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Create modal HTML
-    const modalHTML = `
+      // ✅ Update transactions count
+      function updateTransactionsCount() {
+        // Increment completed transactions count
+        const completedElement = document.querySelector(
+          ".card.text-center:nth-child(4) h3"
+        );
+        if (completedElement) {
+          const currentCount = parseInt(completedElement.textContent) || 0;
+          completedElement.textContent = currentCount + 1;
+
+          // Add animation
+          completedElement.classList.add("text-success");
+          setTimeout(() => {
+            completedElement.classList.remove("text-success");
+          }, 2000);
+        }
+      }
+
+      // ✅ FIXED: Simple Transaction Modal
+      function showSimpleTransactionModal(requestId) {
+        console.log("💳 Opening transaction modal for request:", requestId);
+
+        // Remove existing modal if any
+        const existingModal = document.getElementById("transactionModal");
+        if (existingModal) {
+          existingModal.remove();
+        }
+
+        // Create modal HTML
+        const modalHTML = `
         <div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -6535,121 +6567,136 @@ function showSimpleTransactionModal(requestId) {
             </div>
         </div>
     `;
-    
-    // Add modal to page
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Show modal
-    const modalElement = document.getElementById('transactionModal');
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
-    
-    // Remove modal from DOM when hidden
-    modalElement.addEventListener('hidden.bs.modal', function() {
-        setTimeout(() => {
+
+        // Add modal to page
+        document.body.insertAdjacentHTML("beforeend", modalHTML);
+
+        // Show modal
+        const modalElement = document.getElementById("transactionModal");
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+        // Remove modal from DOM when hidden
+        modalElement.addEventListener("hidden.bs.modal", function () {
+          setTimeout(() => {
             if (this.parentElement) {
-                this.remove();
+              this.remove();
             }
-        }, 300);
-    });
-    
-    // Focus on first input
-    setTimeout(() => {
-        const firstInput = modalElement.querySelector('select');
-        if (firstInput) firstInput.focus();
-    }, 500);
-}
-      // handleAcceptRequest function without event parameter
-    // ✅ FIXED: handleAcceptRequest function with proper data format
-async function handleAcceptRequest(requestId, userId) {
-    try {
-        console.log('🔄 Accepting request:', { requestId, userId });
-
-        if (!confirm('Are you sure you want to accept this request?')) {
-            return;
-        }
-
-        // ✅ FIXED: Get button reference properly
-        const button = document.querySelector(`[onclick*="handleAcceptRequest(${requestId}, ${userId})"]`);
-        if (button) {
-            const originalText = button.innerHTML;
-            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-            button.disabled = true;
-        }
-
-        // ✅ FIXED: Send correct data format for API
-        const requestData = {
-            id: parseInt(requestId),  // API expects 'id' not 'request_id'
-            status: 'Approved',
-            user_id: parseInt(userId),
-            price: null  // Add this if API needs price field
-        };
-
-        console.log('📤 Sending to API:', requestData);
-
-        const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(requestData)
+          }, 300);
         });
 
-        const responseText = await response.text();
-        console.log('📡 Raw response:', responseText.substring(0, 200));
-
-        let result;
+        // Focus on first input
+        setTimeout(() => {
+          const firstInput = modalElement.querySelector("select");
+          if (firstInput) firstInput.focus();
+        }, 500);
+      }
+      // handleAcceptRequest function without event parameter
+      // ✅ FIXED: handleAcceptRequest function with proper data format
+      async function handleAcceptRequest(requestId, userId) {
         try {
-            result = JSON.parse(responseText);
-            console.log('✅ Parsed response:', result);
-        } catch (parseError) {
-            console.error('❌ JSON Parse Error:', parseError);
-            console.log('🔄 Trying to parse manually...');
-            
-            // Try to extract success message from HTML response
-            if (responseText.includes('success') && responseText.includes('true')) {
-                result = { success: true, message: 'Request updated successfully' };
-            } else {
-                throw new Error('Server returned invalid response');
-            }
-        }
+          console.log("🔄 Accepting request:", { requestId, userId });
 
-        if (result.success) {
-            console.log('✅ Request accepted successfully');
-            
-            showToast('✅ Request accepted! Complete the transaction.', 'success');
-            
+          if (!confirm("Are you sure you want to accept this request?")) {
+            return;
+          }
+
+          // ✅ FIXED: Get button reference properly
+          const button = document.querySelector(
+            `[onclick*="handleAcceptRequest(${requestId}, ${userId})"]`
+          );
+          if (button) {
+            const originalText = button.innerHTML;
+            button.innerHTML =
+              '<span class="spinner-border spinner-border-sm"></span>';
+            button.disabled = true;
+          }
+
+          // ✅ FIXED: Send correct data format for API
+          const requestData = {
+            id: parseInt(requestId), // API expects 'id' not 'request_id'
+            status: "Approved",
+            user_id: parseInt(userId),
+            price: null, // Add this if API needs price field
+          };
+
+          console.log("📤 Sending to API:", requestData);
+
+          const response = await fetch(
+            "http://localhost/project/backend/api/requests/update.php",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(requestData),
+            }
+          );
+
+          const responseText = await response.text();
+          console.log("📡 Raw response:", responseText.substring(0, 200));
+
+          let result;
+          try {
+            result = JSON.parse(responseText);
+            console.log("✅ Parsed response:", result);
+          } catch (parseError) {
+            console.error("❌ JSON Parse Error:", parseError);
+            console.log("🔄 Trying to parse manually...");
+
+            // Try to extract success message from HTML response
+            if (
+              responseText.includes("success") &&
+              responseText.includes("true")
+            ) {
+              result = {
+                success: true,
+                message: "Request updated successfully",
+              };
+            } else {
+              throw new Error("Server returned invalid response");
+            }
+          }
+
+          if (result.success) {
+            console.log("✅ Request accepted successfully");
+
+            showToast(
+              "✅ Request accepted! Complete the transaction.",
+              "success"
+            );
+
             // Show transaction modal
             setTimeout(() => {
-                showSimpleTransactionModal(requestId);
+              showSimpleTransactionModal(requestId);
             }, 1000);
-            
+
             // Update UI
-            updateRequestUI(requestId, 'Approved');
+            updateRequestUI(requestId, "Approved");
             updateRequestsCount();
-            
+
             // Refresh requests list
             setTimeout(() => {
-                loadIncomingRequests();
+              loadIncomingRequests();
             }, 1500);
+          } else {
+            console.error("❌ API returned error:", result);
+            throw new Error(result.message || "Failed to accept request");
+          }
+        } catch (error) {
+          console.error("❌ Error accepting request:", error);
+          showToast("❌ Error: " + error.message, "error");
 
-        } else {
-            console.error('❌ API returned error:', result);
-            throw new Error(result.message || 'Failed to accept request');
-        }
-
-    } catch (error) {
-        console.error('❌ Error accepting request:', error);
-        showToast('❌ Error: ' + error.message, 'error');
-
-        // ✅ FIXED: Safe button reset
-        const button = document.querySelector(`[onclick*="handleAcceptRequest(${requestId}, ${userId})"]`);
-        if (button) {
+          // ✅ FIXED: Safe button reset
+          const button = document.querySelector(
+            `[onclick*="handleAcceptRequest(${requestId}, ${userId})"]`
+          );
+          if (button) {
             button.innerHTML = '<i class="fas fa-check me-1"></i> Accept';
             button.disabled = false;
+          }
         }
-    }
-}
+      }
       // Update Request UI Function
       function updateRequestUI(requestId, newStatus) {
         console.log("🎨 Updating UI for request:", requestId, "→", newStatus);

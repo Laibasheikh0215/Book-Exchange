@@ -154,3 +154,55 @@
 2026-01-11 21:40:17 - Email found in database
 2026-01-11 21:40:17 - Password matches
 2026-01-11 21:40:17 - === REQUEST COMPLETED ===
+2026-01-12 08:04:57 - === NEW REQUEST ===
+2026-01-12 08:04:57 - Request method: POST
+2026-01-12 08:04:57 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-12 08:04:57 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-12 08:04:57 - Checking email: noshabarahseed@example.com
+2026-01-12 08:04:57 - Email found in database
+2026-01-12 08:04:57 - Password matches
+2026-01-12 08:04:57 - === REQUEST COMPLETED ===
+2026-01-12 11:11:56 - === NEW REQUEST ===
+2026-01-12 11:11:56 - Request method: POST
+2026-01-12 11:11:56 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-12 11:11:56 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-12 11:11:56 - Checking email: noshabarahseed@example.com
+2026-01-12 11:11:56 - Email found in database
+2026-01-12 11:11:56 - Password matches
+2026-01-12 11:11:56 - === REQUEST COMPLETED ===
+2026-01-12 11:46:55 - === NEW REQUEST ===
+2026-01-12 11:46:55 - Request method: POST
+2026-01-12 11:46:55 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-01-12 11:46:55 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-01-12 11:46:55 - Checking email: noshabarahseed@example.com
+2026-01-12 11:46:55 - Email found in database
+2026-01-12 11:46:55 - Password matches
+2026-01-12 11:46:55 - === REQUEST COMPLETED ===
+2026-01-12 11:48:49 - === NEW REQUEST ===
+2026-01-12 11:48:49 - Request method: POST
+2026-01-12 11:48:50 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-12 11:48:50 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-12 11:48:50 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-12 11:48:50 - Email found in database
+2026-01-12 11:48:50 - Password matches
+2026-01-12 11:48:50 - === REQUEST COMPLETED ===

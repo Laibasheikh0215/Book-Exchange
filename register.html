@@ -130,17 +130,6 @@
 
                     </div>
 
-                    <!-- Profile Picture Upload -->
-                    <div class="mt-3">
-                        <h6>Upload Profile Picture</h6>
-                        <img id="preview" src="https://via.placeholder.com/150" alt="Profile Picture"
-                            class="profile-pic" style="width: 150px; height: 150px;">
-                        <br>
-                        <div>
-                            <input type="file" id="profilePic" accept="image/*" class="upload-btn form-control">
-                        </div>
-                    </div>
-
                     <button type="submit" class="btn submit-btn mt-4">Register</button>
 
                     <p class="mt-3">
@@ -213,7 +202,7 @@
             console.log("Sending registration data:", formData);
 
             try {
-                const API_URL = 'http://localhost/book-exchange/register.php';
+                const API_URL = 'http://localhost/project/register.php';
                 console.log("Calling API:", API_URL);
 
                 const response = await fetch(API_URL, {
