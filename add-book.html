@@ -306,82 +306,119 @@
         }
 
         // FORM SUBMISSION
-        document.getElementById("addBookForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+        // FORM SUBMISSION
+document.getElementById("addBookForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-            const userData = JSON.parse(localStorage.getItem('user'));
-            if (!userData) {
-                alert("Please login first");
-                window.location.href = "index.html";
-                return;
-            }
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (!userData) {
+        alert("Please login first");
+        window.location.href = "index.html";
+        return;
+    }
 
-            console.log("=== FORM SUBMISSION DEBUG ===");
-            console.log("Selected Images:", selectedImages);
-            console.log("Custom Images:", customImages);
+    console.log("=== FORM SUBMISSION DEBUG ===");
+    console.log("Selected Images:", selectedImages);
+    console.log("Custom Images:", customImages);
 
-            // PREPARE FORM DATA
-            const formData = new FormData();
+    // PREPARE FORM DATA
+    const formData = new FormData();
 
-            // Add form fields
-            formData.append('title', document.getElementById('title').value);
-            formData.append('author', document.getElementById('author').value);
-            formData.append('user_id', userData.user_id);
-            formData.append('isbn', document.getElementById('isbn').value);
-            formData.append('genre', document.getElementById('genre').value);
-            formData.append('price', document.getElementById('price').value);
-            formData.append('condition', document.getElementById('condition').value);
-            formData.append('description', document.getElementById('description').value);
+    // Add form fields
+    formData.append('title', document.getElementById('title').value);
+    formData.append('author', document.getElementById('author').value);
+    formData.append('user_id', userData.user_id);
+    formData.append('isbn', document.getElementById('isbn').value);
+    formData.append('genre', document.getElementById('genre').value);
+    formData.append('price', document.getElementById('price').value);
+    formData.append('condition', document.getElementById('condition').value);
+    formData.append('description', document.getElementById('description').value);
 
-            // CUSTOM IMAGES KE LIYE FILES APPEND KAREIN
-            customImages.forEach((customImage, index) => {
-                formData.append(`image${index + 1}`, customImage.file);
-            });
+    // CUSTOM IMAGES KE LIYE FILES APPEND KAREIN
+    customImages.forEach((customImage, index) => {
+        formData.append(`image${index + 1}`, customImage.file);
+        console.log(`Added custom image ${index + 1}:`, customImage.file.name);
+    });
 
-            // Sending predefined images (if any)
-            selectedImages.forEach((imageData, index) => {
-                // Agar predefined image hai (base64 nahi hai)
-                if (imageData.startsWith('Assets/')) {
-                    formData.append(`predefined_image${index + 1}`, imageData);
-                }
-            });
+    // Sending predefined images (if any)
+    selectedImages.forEach((imageData, index) => {
+        // Agar predefined image hai (base64 nahi hai)
+        if (imageData.startsWith('Assets/')) {
+            formData.append(`predefined_image${index + 1}`, imageData);
+            console.log(`Added predefined image ${index + 1}:`, imageData);
+        }
+    });
 
-            console.log("📦 Uploading book with images...");
+    console.log("📦 Uploading book with images...");
+    
+    // Show loading state
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Adding Book...';
+    submitBtn.disabled = true;
 
-            // Show loading state
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Adding Book...';
-            submitBtn.disabled = true;
+    try {
+        // Debug: Log the FormData contents
+        console.log("FormData contents:");
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ', pair[1]);
+        }
 
-            try {
-                const response = await fetch('http://localhost/project/backend/api/books/create.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-                console.log("✅ API RESPONSE:", result);
-
-                if (result.success) {
-                    alert("Book added successfully with ID: " + result.book_id);
-                    window.location.href = "dashboard.html";
-                } else {
-                    alert("Error: " + (result.message || "Unknown error occurred"));
-                }
-
-            } catch (error) {
-                console.error('❌ Error:', error);
-                alert("Error: " + error.message);
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+        const response = await fetch('http://localhost/project/backend/api/books/create.php', {
+            method: 'POST',
+            body: formData
         });
-        // Load Font Awesome for icons
-        const faScript = document.createElement('script');
-        faScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js';
-        document.head.appendChild(faScript);
+
+        console.log("Response status:", response.status);
+        console.log("Response headers:", [...response.headers]);
+
+        // Get response as text first to handle JSON parsing safely
+        const responseText = await response.text();
+        console.log("📥 RAW RESPONSE TEXT (first 500 chars):", responseText.substring(0, 500));
+        console.log("Full response length:", responseText.length);
+        
+        // Check if response contains HTML
+        if (responseText.trim().startsWith('<!DOCTYPE') || responseText.trim().startsWith('<html')) {
+            console.error("❌ Server returned HTML instead of JSON!");
+            alert("Server error: Received HTML page instead of data. Check PHP configuration.");
+            return;
+        }
+        
+        let result;
+        try {
+            result = JSON.parse(responseText);
+            console.log("✅ PARSED JSON:", result);
+        } catch (parseError) {
+            console.error("❌ JSON PARSE ERROR:", parseError);
+            console.error("Response text that failed to parse (first 200 chars):", responseText.substring(0, 200));
+            
+            // Try to extract error from response
+            if (responseText.includes("error") || responseText.includes("Error") || responseText.includes("Exception")) {
+                // Extract first 300 characters to show in alert
+                const errorPreview = responseText.substring(0, 300);
+                alert("Server Error:\n" + errorPreview + "...");
+            } else {
+                alert("Server returned invalid JSON. Response starts with: " + responseText.substring(0, 100) + "...");
+            }
+            return;
+        }
+
+        if (result.success) {
+            alert("Book added successfully with ID: " + result.book_id);
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Error: " + (result.message || "Unknown error occurred"));
+        }
+
+    } catch (error) {
+        console.error('❌ Fetch Error:', error);
+        alert("Network Error: " + error.message);
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+});
+        
     </script>
 </body>
 
