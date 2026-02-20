@@ -284,3 +284,107 @@
 2026-01-22 18:44:59 - Email found in database
 2026-01-22 18:44:59 - Password matches
 2026-01-22 18:44:59 - === REQUEST COMPLETED ===
+2026-01-29 11:33:14 - === NEW REQUEST ===
+2026-01-29 11:33:14 - Request method: POST
+2026-01-29 11:33:14 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-29 11:33:14 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-29 11:33:14 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-29 11:33:14 - Email found in database
+2026-01-29 11:33:14 - Password matches
+2026-01-29 11:33:14 - === REQUEST COMPLETED ===
+2026-01-29 11:35:25 - === NEW REQUEST ===
+2026-01-29 11:35:25 - Request method: POST
+2026-01-29 11:35:25 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-01-29 11:35:25 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-01-29 11:35:25 - Checking email: sheikh.laiba8019@gmail.com
+2026-01-29 11:35:26 - Email found in database
+2026-01-29 11:35:26 - Password matches
+2026-01-29 11:35:26 - === REQUEST COMPLETED ===
+2026-02-08 10:50:42 - === NEW REQUEST ===
+2026-02-08 10:50:42 - Request method: POST
+2026-02-08 10:50:42 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-02-08 10:50:42 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-02-08 10:50:42 - Checking email: noshabarahseed@example.com
+2026-02-08 10:50:42 - Email found in database
+2026-02-08 10:50:43 - Password matches
+2026-02-08 10:50:43 - === REQUEST COMPLETED ===
+2026-02-08 10:52:06 - === NEW REQUEST ===
+2026-02-08 10:52:06 - Request method: POST
+2026-02-08 10:52:06 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-02-08 10:52:06 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-02-08 10:52:06 - Checking email: sheikh.laiba8019@gmail.com
+2026-02-08 10:52:06 - Email found in database
+2026-02-08 10:52:06 - Password matches
+2026-02-08 10:52:06 - === REQUEST COMPLETED ===
+2026-02-08 10:52:28 - === NEW REQUEST ===
+2026-02-08 10:52:28 - Request method: POST
+2026-02-08 10:52:28 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-02-08 10:52:28 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-02-08 10:52:28 - Checking email: sheikh.laiba8019@gmail.com
+2026-02-08 10:52:28 - Email found in database
+2026-02-08 10:52:28 - Password matches
+2026-02-08 10:52:28 - === REQUEST COMPLETED ===
+2026-02-08 16:25:34 - === NEW REQUEST ===
+2026-02-08 16:25:34 - Request method: POST
+2026-02-08 16:25:34 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-02-08 16:25:34 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-02-08 16:25:34 - Checking email: noshabarahseed@example.com
+2026-02-08 16:25:34 - Email found in database
+2026-02-08 16:25:34 - Password matches
+2026-02-08 16:25:34 - === REQUEST COMPLETED ===
+2026-02-08 16:25:49 - === NEW REQUEST ===
+2026-02-08 16:25:49 - Request method: POST
+2026-02-08 16:25:49 - Raw input: {"email":"noshabarahseed@example.com","password":"Second123@"}
+2026-02-08 16:25:49 - JSON parsed: stdClass Object
+(
+    [email] => noshabarahseed@example.com
+    [password] => Second123@
+)
+
+2026-02-08 16:25:49 - Checking email: noshabarahseed@example.com
+2026-02-08 16:25:49 - Email found in database
+2026-02-08 16:25:49 - Password matches
+2026-02-08 16:25:49 - === REQUEST COMPLETED ===
+2026-02-08 16:28:57 - === NEW REQUEST ===
+2026-02-08 16:28:57 - Request method: POST
+2026-02-08 16:28:57 - Raw input: {"email":"sheikh.laiba8019@gmail.com","password":"Albatross123@"}
+2026-02-08 16:28:57 - JSON parsed: stdClass Object
+(
+    [email] => sheikh.laiba8019@gmail.com
+    [password] => Albatross123@
+)
+
+2026-02-08 16:28:57 - Checking email: sheikh.laiba8019@gmail.com
+2026-02-08 16:28:57 - Email found in database
+2026-02-08 16:28:57 - Password matches
+2026-02-08 16:28:57 - === REQUEST COMPLETED ===

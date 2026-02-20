@@ -2081,86 +2081,7 @@
           )
           .join("");
       }
-      // SIMPLE REQUEST ACCEPT FUNCTION
-
-      // async function handleAcceptRequest(requestId, userId) {
-      //     try {
-      //         console.log('🔄 Accepting request:', requestId);
-
-      //         if (!confirm('Are you sure you want to accept this request?')) {
-      //             return;
-      //         }
-
-      // Get button reference
-      // const button = event.target.closest('button');
-      // if (button) {
-      //     const originalText = button.innerHTML;
-      //     button.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-      //     button.disabled = true;
-      // }
-
-      // ✅ NAYA: Pehle request details le aayein
-      // console.log('📋 Fetching request details before acceptance...');
-      // const requestDetails = await loadRequestDetails(requestId);
-      // console.log('✅ Request details loaded:', requestDetails);
-
-      // Simple request data
-      // const requestData = {
-      //     request_id: parseInt(requestId),
-      //     status: 'Approved',
-      //     user_id: parseInt(userId)
-      // };
-
-      // console.log('📤 Sending to API:', requestData);
-
-      // const response = await fetch('http://localhost/project/backend/api/requests/update.php', {
-      //     method: 'POST',
-      //     headers: {
-      //         'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify(requestData)
-      // });
-
-      // const responseText = await response.text();
-      // console.log('📡 Raw response:', responseText);
-
-      // let result;
-      // try {
-      //     result = JSON.parse(responseText);
-      // } catch (parseError) {
-      //     console.error('❌ JSON Parse Error:', parseError);
-      //     throw new Error('Server response error');
-      // }
-
-      // if (result.success) {
-      //     console.log('✅ Request accepted successfully');
-
-      // Transaction modal show karein
-      // setTimeout(() => {
-      //     showTransactionModal(requestId, requestDetails);
-      // }, 500);
-
-      // UI update karen
-      //         updateRequestUI(requestId, 'Approved');
-      //         updateRequestsCount();
-      //         showToast('Request accepted! Complete the transaction', 'success');
-
-      //     } else {
-      //         throw new Error(result.message || 'Failed to accept request');
-      //     }
-
-      // } catch (error) {
-      //     console.error('❌ Error accepting request:', error);
-      //     showToast('Error: ' + error.message, 'error');
-
-      // Button reset karen
-      //         const button = event.target.closest('button');
-      //         if (button) {
-      //             button.innerHTML = '<i class="fas fa-check me-1"></i> Accept';
-      //             button.disabled = false;
-      //         }
-      //     }
-      // }
+    
 
       // SIMPLE UI UPDATE FUNCTION
       function updateRequestUI(requestId, newStatus) {
@@ -2186,21 +2107,6 @@
         `;
         });
       }
-
-      //REQUEST ACTIONS HANDLERS
-      // async function handleAcceptRequest(requestId, userId) {
-      //     await updateRequestStatus(requestId, 'accepted', userId);
-      // }
-
-      // REQUEST ACTIONS HANDLERS
-      // async function handleRejectRequest(requestId, userId) {
-      //     await updateRequestStatus(requestId, 'rejected', userId);
-      // }
-
-      // REQUEST ACTIONS HANDLERS
-      // async function handleCancelRequest(requestId, userId) {
-      //     await updateRequestStatus(requestId, 'cancelled', userId);
-      // }
 
       //Add this temporary function to see the actual API response
       async function updateRequestStatus(requestId, status, userId) {
